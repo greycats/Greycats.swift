@@ -29,7 +29,7 @@
 		CF403A0A1A7DFADF0049876A /* Try.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Try.playground; path = Example/Try.playground; sourceTree = "<group>"; };
 		CFC5570F1A7DF6A0001951DE /* Greycats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Greycats.h; sourceTree = "<group>"; };
 		CFC557141A7DF6F8001951DE /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
-		CFC557161A7DF729001951DE /* Greycats.swift.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Greycats.swift.podspec; sourceTree = "<group>"; };
+		CFC557161A7DF729001951DE /* Greycats.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Greycats.podspec; sourceTree = "<group>"; };
 		CFC557171A7DF729001951DE /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CFC557181A7DF729001951DE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -101,7 +101,7 @@
 		CFC5571C1A7DF72E001951DE /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				CFC557161A7DF729001951DE /* Greycats.swift.podspec */,
+				CFC557161A7DF729001951DE /* Greycats.podspec */,
 				CFC557171A7DF729001951DE /* LICENSE */,
 				CFC557181A7DF729001951DE /* README.md */,
 			);
