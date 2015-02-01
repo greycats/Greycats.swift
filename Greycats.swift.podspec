@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Greycats.swift"
-  s.version          = "0.1.1"
+  s.version          = "0.1.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -24,6 +24,5 @@ Pod::Spec.new do |s|
 
   s.source_files     = "Greycats/**/*.{h, swift}"
   s.frameworks       = 'UIKit'
-  s.deprecated_in_favor_of = 'Greycats'
-
+  s.deprecated       = true
 end

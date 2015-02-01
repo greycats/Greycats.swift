@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "0.1.1"
+  s.version          = "0.1.2"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
