@@ -7,18 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CFC080481A7F1B8C00BD587E /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC080471A7F1B8C00BD587E /* Filter.swift */; };
+		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
+		CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */; };
+		CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */; };
 		CFC557101A7DF6A0001951DE /* Greycats.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC5570F1A7DF6A0001951DE /* Greycats.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFC557151A7DF6F8001951DE /* TableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC557141A7DF6F8001951DE /* TableViewData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF403A0A1A7DFADF0049876A /* Try.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Try.playground; path = Example/Try.playground; sourceTree = "<group>"; };
-		CFC080471A7F1B8C00BD587E /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		CFB62E7D1A7F5C2900D54010 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Breadcrumb.swift; sourceTree = "<group>"; };
+		CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
 		CFC5570F1A7DF6A0001951DE /* Greycats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Greycats.h; sourceTree = "<group>"; };
-		CFC557141A7DF6F8001951DE /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
 		CFC557161A7DF729001951DE /* Greycats.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Greycats.podspec; sourceTree = "<group>"; };
 		CFC557171A7DF729001951DE /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CFC557181A7DF729001951DE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -57,7 +59,9 @@
 			isa = PBXGroup;
 			children = (
 				CFC5570F1A7DF6A0001951DE /* Greycats.h */,
-				CFC557131A7DF6CD001951DE /* DataBinding */,
+				CFB62E7D1A7F5C2900D54010 /* Filter.swift */,
+				CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */,
+				CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */,
 				CF21163A1A7DECF10065E3B2 /* Supporting Files */,
 			);
 			path = Greycats;
@@ -69,15 +73,6 @@
 				CF21163B1A7DECF10065E3B2 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CFC557131A7DF6CD001951DE /* DataBinding */ = {
-			isa = PBXGroup;
-			children = (
-				CFC080471A7F1B8C00BD587E /* Filter.swift */,
-				CFC557141A7DF6F8001951DE /* TableViewData.swift */,
-			);
-			path = DataBinding;
 			sourceTree = "<group>";
 		};
 		CFC5571C1A7DF72E001951DE /* Podspec Metadata */ = {
@@ -167,8 +162,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFC557151A7DF6F8001951DE /* TableViewData.swift in Sources */,
-				CFC080481A7F1B8C00BD587E /* Filter.swift in Sources */,
+				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
+				CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */,
+				CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

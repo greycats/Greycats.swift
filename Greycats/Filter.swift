@@ -5,6 +5,8 @@
 //  Copyright (c) 2015 iLabs. All rights reserved.
 //
 
+// available in pod 'Greycats', '~> 0.1.4'
+
 import UIKit
 
 public protocol FilterDelegate {
@@ -100,8 +102,8 @@ public class FilterTextFieldDelegate: NSObject, UITextFieldDelegate, UISearchBar
 		applyFilter(nil)
 		return true
 	}
+	
 	public func textFieldShouldReturn(textField: UITextField) -> Bool {
-		applyFilter(textField.text)
 		textField.resignFirstResponder()
 		return true
 	}
@@ -115,7 +117,6 @@ public class FilterTextFieldDelegate: NSObject, UITextFieldDelegate, UISearchBar
 	}
 	
 	public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-		applyFilter(searchBar.text)
 		searchBar.resignFirstResponder()
 	}
 }

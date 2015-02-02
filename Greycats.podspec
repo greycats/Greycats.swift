@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "0.1.4"
+  s.version          = "0.1.5"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -24,6 +24,6 @@ Pod::Spec.new do |s|
 
   s.source_files     = "Greycats/**/*.swift"
   s.frameworks       = 'UIKit'
-  s.platform         = :ios, "7.0"
+  s.platform         = :ios, "8.0"
 
 end
