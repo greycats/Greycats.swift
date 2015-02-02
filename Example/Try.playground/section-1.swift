@@ -22,24 +22,21 @@ struct Document {
 	}
 }
 
-struct Story {
-	var location: String
-	var time: NSDate
+struct Anchor {
+	var title: String
 	
-	init(location: String, time: NSDate) {
-		self.location = location
-		self.time = time
+	init(title: String) {
+		self.title = title
 	}
 }
 
 let docs = (0...2).map { Document(name: "document.\($0)") }
-let stories = (0...9).map { _ in
-	Story(location: "location", time: NSDate())
-}
+let sitemap = ["iOS 8", "OS X Yosemite", "Swift", "Xcode 6", "iOS Dev Center", "Mac Dev Center", "Safari Dev Center", "App Store", "iAd", "iCloud", "Forums", "Videos", "Licensing and Trademarks", "Hardware and Drivers", "iPod, iPhone, and iPad Cases", "Open Source", "iOS Developer Program", "iOS Developer Enterprise Program", "iOS Developer University Program", "Mac Developer Program", "Safari Developer Program", "MFi Program", "iOS Developer Program", "Mac Developer Program", "Safari Developer Program", "App Store", "iTunes Connect", "Technical Support"].map { Anchor(title: $0) }
 
 class DemoViewController: UIViewController {
 	
 	let tableView = UITableView()
+	let filter = FilterTextFieldDelegate()
 	
 	let docsData = TableViewData<Document, UITableViewCell>(title: "Documents")
 		.onRender { (cell, object) -> Void in
@@ -53,9 +50,9 @@ class DemoViewController: UIViewController {
 			return header
 	}
 	
-	let storiesData = TableViewData<Story, UITableViewCell>(title: "Stories")
+	let sitemapData = TableViewData<Anchor, UITableViewCell>(title: "Sitemap")
 		.onRender { (cell, object) -> Void in
-			cell.textLabel!.text = "\(object.time) at \(object.location)"
+			cell.textLabel!.text = "\(object.title)"
 		}
 		.onHeader { (title) -> UIView? in
 			let header = UILabel()
@@ -68,18 +65,32 @@ class DemoViewController: UIViewController {
 	override func viewDidLoad() {
 		tableView.frame = view.bounds
 		view.layer.borderWidth = 0.5
+		let filterField = UITextField(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 40))
+		filterField.placeholder = "Search"
+		filterField.delegate = filter
+		tableView.tableHeaderView = filterField
 		tableView.autoresizingMask = .FlexibleHeight | .FlexibleWidth
 		view.addSubview(tableView)
-		connectTableView(tableView, sections: [docsData, storiesData])
+		connectTableView(tableView, sections: [docsData, sitemapData])
+		
+		filter.onChange {string in
+			self.docsData.source = Filter.WordSequences.apply(string, objects: docs, {$0.name})
+			self.sitemapData.source = Filter.Contains.apply(string, objects: sitemap, {$0.title})
+		}
 	}
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		delay(0.2) {
 			self.docsData.source = docs
-			self.storiesData.source = stories
+			self.sitemapData.source = sitemap
+		}
+		
+		delay(1.2) {
+			self.filter.search("OS")
 		}
 	}
 }
+
 
 XCPShowView("Demo", DemoViewController().view)
