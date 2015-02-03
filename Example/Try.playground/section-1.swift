@@ -33,12 +33,17 @@ struct Anchor {
 let docs = (0...2).map { Document(name: "document.\($0)") }
 let sitemap = ["iOS 8", "OS X Yosemite", "Swift", "Xcode 6", "iOS Dev Center", "Mac Dev Center", "Safari Dev Center", "App Store", "iAd", "iCloud", "Forums", "Videos", "Licensing and Trademarks", "Hardware and Drivers", "iPod, iPhone, and iPad Cases", "Open Source", "iOS Developer Program", "iOS Developer Enterprise Program", "iOS Developer University Program", "Mac Developer Program", "Safari Developer Program", "MFi Program", "iOS Developer Program", "Mac Developer Program", "Safari Developer Program", "App Store", "iTunes Connect", "Technical Support"].map { Anchor(title: $0) }
 
+class MyCell: UITableViewCell, UITableViewCellCachable {
+	func decodeWithCoder(coder: NSCoder) {
+	}
+}
+
 class DemoViewController: UIViewController {
 	
 	let tableView = UITableView()
 	let filter = FilterTextFieldDelegate()
 	
-	let docsData = TableViewData<Document, UITableViewCell>(title: "Documents")
+	let docsData = TableViewData<Document, MyCell>(title: "Documents")
 		.onRender { (cell, object) -> Void in
 			cell.textLabel!.text = object.name
 		}
@@ -50,7 +55,7 @@ class DemoViewController: UIViewController {
 			return header
 	}
 	
-	let sitemapData = TableViewData<Anchor, UITableViewCell>(title: "Sitemap")
+	let sitemapData = TableViewData<Anchor, MyCell>(title: "Sitemap")
 		.onRender { (cell, object) -> Void in
 			cell.textLabel!.text = "\(object.title)"
 		}
