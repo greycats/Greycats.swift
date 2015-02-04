@@ -9,7 +9,7 @@
 
 import UIKit
 
-private let __iOS8 = UIDevice.currentDevice().systemVersion.compare("8.0", options: NSStringCompareOptions.NumericSearch) != .OrderedAscending
+private let skipHeightCalculation = UIDevice.currentDevice().systemVersion.compare("8.0", options: NSStringCompareOptions.NumericSearch) != .OrderedAscending
 
 public protocol SectionData: NSObjectProtocol {
 	var section: Int {get set}
@@ -22,21 +22,16 @@ public protocol SectionData: NSObjectProtocol {
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) -> UIViewController?
 }
 
-public protocol UITableViewCellCachable {
-	func decodeWithCoder(coder: NSCoder)
-}
-
-public class TableViewData<T, U: UITableViewCell where U: UITableViewCellCachable>: NSObject, SectionData {
+public class TableViewData<T, U: UITableViewCell>: NSObject, SectionData {
 	typealias Element = T
 	typealias Cell = U
-	
 	public var section: Int = 0
 	public var cacheKey: (T -> String)?
 	public var cellIdentifier = "cell"
 	
 	private var data: [T] = []
 	private var preRender: (U -> Void)?
-	private var renderCell: ((U, T) -> Void)?
+	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
 	private var select: ((T) -> UIViewController?)?
 	private var renderHeader: ((String) -> UIView?)?
 	private var title: String?
@@ -44,7 +39,7 @@ public class TableViewData<T, U: UITableViewCell where U: UITableViewCellCachabl
 	private weak var _tableView: UITableView?
 	private let cell = U(style: .Default, reuseIdentifier: "-placeholder-")
 	private let rendering_cache = NSCache()
-	
+	private var height_cache: [Int: CGFloat] = [:]
 	
 	public var tableView: UITableView? {
 		set(t) {
@@ -58,36 +53,37 @@ public class TableViewData<T, U: UITableViewCell where U: UITableViewCellCachabl
 		}
 	}
 	
-	func render(cell: U, object: T) -> Float {
-		var height: Float = 0
+	func render(cell: U, index: Int) -> CGFloat {
+		let object = data[index]
 		if let c = cacheKey {
 			let key = c(object)
 			var data = rendering_cache.objectForKey(key) as? NSData
 			if data == nil {
-				renderCell?(cell, object)
-				var mdata = NSMutableData()
-				let coder = NSKeyedArchiver(forWritingWithMutableData: mdata)
-				cell.encodeWithCoder(coder)
-				if !__iOS8 {
-					cell.layoutIfNeeded()
-					height = Float(ceil(cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height))
-					println("height for \(object) = \(height)")
-					coder.encodeFloat(height, forKey: "height")
+				renderCell?(cell, object) {
+					var mdata = NSMutableData()
+					let coder = NSKeyedArchiver(forWritingWithMutableData: mdata)
+					cell.encodeRestorableStateWithCoder(coder)
+					coder.finishEncoding()
+					self.rendering_cache.setObject(mdata, forKey: key)
 				}
-				
-				coder.finishEncoding()
-				rendering_cache.setObject(mdata, forKey: key)
 			} else {
 				let coder = NSKeyedUnarchiver(forReadingWithData: data!)
-				cell.decodeWithCoder(coder)
-				if !__iOS8 {
-					height = coder.decodeFloatForKey("height")
-				}
+				cell.decodeRestorableStateWithCoder(coder)
 			}
 		} else {
-			renderCell?(cell, object)
+			renderCell?(cell, object) {}
 		}
-		return height
+		if !skipHeightCalculation {
+			if let height = height_cache[index] {
+				return height
+			}
+			cell.layoutIfNeeded()
+			let height = CGFloat(ceil(cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height))
+			println("height for \(object) = \(height)")
+			height_cache[index] = height
+			return height
+		}
+		return UITableViewAutomaticDimension
 	}
 	
 	public required init(title: String?) {
@@ -103,12 +99,14 @@ public class TableViewData<T, U: UITableViewCell where U: UITableViewCellCachabl
 	}
 	
 	public func onRender(block: (cell: U, object: T) -> Void) -> Self {
-		renderCell = block
+		renderCell = {
+			block(cell: $0, object: $1)
+			$2()
+		}
 		return self
 	}
 	
-	public func onRender(pre: (cell: Cell) -> Void, render: (Cell, T) -> Void) -> Self {
-		preRender = pre
+	public func onFutureRender(render: (Cell, T, dispatch_block_t) -> Void) -> Self {
 		renderCell = render
 		return self
 	}
@@ -137,31 +135,18 @@ public class TableViewData<T, U: UITableViewCell where U: UITableViewCellCachabl
 		return data.count
 	}
 	
-	public func writeCache(forObject object: T, closure: NSCoder -> Void) {
-		if let c = cacheKey {
-			let key = c(object)
-			var mdata = NSMutableData()
-			let coder = NSKeyedArchiver(forWritingWithMutableData: mdata)
-			closure(coder)
-			coder.finishEncoding()
-			rendering_cache.setObject(mdata, forKey: key)
-		}
-	}
-	
 	public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		preRender?(cell)
-		var height = render(cell, object: data[indexPath.row])
-		if height == 0 {
-			cell.layoutIfNeeded()
-			return ceil(cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height)
+		if skipHeightCalculation {
+			return UITableViewAutomaticDimension
 		}
-		return CGFloat(height)
+		preRender?(cell)
+		return render(cell, index: indexPath.row)
 	}
 	
 	public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as Cell
 		preRender?(cell)
-		render(cell, object: data[indexPath.row])
+		render(cell, index: indexPath.row)
 		return cell
 	}
 	
@@ -193,7 +178,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 			obj.tableView = tableView
 		}
 		super.init()
-		if __iOS8 {
+		if skipHeightCalculation {
 			tableView.estimatedRowHeight = 80
 		}
 		tableView.delegate = self
@@ -220,9 +205,6 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	}
 	
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		if __iOS8 {
-			return UITableViewAutomaticDimension
-		}
 		return joined[indexPath.section].tableView(tableView, heightForRowAtIndexPath: indexPath)
 	}
 	

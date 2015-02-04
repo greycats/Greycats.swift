@@ -40,7 +40,7 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 		self.transform = transform
 	}
 	
-	func join(elements: [T], highlight: NSRegularExpression? = nil) -> (NSMutableAttributedString, [NSRange]) {
+	func join(elements: [T]) -> (NSMutableAttributedString, [NSRange]) {
 		var attempt = NSMutableAttributedString()
 		let slash = NSAttributedString(string: "\(self.slash)", attributes: attributes)
 		let lastIndex = elements.count - 1
@@ -51,41 +51,42 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 			var attr = attributes
 			attr["-pickle-"] = el.pickle()
 			var text = NSMutableAttributedString(string: str, attributes: attr)
-			
-			if index != lastIndex {
-				ranges.append(NSMakeRange(attempt.length, text.length + 1))
-			} else {
-				if let highlight = highlight {
-					if let highlightAttributes = highlightAttributes {
-						var attr = highlightAttributes
-						attr["-pickle-"] = el.pickle()
-						let matches = highlight.matchesInString(str, options: nil, range: NSMakeRange(0, str.utf16Count))
-						for match in matches {
-							if let n = match.numberOfRanges {
-								for i in 1..<n {
-									text.addAttributes(attr, range: match.rangeAtIndex(i))
-								}
-							}
-						}
-					}
-				}
-				ranges.append(NSMakeRange(attempt.length, text.length))
-			}
+			let loc = attempt.length
 			attempt.appendAttributedString(text)
 			if index != lastIndex {
 				attempt.appendAttributedString(slash)
+				ranges.append(NSMakeRange(loc, text.length + 1))
+			} else {
+				ranges.append(NSMakeRange(loc, text.length))
 			}
 		}
 		return (attempt, ranges)
 	}
 	
+	func _highlight(text: NSMutableAttributedString, range: NSRange?, highlight: NSRegularExpression?) {
+		if let highlight = highlight {
+			if let highlightAttributes = highlightAttributes {
+				if let r = range {
+					let matches = highlight.matchesInString(text.string, options: nil, range: r)
+					for match in matches {
+						if let n = match.numberOfRanges {
+							for i in 1..<n {
+								text.addAttributes(highlightAttributes, range: match.rangeAtIndex(i))
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	func fit(attr: NSAttributedString) -> Bool {
 		let rect = attr.boundingRectWithSize(CGSizeMake(within.width, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, context: nil)
-		println("\"\(attr.string)\" rect = \(rect)")
+		//		println("\"\(attr.string)\" rect = \(rect)")
 		return rect.size.height <= within.height
 	}
 	
-	func cut(attempt: NSMutableAttributedString, ranges: [NSRange]) {
+	func _cut(attempt: NSMutableAttributedString, ranges: [NSRange]) {
 		let dots = NSAttributedString(string: "\(self.dots)\(self.slash)", attributes: attributes)
 		if fit(attempt) {
 			return
@@ -102,8 +103,9 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 	}
 	
 	public func create(elements: [T], highlight: NSRegularExpression? = nil) -> NSMutableAttributedString {
-		var (attempt, ranges) = join(elements, highlight: highlight)
-		cut(attempt, ranges: ranges)
+		var (attempt, ranges) = join(elements)
+		_highlight(attempt, range: ranges.last, highlight: highlight)
+		_cut(attempt, ranges: ranges)
 		return attempt
 	}
 	
