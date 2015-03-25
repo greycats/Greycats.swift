@@ -21,22 +21,17 @@ class TapTap: NSObject {
 	}
 }
 
-public class Breadcrumb<T: BreadcrumbPickle> {
+public class Breadcrumb<T: NSCoding> {
 	private let attributes: [NSObject: AnyObject]
 	private let highlightAttributes: [NSObject: AnyObject]?
 	private let transform: T -> String
-	public var slash = "/"
+	public var slash = " / "
 	public var dots = "..."
 	public var within: CGSize = CGSizeMake(CGFloat.max, CGFloat.max)
 	
-	public init(attributes: [NSObject: AnyObject], highlightAttributes: [NSObject: AnyObject]?, transform: T -> String) {
+	public init(attributes: [NSObject: AnyObject], highlightAttributes: [NSObject: AnyObject] = [:], transform: T -> String) {
 		self.attributes = attributes
 		self.highlightAttributes = highlightAttributes
-		self.transform = transform
-	}
-	
-	public init(attributes: [NSObject: AnyObject], transform: T -> String) {
-		self.attributes = attributes
 		self.transform = transform
 	}
 	
@@ -49,7 +44,11 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 		for (index, el) in enumerate(elements) {
 			let str = transform(el)
 			var attr = attributes
-			attr["-pickle-"] = el.pickle()
+			var data = NSMutableData()
+			let coder = NSKeyedArchiver(forWritingWithMutableData: data)
+			el.encodeWithCoder(coder)
+			coder.finishEncoding()
+			attr["archived-data"] = data
 			var text = NSMutableAttributedString(string: str, attributes: attr)
 			let loc = attempt.length
 			attempt.appendAttributedString(text)
@@ -81,7 +80,7 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 	}
 	
 	func fit(attr: NSAttributedString) -> Bool {
-		let rect = attr.boundingRectWithSize(CGSizeMake(within.width, CGFloat.max), options: NSStringDrawingOptions.UsesLineFragmentOrigin, context: nil)
+		let rect = attr.boundingRectWithSize(CGSizeMake(within.width, CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
 		//		println("\"\(attr.string)\" rect = \(rect)")
 		return rect.size.height <= within.height
 	}
@@ -109,22 +108,23 @@ public class Breadcrumb<T: BreadcrumbPickle> {
 		return attempt
 	}
 	
-	private var taptap = TapTap()
-	
-	public func onClick(textView: UITextView, block: T -> Void) {
-		textView.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: Selector("tapped:")))
+	public func onClick(textView: UITextView, block: T -> Void) -> AnyObject {
+		let taptap = TapTap()
+		textView.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: "tapped:"))
 		taptap.block = {[unowned textView] tap in
 			var loc = tap.locationInView(textView)
 			loc.x -= textView.textContainerInset.left
 			loc.y -= textView.textContainerInset.top
 			let index = textView.layoutManager.characterIndexForPoint(loc, inTextContainer: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
 			if index < textView.textStorage.length {
-				if let value = textView.attributedText.attribute("-pickle-", atIndex: index, effectiveRange: nil) as? [String: AnyObject] {
-					let category = T(pickle: value)
+				if let value = textView.attributedText.attribute("archived-data", atIndex: index, effectiveRange: nil) as? NSData {
+					let coder = NSKeyedUnarchiver(forReadingWithData: value)
+					let category = T(coder: coder)
 					println("click \(value)")
 					block(category)
 				}
 			}
 		}
+		return taptap
 	}
 }

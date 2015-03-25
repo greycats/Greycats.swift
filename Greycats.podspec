@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "0.1.6"
+  s.version          = "0.2.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -21,9 +21,16 @@ Pod::Spec.new do |s|
   s.author           = { "Rex Sheng" => "shengning@gmail.com" }
   s.source           = { :git => "https://github.com/greycats/Greycats.swift.git", :tag => s.version.to_s }
   s.requires_arc     = true
-
-  s.source_files     = "Greycats/**/*.swift"
-  s.frameworks       = 'UIKit'
   s.platform         = :ios, "8.0"
+  
+  s.subspec 'UIKit' do |ss|
+    ss.source_files = "Greycats/{TableViewData,Breadcrumb,Filter}.swift"
+    ss.frameworks = 'UIKit'
+  end
+  
+  s.subspec 'Parse' do |ss|
+    ss.source_files = "Greycats/Parse.swift"
+    ss.dependency 'Alamofire'
+  end
 
 end

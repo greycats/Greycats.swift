@@ -53,7 +53,7 @@ public enum Filter {
 	}
 	
 	public func apply<T>(string: String?, objects: [T], selector: (T) -> String?) -> [T] {
-		var filtered: [T] = []
+		var filtered: [T] = objects
 		if let keyword = string {
 			let r = self.pattern(keyword)
 			filtered = objects.filter() {
@@ -79,44 +79,59 @@ public enum Filter {
 		}
 		return filtered
 	}
-}
-
-public class FilterTextFieldDelegate: NSObject, UITextFieldDelegate, UISearchBarDelegate {
-	var applyFilter: ((String?) -> Void) = { _ in }
 	
-	public func onChange(block: (String?) -> Void) -> Self {
-		applyFilter = block
-		return self
-	}
-	
-	public func search(term: String?) {
-		applyFilter(term)
-	}
-	
-	public func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-		let filter = (textField.text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-		applyFilter(filter)
-		return true
-	}
-	public func textFieldShouldClear(textField: UITextField) -> Bool {
-		applyFilter(nil)
-		return true
-	}
-	
-	public func textFieldShouldReturn(textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
-		return true
-	}
-	
-	public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-		applyFilter(searchBar.text)
-	}
-	
-	public func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-		applyFilter(nil)
-	}
-	
-	public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-		searchBar.resignFirstResponder()
+	public class Delegate: NSObject, UITextFieldDelegate, UISearchBarDelegate {
+		var applyFilter: ((String?, hitReturn: Bool) -> Void) = { _ in }
+		var startEditing: (() -> Bool)? = nil
+		
+		public func onChange(block: (String?, hitReturn: Bool) -> Void) -> Self {
+			applyFilter = block
+			return self
+		}
+		
+		public func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+			var start = true
+			if startEditing != nil {
+				start = startEditing!()
+			}
+			return start
+		}
+		
+		public func search(term: String?) {
+			applyFilter(term, hitReturn: false)
+		}
+		
+		public func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+			let filter = (textField.text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+			if countElements(filter) > 0 {
+				applyFilter(filter, hitReturn: false)
+			} else {
+				applyFilter(nil, hitReturn: false)
+			}
+			return true
+		}
+		
+		public func textFieldShouldClear(textField: UITextField) -> Bool {
+			applyFilter(nil, hitReturn: false)
+			return true
+		}
+		
+		public func textFieldShouldReturn(textField: UITextField) -> Bool {
+			applyFilter(countElements(textField.text) > 0 ? textField.text : nil, hitReturn: true)
+			textField.resignFirstResponder()
+			return true
+		}
+		
+		public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+			applyFilter(countElements(searchBar.text) > 0 ? searchBar.text : nil, hitReturn: false)
+		}
+		
+		public func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+			applyFilter(nil, hitReturn: false)
+		}
+		
+		public func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+			searchBar.resignFirstResponder()
+		}
 	}
 }
