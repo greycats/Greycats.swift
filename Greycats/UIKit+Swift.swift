@@ -1,6 +1,5 @@
 //
 //  UIKit+Swift.swift
-//  ThinkSpider
 //
 //  Created by Rex Sheng on 3/11/15.
 //  Copyright (c) 2015 Rex Sheng. All rights reserved.
@@ -35,7 +34,7 @@ extension UIColor {
 	}
 }
 
-var bitmapInfo: CGBitmapInfo = {
+private var bitmapInfo: CGBitmapInfo = {
 	var bitmapInfo = CGBitmapInfo.ByteOrder32Little
 	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask
 	bitmapInfo |= CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)

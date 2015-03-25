@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */; };
 		CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3468761AC24ED900687762 /* UIKit+Swift.swift */; };
 		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
 		CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutolayoutStack.swift; sourceTree = "<group>"; };
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF3468761AC24ED900687762 /* UIKit+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Swift.swift"; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 				CFC5570F1A7DF6A0001951DE /* Greycats.h */,
 				CFB62E7D1A7F5C2900D54010 /* Filter.swift */,
 				CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */,
+				CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */,
 				CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */,
 				CF3468761AC24ED900687762 /* UIKit+Swift.swift */,
 				CF21163A1A7DECF10065E3B2 /* Supporting Files */,
@@ -167,6 +170,7 @@
 			files = (
 				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
 				CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */,
+				CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */,
 				CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */,
 				CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */,
 			);
