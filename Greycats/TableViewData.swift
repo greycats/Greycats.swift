@@ -29,7 +29,7 @@ protocol SectionDataSource: SectionData {
 }
 
 public protocol TableViewDataNibCell {
-	class var nibName: String { get }
+	static var nibName: String { get }
 }
 
 public class TableViewDataNib<T, U: UITableViewCell where U: TableViewDataNibCell>: TableViewData<T, U> {
@@ -37,8 +37,28 @@ public class TableViewDataNib<T, U: UITableViewCell where U: TableViewDataNibCel
 		super.init(title: title)
 	}
 	
-	public override func didSetTableView(tableView: UITableView?) {
-		_tableView?.registerNib(UINib(nibName: U.nibName, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+	public override func didSetTableView(tableView: UITableView) {
+		tableView.registerNib(UINib(nibName: U.nibName, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+	}
+}
+
+public protocol TableViewDataCustomizeRegister {
+	static func register(tableView: UITableView)
+	static var defaultIdentifier: String { get }
+}
+
+public class TableViewDataCombine<T, U: UITableViewCell where U: TableViewDataCustomizeRegister>: TableViewData<T, U> {
+	
+	public required init(title: String?) {
+		super.init(title: title)
+	}
+	
+	public override func willSetTableView(tableView: UITableView) {
+		cellIdentifier = Cell.defaultIdentifier
+	}
+	
+	public override func didSetTableView(tableView: UITableView) {
+		Cell.register(tableView)
 	}
 }
 
@@ -47,7 +67,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	typealias Cell = U
 	public var section: Int = 0
 	public var cacheKey: (T -> String)?
-	public var cellIdentifier = "cell"
+	public var cellIdentifier: String!
 	var className: String?
 	
 	private var data: [T] = []
@@ -66,8 +86,9 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	public var tableView: UITableView? {
 		set(t) {
 			if let t = t {
+				willSetTableView(t)
 				_tableView = t
-				cellIdentifier = "\(className!)-\(section)"
+				cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
 				println("\(self) register cell \(cellIdentifier)")
 				didSetTableView(t)
 			}
@@ -77,8 +98,18 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		}
 	}
 	
-	public func didSetTableView(tableView: UITableView?) {
+	public func willSetTableView(tableView: UITableView) {
+	}
+	
+	public func didSetTableView(tableView: UITableView) {
 		_tableView?.registerClass(U.self, forCellReuseIdentifier: cellIdentifier)
+	}
+	
+	var identifier: ((T) -> (String))?
+	
+	public func interceptIdentifier(closure: ((T) -> (String))) -> Self {
+		identifier = closure
+		return self
 	}
 	
 	func render(cell: U, index: Int) {
@@ -166,7 +197,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 			return UITableViewAutomaticDimension
 		}
 		if placeholder == nil {
-			let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as Cell
+			let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! Cell
 			placeholder = cell
 			placeholder.setTranslatesAutoresizingMaskIntoConstraints(false)
 		}
@@ -179,7 +210,9 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	}
 	
 	public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as Cell
+		let object = data[indexPath.row]
+		let id = identifier?(object) ?? cellIdentifier
+		let cell = tableView.dequeueReusableCellWithIdentifier(id!, forIndexPath: indexPath) as! Cell
 		preRender?(cell)
 		render(cell, index: indexPath.row)
 		return cell
