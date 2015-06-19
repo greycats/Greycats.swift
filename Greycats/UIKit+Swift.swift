@@ -9,21 +9,21 @@
 // available in pod 'Greycats', '~> 0.2.0'
 
 import UIKit
-let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8
+public let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8
 
-func dispatch_time_in(delay: Double) -> dispatch_time_t {
+public func dispatch_time_in(delay: Double) -> dispatch_time_t {
 	return dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
 }
 
-func delay(delay: Double, closure: dispatch_block_t) {
+public func delay(delay: Double, closure: dispatch_block_t) {
 	dispatch_after(dispatch_time_in(delay), dispatch_get_main_queue(), closure)
 }
 
-func background(closure: dispatch_block_t) {
+public func background(closure: dispatch_block_t) {
 	dispatch_async(dispatch_get_global_queue(0, 0), closure)
 }
 
-func foreground(closure: dispatch_block_t) {
+public func foreground(closure: dispatch_block_t) {
 	dispatch_async(dispatch_get_main_queue(), closure)
 }
 
@@ -45,7 +45,7 @@ var bitmapInfo: CGBitmapInfo = {
 	}()
 
 extension CGImage {
-	func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage {
+	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
 		let width = CGImageGetWidth(self)
 		let height = CGImageGetHeight(self)
@@ -60,7 +60,7 @@ extension CGImage {
 		return CGBitmapContextCreateImage(context)
 	}
 	
-	class func op(width: Int, _ height: Int, closure: (CGContextRef) -> Void) -> CGImage! {
+	public static func op(width: Int, _ height: Int, closure: (CGContextRef) -> Void) -> CGImage! {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
 		let rect = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
 		let context = CGBitmapContextCreate(nil, width, height, 8, width * 4, colourSpace, bitmapInfo)
@@ -68,7 +68,7 @@ extension CGImage {
 		return CGBitmapContextCreateImage(context)
 	}
 	
-	class func create(color: CGColor, size: CGSize) -> CGImage! {
+	public static func create(color: CGColor, size: CGSize) -> CGImage! {
 		return op(Int(size.width), Int(size.height)) { (context) in
 			let rect = CGRect(origin: .zeroPoint, size: size)
 			CGContextSetFillColorWithColor(context, color)
@@ -104,7 +104,7 @@ extension UIView {
 }
 
 extension NSObject {
-	func loadFromNib(nibName: String, index: Int = 0) -> UIView {
+	public func loadFromNib(nibName: String, index: Int = 0) -> UIView {
 		let buddle = NSBundle(forClass: self.dynamicType)
 		let nib = UINib(nibName: nibName, bundle: buddle)
 		let view = nib.instantiateWithOwner(self, options: nil)[index] as! UIView
@@ -112,56 +112,56 @@ extension NSObject {
 	}
 }
 
-protocol _NibView {
+public protocol _NibView {
 	var nibName: String { get }
 }
 
-class NibView: UIView, _NibView {
-	var nibName: String { return "-" }
+public class NibView: UIView, _NibView {
+	public var nibName: String { return "-" }
 	var nibIndex: Int { return 0 }
-	var view: UIView!
+	public var view: UIView!
 	
-	convenience init() {
+	public convenience init() {
 		self.init(frame: .zeroRect)
 	}
 	
-	override init(frame: CGRect) {
+	public override init(frame: CGRect) {
 		super.init(frame: frame)
 		setup()
 	}
 	
-	func setup() {
+	public func setup() {
 		view = loadFromNib(nibName, index: nibIndex)
 		view.frame = bounds
 		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
 		addSubview(view)
 	}
 	
-	required init(coder aDecoder: NSCoder) {
+	public required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setup()
 	}
 }
 
 extension UIImage {
-	func blend(color: UIColor) -> UIImage? {
+	public func blend(color: UIColor) -> UIImage? {
 		return blend(kCGBlendModeDestinationIn, color: color)
 	}
 	
-	func blend(mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
+	public func blend(mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
 		let cgImage = CGImage.blend(mode, color: color.CGColor, alpha: alpha)
 		let image = UIImage(CGImage: cgImage, scale: scale, orientation: imageOrientation)
 		return image
 	}
 	
-	convenience init?(fromColor: UIColor) {
+	public convenience init?(fromColor: UIColor) {
 		self.init(CGImage: CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)))
 	}
 }
 
 private var labelTimer: UInt8 = 0
 extension UILabel {
-	func keepUpdating(time: NSTimeInterval, closure: (NSTimeInterval) -> (String)) {
+	public func keepUpdating(time: NSTimeInterval, closure: (NSTimeInterval) -> (String)) {
 		let timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
 		dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, NSEC_PER_SEC, 0)
 		objc_setAssociatedObject(self, &labelTimer, timer, objc_AssociationPolicy(OBJC_ASSOCIATION_RETAIN))
@@ -175,44 +175,49 @@ extension UILabel {
 }
 
 extension UITextView {
-	func notEditable() {
+	public func notEditable() {
 		textContainerInset = UIEdgeInsetsZero
 		editable = false
 	}
 }
 
 extension UIViewController {
-	func registerKeyboard() {
+	public func registerKeyboard() {
 		NSNotificationCenter.defaultCenter() .addObserver(self, selector: "keyboardDidShow:", name: UIKeyboardWillChangeFrameNotification, object: nil)
 		NSNotificationCenter.defaultCenter() .addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
-	func unregisterKeyboard() {
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardDidShowNotification, object: nil)
+	public func unregisterKeyboard() {
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillChangeFrameNotification, object: nil)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
-	func activeField() -> UIView? {
+	public func activeField() -> UIView? {
 		return nil
 	}
 	
-	func scrollingView() -> UIScrollView? {
+	public func scrollingView() -> UIScrollView? {
 		return nil
 	}
 	
-	func keyboardConstraint() -> NSLayoutConstraint? {
+	public func keyboardConstraint() -> NSLayoutConstraint? {
 		return nil
 	}
 	
-	func keyboardHeightDidUpdate(height: CGFloat) {
+	public func keyboardHeightDidUpdate(height: CGFloat) {
 	}
 	
-	func keyboardDidShow(notif: NSNotification) {
+	public func keyboardDidShow(notif: NSNotification) {
 		if let info = notif.userInfo {
 			var kbRect = (info["UIKeyboardBoundsUserInfoKey"] as! NSValue).CGRectValue()
 			kbRect = self.view.convertRect(kbRect, fromView: nil)
 			if let constraint = keyboardConstraint() {
-				let height = kbRect.size.height
+				var height = kbRect.size.height
+				if let tabBar = self.tabBarController {
+					if !self.hidesBottomBarWhenPushed {
+						height -= tabBar.tabBar.bounds.size.height
+					}
+				}
 				constraint.constant = height
 				keyboardHeightDidUpdate(height)
 				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! Double, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
@@ -229,9 +234,10 @@ extension UIViewController {
 				self.scrollingView()?.scrollRectToVisible(frame, animated: true)
 			}
 		}
+		UIView.setAnimationsEnabled(true)
 	}
 	
-	func keyboardWillBeHidden(notif: NSNotification) {
+	public func keyboardWillBeHidden(notif: NSNotification) {
 		if let info = notif.userInfo {
 			let insets = UIEdgeInsetsZero
 			if let constraint = keyboardConstraint() {
@@ -249,13 +255,13 @@ extension UIViewController {
 }
 
 @IBDesignable
-class GradientView: UIView {
-	@IBInspectable var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
+public class GradientView: UIView {
+	@IBInspectable public var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+	@IBInspectable public var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+	@IBInspectable public var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
+	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
 	
-	override func drawRect(rect: CGRect) {
+	override public func drawRect(rect: CGRect) {
 		let context = UIGraphicsGetCurrentContext()
 		CGContextSaveGState(context)
 		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
@@ -269,68 +275,101 @@ class GradientView: UIView {
 }
 
 @IBDesignable
-class Gradient4View: UIView {
-	@IBInspectable var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var color3: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var color4: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc1: CGPoint = CGPointMake(0, 0.5) { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc2: CGPoint = CGPointMake(0.22, 0.5) { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc3: CGPoint = CGPointMake(0.41, 0.5) { didSet { setNeedsDisplay() } }
-	@IBInspectable var loc4: CGPoint = CGPointMake(1, 0.5) { didSet { setNeedsDisplay() } }
+public class Gradient4View: UIView {
+	public let clearColor: UIColor = UIColor(white: 1, alpha: 0)
+	@IBInspectable public var color: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+	@IBInspectable public var left: CGFloat = 0.22
+	@IBInspectable public var right: CGFloat = 0.19
 	
-	override func drawRect(rect: CGRect) {
+	@IBInspectable public var progress: CGFloat = 0 { didSet { setNeedsDisplay() } }
+	
+	var lastDrawTime: CFTimeInterval = 0
+	var displayLink: CADisplayLink?
+	public func startAnimation() {
+		if let displayLink = displayLink {
+			displayLink.invalidate()
+			lastDrawTime = 0
+		}
+		displayLink = CADisplayLink(target: self, selector: "update")
+		displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+	}
+	
+	public func stopAnimation() {
+		hidden = true
+		displayLink?.invalidate()
+		lastDrawTime = 0
+	}
+	
+	deinit {
+		if let displayLink = displayLink {
+			displayLink.invalidate()
+		}
+	}
+	
+	public var interval: CGFloat = 6
+	
+	func update() {
+		if let displayLink = displayLink {
+			if lastDrawTime == 0 {
+				lastDrawTime = displayLink.timestamp
+			}
+			let r = CGFloat(displayLink.timestamp - lastDrawTime) / interval
+			progress = r - floor(r)
+		}
+	}
+	
+	override public func drawRect(rect: CGRect) {
+		super.drawRect(rect)
 		let context = UIGraphicsGetCurrentContext()
 		CGContextSaveGState(context)
-		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor, color3.CGColor, color4.CGColor], [loc1.x, loc2.x, loc3.x, loc4.x])
+		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [clearColor.CGColor, clearColor.CGColor, color.CGColor, clearColor.CGColor, clearColor.CGColor], [0, max(0, progress - left), progress, min(1, progress + right), 1])
 		CGContextDrawLinearGradient(context, gradient,
-			CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
-			CGPointMake(rect.size.width * loc4.x, rect.size.height * loc4.y),
+			CGPointMake(0, rect.size.height * 0.5),
+			CGPointMake(rect.size.width, rect.size.height * 0.5),
 			UInt32(kCGGradientDrawsBeforeStartLocation) | UInt32(kCGGradientDrawsAfterEndLocation))
 		CGContextRestoreGState(context)
-		super.drawRect(rect)
 	}
 }
 
-struct Polar {
-	let r: CGFloat
-	var θ: CGFloat
+public struct Polar {
+	public let r: CGFloat
+	public var θ: CGFloat
 	
-	init(_ a: CGFloat, _ b: CGFloat) {
+	public init(_ a: CGFloat, _ b: CGFloat) {
 		r = sqrt(pow(a, 2) + pow(b, 2))
 		θ = atan2(b, a)
 	}
 	
-	mutating func rotate(angle: CGFloat) {
+	public mutating func rotate(angle: CGFloat) {
 		θ -= angle
 	}
 	
-	var x: CGFloat {
+	public var x: CGFloat {
 		return r * cos(θ)
 	}
 	
-	var y: CGFloat {
+	public var y: CGFloat {
 		return r * sin(θ)
 	}
 }
 
 @IBDesignable
-class _Control: UIControl {
-	override func tintColorDidChange() {
+public class _Control: UIControl {
+	override public func tintColorDidChange() {
 		setNeedsDisplay()
 	}
 	
-	@IBInspectable var disabledColor: UIColor = UIColor.grayColor()
+	@IBInspectable public var disabledColor: UIColor = UIColor.grayColor()
 	
-	@IBInspectable var desiredWidth: CGFloat = 0 {
+	@IBInspectable public var desiredWidth: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
 	
-	@IBInspectable var angle: CGFloat = 0 {
+	@IBInspectable public var angle: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
 	
-	required override init(frame: CGRect) {
+	required override public init(frame: CGRect) {
 		super.init(frame: frame)
 		if iOS8Less {
 			contentMode = .Redraw
@@ -338,7 +377,7 @@ class _Control: UIControl {
 		opaque = false
 	}
 	
-	required init(coder aDecoder: NSCoder) {
+	required public init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if iOS8Less {
 			contentMode = .Redraw
@@ -346,7 +385,7 @@ class _Control: UIControl {
 		opaque = false
 	}
 	
-	func centerScale(originalSize: CGSize, closure: (scale: CGFloat) -> ()) {
+	public func centerScale(originalSize: CGSize, closure: (scale: CGFloat) -> ()) {
 		var width = desiredWidth
 		let rect = self.bounds
 		if width == 0 {
@@ -366,5 +405,32 @@ class _Control: UIControl {
 		}
 		closure(scale: scale)
 		CGContextRestoreGState(context)
+	}
+}
+
+@IBDesignable
+public class StyledView: UIView {
+	@IBInspectable public var layout: String = "" { didSet { setup() } }
+	weak public var view: UIView!
+	public var nibNamePrefix: String { return "" }
+	
+	public func setup() {
+		if view != nil {
+			view.removeFromSuperview()
+		}
+		view = loadFromNib("\(nibNamePrefix)\(layout)", index: 0)
+		view.frame = bounds
+		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
+		addSubview(view)
+	}
+	
+	override public init(frame: CGRect) {
+		super.init(frame: frame)
+		setup()
+	}
+	
+	required public init(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		setup()
 	}
 }

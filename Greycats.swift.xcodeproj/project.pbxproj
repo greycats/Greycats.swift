@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF02A9531B33E00C006C010A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF02A9511B33E00C006C010A /* Box.swift */; };
 		CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */; };
 		CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3468761AC24ED900687762 /* UIKit+Swift.swift */; };
 		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CF02A9511B33E00C006C010A /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutolayoutStack.swift; sourceTree = "<group>"; };
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 		CF2116391A7DECF10065E3B2 /* Greycats */ = {
 			isa = PBXGroup;
 			children = (
+				CF02A9511B33E00C006C010A /* Box.swift */,
 				CFC5570F1A7DF6A0001951DE /* Greycats.h */,
 				CFB62E7D1A7F5C2900D54010 /* Filter.swift */,
 				CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */,
@@ -171,6 +174,7 @@
 				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
 				CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */,
 				CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */,
+				CF02A9531B33E00C006C010A /* Box.swift in Sources */,
 				CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */,
 				CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */,
 			);
@@ -274,7 +278,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Greycats/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -292,7 +296,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = Greycats/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

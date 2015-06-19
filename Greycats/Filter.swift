@@ -58,7 +58,7 @@ public enum Filter {
 			let r = self.pattern(keyword)
 			filtered = objects.filter() {
 				if let name = selector($0) {
-					return r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, name.utf16Count)) != nil
+					return r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, count(name))) != nil
 				}
 				return false
 			}
@@ -73,7 +73,7 @@ public enum Filter {
 		for i in 0..<num {
 			let item: AnyObject = delegate.itemPassingToFilterAt(i)
 			let name = delegate.comparingStringOf(item)
-			if let m = r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, name.utf16Count)) {
+			if let m = r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, count(name))) {
 				filtered.append(item)
 			}
 		}
@@ -103,7 +103,7 @@ public enum Filter {
 		
 		public func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
 			let filter = (textField.text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-			if countElements(filter) > 0 {
+			if count(filter) > 0 {
 				applyFilter(filter, hitReturn: false)
 			} else {
 				applyFilter(nil, hitReturn: false)
@@ -117,13 +117,13 @@ public enum Filter {
 		}
 		
 		public func textFieldShouldReturn(textField: UITextField) -> Bool {
-			applyFilter(countElements(textField.text) > 0 ? textField.text : nil, hitReturn: true)
+			applyFilter(count(textField.text) > 0 ? textField.text : nil, hitReturn: true)
 			textField.resignFirstResponder()
 			return true
 		}
 		
 		public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-			applyFilter(countElements(searchBar.text) > 0 ? searchBar.text : nil, hitReturn: false)
+			applyFilter(count(searchBar.text) > 0 ? searchBar.text : nil, hitReturn: false)
 		}
 		
 		public func searchBarCancelButtonClicked(searchBar: UISearchBar) {

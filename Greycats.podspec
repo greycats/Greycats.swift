@@ -9,12 +9,13 @@
 
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "0.2.0"
+  s.version          = "1.0.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
 						* a TableViewData which binds Section to DataSource
 						* a Filter which applies regexp search on UISearchBar | UITextField
+						* AutolayoutStack
                        DESC
   s.homepage         = "https://github.com/greycats/Greycats.swift"
   s.license          = 'MIT'
@@ -23,14 +24,6 @@ Pod::Spec.new do |s|
   s.requires_arc     = true
   s.platform         = :ios, "8.0"
   
-  s.subspec 'UIKit' do |ss|
-    ss.source_files = "Greycats/{TableViewData,Breadcrumb,Filter}.swift"
-    ss.frameworks = 'UIKit'
-  end
-  
-  s.subspec 'Parse' do |ss|
-    ss.source_files = "Greycats/Parse.swift"
-    ss.dependency 'Alamofire'
-  end
+  s.source_files = "Greycats/*.swift"
 
 end

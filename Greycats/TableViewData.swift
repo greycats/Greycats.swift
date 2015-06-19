@@ -21,6 +21,7 @@ public protocol SectionData: NSObjectProtocol {
 	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
 	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
 }
 
 protocol SectionDataSource: SectionData {
@@ -71,6 +72,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	var className: String?
 	
 	private var data: [T] = []
+	private var willDisplay: ((U, NSIndexPath) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
 	private var select: ((T) -> UIViewController?)?
@@ -89,7 +91,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 				willSetTableView(t)
 				_tableView = t
 				cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
-				println("\(self) register cell \(cellIdentifier)")
+				print("\(self) register cell \(cellIdentifier)")
 				didSetTableView(t)
 			}
 		}
@@ -141,6 +143,11 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		self.title = title
 		className = "\(NSStringFromClass(U))"
 		super.init()
+	}
+	
+	public func willDisplay(block: (cell: U, indexPath: NSIndexPath) -> Void) -> Self {
+		willDisplay = block
+		return self
 	}
 	
 	public func preRender(block: (cell: U) -> Void) -> Self {
@@ -198,6 +205,9 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		}
 		if placeholder == nil {
 			let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as! Cell
+			if skipHeightCalculation {
+				cell.layoutMargins = UIEdgeInsetsZero
+			}
 			placeholder = cell
 			placeholder.setTranslatesAutoresizingMaskIntoConstraints(false)
 		}
@@ -213,6 +223,9 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		let object = data[indexPath.row]
 		let id = identifier?(object) ?? cellIdentifier
 		let cell = tableView.dequeueReusableCellWithIdentifier(id!, forIndexPath: indexPath) as! Cell
+		if skipHeightCalculation {
+			cell.layoutMargins = UIEdgeInsetsZero
+		}
 		preRender?(cell)
 		render(cell, index: indexPath.row)
 		return cell
@@ -235,6 +248,10 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		if let vc = select?(data[indexPath.row]) {
 			navigationController?.pushViewController(vc, animated: true)
 		}
+	}
+	
+	public func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+		willDisplay?(cell as! Cell, indexPath)
 	}
 }
 
@@ -286,6 +303,10 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, didSelectRowAtIndexPath: indexPath)
+	}
+
+	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+		joined[indexPath.section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
 	}
 }
 
