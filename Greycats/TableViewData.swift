@@ -76,7 +76,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
 	private var select: ((T) -> UIViewController?)?
-	private var renderHeader: ((String) -> UIView?)?
+	private var renderHeader: (String -> UIView)?
 	private var title: String?
 	public var alwaysDisplaySectionHeader = false
 	private weak var _tableView: UITableView?
@@ -91,7 +91,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 				willSetTableView(t)
 				_tableView = t
 				cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
-				print("\(self) register cell \(cellIdentifier)")
+				println("\(self) register cell \(cellIdentifier)")
 				didSetTableView(t)
 			}
 		}
@@ -173,7 +173,7 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		return self
 	}
 	
-	public func onHeader(block: (String) -> UIView?) -> Self {
+	public func onHeader(block: String -> UIView) -> Self {
 		renderHeader = block
 		return self
 	}
@@ -233,8 +233,12 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if self.title != nil {
-			let view = renderHeader?(title!)
-			return view?.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height ?? 44
+			var height: CGFloat = 44
+			if let view = renderHeader?(title!) {
+				let size = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+				height = size.height
+			}
+			return height
 		}
 		return 0
 	}
@@ -313,7 +317,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 private var joinedAssociationKey: UInt8 = 0x01
 
 extension NSObject {
-	var _joined_sections: [String: TableViewJoinedData] {
+	private var _joined_sections: [String: TableViewJoinedData] {
 		get {
 			if let cache = objc_getAssociatedObject(self, &joinedAssociationKey) as? [String: TableViewJoinedData] {
 				return cache
@@ -346,6 +350,6 @@ extension NSObject {
 
 extension UIViewController {
 	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default") {
-		super.connectTableView(tableView, sections: sections, alwaysDisplaySectionHeader: alwaysDisplaySectionHeader, key: key, navigationController: self.navigationController)
+		super.connectTableView(tableView, sections: sections, alwaysDisplaySectionHeader: alwaysDisplaySectionHeader, key: key, navigationController: navigationController)
 	}
 }

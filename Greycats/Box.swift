@@ -7,28 +7,27 @@
 
 import UIKit
 
-@IBDesignable
-extension UIView {
-	@IBInspectable dynamic var borderColor: UIColor? {
+public extension UIView {
+	@IBInspectable public dynamic var borderColor: UIColor? {
 		get { return UIColor(CGColor: layer.borderColor) }
 		set(value) { layer.borderColor = value!.CGColor }
 	}
-	@IBInspectable dynamic var borderWidth: CGFloat {
+	@IBInspectable public dynamic var borderWidth: CGFloat {
 		get { return layer.borderWidth }
 		set(value) { layer.borderWidth = value / UIScreen.mainScreen().scale }
 	}
-	@IBInspectable dynamic var cornerRadius: CGFloat {
+	@IBInspectable public dynamic var cornerRadius: CGFloat {
 		get { return layer.cornerRadius }
 		set(value) {
 			layer.cornerRadius = value
 			layer.masksToBounds = layer.shadowOpacity == 0
 		}
 	}
-	@IBInspectable dynamic var shadowOffset: CGPoint {
+	@IBInspectable public dynamic var shadowOffset: CGPoint {
 		get { return CGPoint(x: layer.shadowOffset.width * UIScreen.mainScreen().scale, y: layer.shadowOffset.height * UIScreen.mainScreen().scale) }
 		set(value) { layer.shadowOffset = CGSize(width: value.x / UIScreen.mainScreen().scale, height: value.y / UIScreen.mainScreen().scale) }
 	}
-	@IBInspectable dynamic var shadowOpacity: Float {
+	@IBInspectable public dynamic var shadowOpacity: Float {
 		get { return layer.shadowOpacity }
 		set(value) {
 			layer.shadowOpacity = value
@@ -41,13 +40,14 @@ extension UIView {
 			}
 		}
 	}
-	@IBInspectable dynamic var shadowRadius: CGFloat {
+	@IBInspectable public dynamic var shadowRadius: CGFloat {
 		get { return layer.shadowRadius }
 		set(value) { layer.shadowRadius = value }
 	}
 }
 
-class BoxView: UIView {
+@IBDesignable
+public class BoxView: UIView {
 }
 
 private var boxesKey: UInt8 = 0x01
@@ -57,7 +57,7 @@ private func _attr(attr: NSLayoutAttribute) -> String {
 }
 
 extension UIView {
-	var boxes: [String: BoxView] {
+	public var boxes: [String: BoxView] {
 		get {
 			if let cache = objc_getAssociatedObject(self, &boxesKey) as? [String: BoxView] {
 				return cache
@@ -72,14 +72,14 @@ extension UIView {
 		}
 	}
 	
-	func removeBox(identifier: String) {
+	public func removeBox(identifier: String) {
 		if let box = boxes[identifier] {
 			box.removeFromSuperview()
 		}
 		boxes[identifier] = nil
 	}
 	
-	func box<T: UIView>(from: T, _ to: T, identifier: String, insets: UIEdgeInsets = UIEdgeInsetsZero) {
+	public func box<T: UIView>(from: T, _ to: T, identifier: String, insets: UIEdgeInsets = UIEdgeInsetsZero) {
 		if let box = boxes[identifier] {
 			box.removeFromSuperview()
 		}
@@ -98,14 +98,14 @@ extension UIView {
 	private func _adjustBoxes<T: UIView>(view: T, with newView: T) {
 		for c in self.constraints() as! [NSLayoutConstraint] {
 			if c.firstAttribute == .Top && c.secondAttribute == .Top && c.secondItem as? T === view {
-				if let box = c.firstItem as? BoxView {
+				if let box = c.firstItem as? UIView {
 					print("adjust box \(_id(box)).top = \(_id(newView)).top")
 					removeConstraint(c)
 					addConstraint(NSLayoutConstraint(item: box, attribute: .Top, relatedBy: .Equal, toItem: newView, attribute: .Top, multiplier: c.multiplier, constant: c.constant))
 				}
 			}
 			if c.firstAttribute == .Bottom && c.secondAttribute == .Bottom && c.firstItem as? T === view {
-				if let box = c.secondItem as? BoxView {
+				if let box = c.secondItem as? UIView {
 					print("adjust box \(_id(box)).bottom = \(_id(newView)).bottom")
 					removeConstraint(c)
 					addConstraint(NSLayoutConstraint(item: newView, attribute: .Bottom, relatedBy: .Equal, toItem: box, attribute: .Bottom, multiplier: c.multiplier, constant: c.constant))
@@ -121,7 +121,7 @@ extension UIView {
 				removeConstraint(next)
 				let prevView: AnyObject = prev.secondItem!
 				let nextView: AnyObject = next.firstItem
-				print("removing \(_id(view))")
+				println("removing \(_id(view))")
 				if adjustBoxes {
 					if prevView.dynamicType === view.dynamicType {
 						_adjustBoxes(view, with: prevView as! UIView)
@@ -130,7 +130,7 @@ extension UIView {
 					}
 				}
 				let newConstraint = NSLayoutConstraint(item: nextView, attribute: next.firstAttribute, relatedBy: .Equal, toItem: prevView, attribute: prev.secondAttribute, multiplier: 1, constant: 0)
-				print("connecting: \(_id(prevView)).\(_attr(prev.secondAttribute)) == \(_id(nextView)).\(_attr(next.firstAttribute))")
+				println("connecting: \(_id(prevView)).\(_attr(prev.secondAttribute)) == \(_id(nextView)).\(_attr(next.firstAttribute))")
 				addConstraint(newConstraint)
 			}
 		}

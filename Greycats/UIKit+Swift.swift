@@ -6,9 +6,12 @@
 //  Copyright (c) 2015 Rex Sheng. All rights reserved.
 //
 
-// available in pod 'Greycats', '~> 0.2.0'
+// available in pod 'Greycats', '~> 0.4.0'
 
 import UIKit
+
+public let LineWidth = 1 / UIScreen.mainScreen().scale
+public let ScreenSize = UIScreen.mainScreen().bounds.size
 public let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8
 
 public func dispatch_time_in(delay: Double) -> dispatch_time_t {
@@ -28,7 +31,7 @@ public func foreground(closure: dispatch_block_t) {
 }
 
 extension UIColor {
-	convenience init(hexRGB hex: UInt, alpha: CGFloat = 1) {
+	public convenience init(hexRGB hex: UInt, alpha: CGFloat = 1) {
 		let ff: CGFloat = 255.0;
 		let r = CGFloat((hex & 0xff0000) >> 16) / ff
 		let g = CGFloat((hex & 0xff00) >> 8) / ff
@@ -37,7 +40,7 @@ extension UIColor {
 	}
 }
 
-var bitmapInfo: CGBitmapInfo = {
+private var bitmapInfo: CGBitmapInfo = {
 	var bitmapInfo = CGBitmapInfo.ByteOrder32Little
 	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask
 	bitmapInfo |= CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
@@ -112,6 +115,22 @@ extension NSObject {
 	}
 }
 
+extension UIStoryboardSegue {
+	public func topViewController<T>(type: T.Type) -> T? {
+		var dest: T? = nil
+		if let controller = destinationViewController as? T {
+			dest = controller
+		} else {
+			if let controller = destinationViewController as? UINavigationController {
+				if let controller = controller.topViewController as? T {
+					dest = controller
+				}
+			}
+		}
+		return dest
+	}
+}
+
 public protocol _NibView {
 	var nibName: String { get }
 }
@@ -130,11 +149,19 @@ public class NibView: UIView, _NibView {
 		setup()
 	}
 	
+	@IBOutlet var lineWidth: [NSLayoutConstraint]!
+	
 	public func setup() {
 		view = loadFromNib(nibName, index: nibIndex)
 		view.frame = bounds
+		view.backgroundColor = nil
 		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
-		addSubview(view)
+		if lineWidth != nil {
+			for c in lineWidth {
+				c.constant = LineWidth
+			}
+		}
+		insertSubview(view, atIndex: 0)
 	}
 	
 	public required init(coder aDecoder: NSCoder) {
@@ -183,13 +210,11 @@ extension UITextView {
 
 extension UIViewController {
 	public func registerKeyboard() {
-		NSNotificationCenter.defaultCenter() .addObserver(self, selector: "keyboardDidShow:", name: UIKeyboardWillChangeFrameNotification, object: nil)
-		NSNotificationCenter.defaultCenter() .addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
 	}
 	
 	public func unregisterKeyboard() {
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillChangeFrameNotification, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
 	public func activeField() -> UIView? {
@@ -207,50 +232,32 @@ extension UIViewController {
 	public func keyboardHeightDidUpdate(height: CGFloat) {
 	}
 	
-	public func keyboardDidShow(notif: NSNotification) {
+	public func keyboardWillChange(notif: NSNotification) {
 		if let info = notif.userInfo {
-			var kbRect = (info["UIKeyboardBoundsUserInfoKey"] as! NSValue).CGRectValue()
-			kbRect = self.view.convertRect(kbRect, fromView: nil)
+			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+			kbRect = view.convertRect(kbRect, fromView: view.window)
+			var height = view.bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardConstraint() {
-				var height = kbRect.size.height
-				if let tabBar = self.tabBarController {
-					if !self.hidesBottomBarWhenPushed {
-						height -= tabBar.tabBar.bounds.size.height
-					}
-				}
+				println(notif)
+				println("height to bottom layout = \(height)")
 				constraint.constant = height
 				keyboardHeightDidUpdate(height)
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! Double, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
 					self.view.layoutIfNeeded()
 					}, completion: nil)
 				return
 			}
-			let insets = UIEdgeInsetsMake(0, 0, kbRect.size.height, 0)
-			self.scrollingView()?.contentInset = insets
-			self.scrollingView()?.scrollIndicatorInsets = insets
-			
-			if let field = self.activeField() {
-				let frame = field.convertRect(field.bounds, toView:self.view)
-				self.scrollingView()?.scrollRectToVisible(frame, animated: true)
+			let insets = UIEdgeInsetsMake(0, 0, height, 0)
+			if let scrollView = self.scrollingView() {
+				scrollView.contentInset = insets
+				scrollView.scrollIndicatorInsets = insets
+				if let field = self.activeField() {
+					let frame = field.convertRect(field.bounds, toView:self.view)
+					scrollView.scrollRectToVisible(frame, animated: true)
+				}
 			}
 		}
 		UIView.setAnimationsEnabled(true)
-	}
-	
-	public func keyboardWillBeHidden(notif: NSNotification) {
-		if let info = notif.userInfo {
-			let insets = UIEdgeInsetsZero
-			if let constraint = keyboardConstraint() {
-				constraint.constant = 0
-				keyboardHeightDidUpdate(0)
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! Double) {
-					self.view.layoutIfNeeded()
-				}
-				return
-			}
-			self.scrollingView()?.contentInset = insets
-			self.scrollingView()?.scrollIndicatorInsets = insets
-		}
 	}
 }
 
@@ -271,63 +278,6 @@ public class GradientView: UIView {
 			UInt32(kCGGradientDrawsBeforeStartLocation) | UInt32(kCGGradientDrawsAfterEndLocation))
 		CGContextRestoreGState(context)
 		super.drawRect(rect)
-	}
-}
-
-@IBDesignable
-public class Gradient4View: UIView {
-	public let clearColor: UIColor = UIColor(white: 1, alpha: 0)
-	@IBInspectable public var color: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable public var left: CGFloat = 0.22
-	@IBInspectable public var right: CGFloat = 0.19
-	
-	@IBInspectable public var progress: CGFloat = 0 { didSet { setNeedsDisplay() } }
-	
-	var lastDrawTime: CFTimeInterval = 0
-	var displayLink: CADisplayLink?
-	public func startAnimation() {
-		if let displayLink = displayLink {
-			displayLink.invalidate()
-			lastDrawTime = 0
-		}
-		displayLink = CADisplayLink(target: self, selector: "update")
-		displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-	}
-	
-	public func stopAnimation() {
-		hidden = true
-		displayLink?.invalidate()
-		lastDrawTime = 0
-	}
-	
-	deinit {
-		if let displayLink = displayLink {
-			displayLink.invalidate()
-		}
-	}
-	
-	public var interval: CGFloat = 6
-	
-	func update() {
-		if let displayLink = displayLink {
-			if lastDrawTime == 0 {
-				lastDrawTime = displayLink.timestamp
-			}
-			let r = CGFloat(displayLink.timestamp - lastDrawTime) / interval
-			progress = r - floor(r)
-		}
-	}
-	
-	override public func drawRect(rect: CGRect) {
-		super.drawRect(rect)
-		let context = UIGraphicsGetCurrentContext()
-		CGContextSaveGState(context)
-		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [clearColor.CGColor, clearColor.CGColor, color.CGColor, clearColor.CGColor, clearColor.CGColor], [0, max(0, progress - left), progress, min(1, progress + right), 1])
-		CGContextDrawLinearGradient(context, gradient,
-			CGPointMake(0, rect.size.height * 0.5),
-			CGPointMake(rect.size.width, rect.size.height * 0.5),
-			UInt32(kCGGradientDrawsBeforeStartLocation) | UInt32(kCGGradientDrawsAfterEndLocation))
-		CGContextRestoreGState(context)
 	}
 }
 
@@ -420,8 +370,9 @@ public class StyledView: UIView {
 		}
 		view = loadFromNib("\(nibNamePrefix)\(layout)", index: 0)
 		view.frame = bounds
+		view.backgroundColor = nil
 		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
-		addSubview(view)
+		insertSubview(view, atIndex: 0)
 	}
 	
 	override public init(frame: CGRect) {

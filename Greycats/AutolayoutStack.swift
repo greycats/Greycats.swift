@@ -5,16 +5,16 @@
 //  Copyright (c) 2015 Rex Sheng. All rights reserved.
 //
 
-// available in pod 'Greycats', '~> 0.3.0'
+// available in pod 'Greycats', '~> 0.4.0'
 
 import UIKit
 
-func _id<T: AnyObject>(object: T) -> String {
+public func _id<T: AnyObject>(object: T) -> String {
 	return "<\(_stdlib_getDemangledTypeName(object)): 0x\(String(ObjectIdentifier(object).uintValue, radix: 16))>"
 }
 
 extension UIView {
-	func horizontalStack(views: [UIView], marginX: CGFloat = 0) -> [NSLayoutConstraint] {
+	public func horizontalStack(views: [UIView], marginX: CGFloat = 0, equalWidth: Bool = false) -> [NSLayoutConstraint] {
 		for v in subviews {
 			v.removeFromSuperview()
 		}
@@ -26,16 +26,22 @@ extension UIView {
 			constraints.append(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0))
 			constraints.append(NSLayoutConstraint(item: view, attribute: .Height, relatedBy: .Equal, toItem: self, attribute: .Height, multiplier: 1, constant: -2))
 			constraints.append(NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: -2))
-			
+			if equalWidth {
+				if self is UIScrollView {
+					constraints.append(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: self, attribute: .Width, multiplier: 1, constant: -2 * marginX))
+				} else if let previous = previous {
+					constraints.append(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: previous, attribute: .Width, multiplier: 1, constant: 0))
+				}
+			}
 			if let previous = previous {
-				constraints.append(NSLayoutConstraint(item: view, attribute: .Left, relatedBy: .Equal, toItem: previous, attribute: .Right, multiplier: 1, constant: 2 * marginX))
+				constraints.append(NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: previous, attribute: .Trailing, multiplier: 1, constant: 2 * marginX))
 			} else {
-				constraints.append(NSLayoutConstraint(item: view, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: marginX))
+				constraints.append(NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1, constant: marginX))
 			}
 			previous = view
 		}
 		if let previous = previous {
-			let constraint = NSLayoutConstraint(item: previous, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: -marginX)
+			let constraint = NSLayoutConstraint(item: previous, attribute: .Trailing, relatedBy: .Equal, toItem: self, attribute: .Trailing, multiplier: 1, constant: -marginX)
 			constraint.priority = 999
 			constraints.append(constraint)
 		}
@@ -43,7 +49,7 @@ extension UIView {
 		return constraints
 	}
 	
-	func verticalStack(views: [UIView], marginX: CGFloat = 0) {
+	public func verticalStack(views: [UIView], marginX: CGFloat = 0) {
 		for v in subviews {
 			v.removeFromSuperview()
 		}
@@ -56,8 +62,10 @@ extension UIView {
 	
 	func _previousView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints() as! [NSLayoutConstraint]
+		println(gaps)
+		let attr: NSLayoutAttribute = axis == .Vertical ? .Top : .Leading
 		for gap in gaps {
-			if gap.firstAttribute == .Top && gap.firstItem as? UIView == view {
+			if gap.firstAttribute == attr && gap.firstItem as? UIView == view {
 				return gap
 			}
 		}
@@ -66,8 +74,9 @@ extension UIView {
 	
 	func _firstView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints() as! [NSLayoutConstraint]
+		let attr: NSLayoutAttribute = axis == .Vertical ? .Top : .Leading
 		for gap in gaps {
-			if gap.secondAttribute == .Top && gap.secondItem as? UIView == self {
+			if gap.secondAttribute == attr && gap.secondItem as? UIView == self {
 				return gap
 			}
 		}
@@ -76,8 +85,9 @@ extension UIView {
 	
 	func _lastView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints() as! [NSLayoutConstraint]
+		let attr: NSLayoutAttribute = axis == .Vertical ? .Bottom : .Trailing
 		for gap in gaps {
-			if gap.firstAttribute == .Bottom && gap.firstItem as? UIView == self {
+			if gap.firstAttribute == attr && gap.firstItem as? UIView == self {
 				return gap
 			}
 		}
@@ -86,8 +96,9 @@ extension UIView {
 	
 	func _nextView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints() as! [NSLayoutConstraint]
+		let attr: NSLayoutAttribute = axis == .Vertical ? .Bottom : .Trailing
 		for gap in gaps {
-			if gap.secondAttribute == .Bottom && gap.secondItem as? UIView == view {
+			if gap.secondAttribute == attr && gap.secondItem as? UIView == view {
 				return gap
 			}
 		}
@@ -126,12 +137,17 @@ extension UIView {
 }
 
 infix operator |< {}
-func |< (view: UIView, views: [UIView]) {
+public func |< (view: UIView, views: [UIView]) {
 	view.verticalStack(views, marginX: 0)
 }
 
 infix operator -< {}
-func -< (view: UIView, views: [UIView]) {
+public func -< (view: UIView, views: [UIView]) {
 	view.horizontalStack(views, marginX: 0)
+}
+
+infix operator --< {}
+public func --< (view: UIView, views: [UIView]) {
+	view.horizontalStack(views, marginX: 0, equalWidth: true)
 }
 
