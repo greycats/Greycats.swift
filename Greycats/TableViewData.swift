@@ -33,6 +33,33 @@ public protocol TableViewDataNibCell {
 	static var nibName: String { get }
 }
 
+public class TableViewSource<T>: NSObject {
+	typealias Element = T
+	private var data: [T] = []
+	private var select: ((T) -> UIViewController?)?
+	public var cacheKey: (T -> String)?
+	
+	public var source: [T] {
+		get { return data }
+		set(value) {
+			data = value
+			onSourceChanged()
+		}
+	}
+	
+	func onSourceChanged() {
+	}
+	
+	public func onSelect(block: (T) -> UIViewController?) -> Self {
+		select = block
+		return self
+	}
+	
+	required override public init() {
+		super.init()
+	}
+}
+
 public class TableViewDataNib<T, U: UITableViewCell where U: TableViewDataNibCell>: TableViewData<T, U> {
 	public required init(title: String?) {
 		super.init(title: title)
@@ -63,19 +90,17 @@ public class TableViewDataCombine<T, U: UITableViewCell where U: TableViewDataCu
 	}
 }
 
-public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
+public class TableViewData<T, U: UITableViewCell>: TableViewSource<T>, SectionDataSource {
 	typealias Element = T
 	typealias Cell = U
 	public var section: Int = 0
-	public var cacheKey: (T -> String)?
 	public var cellIdentifier: String!
 	var className: String?
 	
-	private var data: [T] = []
 	private var willDisplay: ((U, NSIndexPath) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
-	private var select: ((T) -> UIViewController?)?
+	
 	private var renderHeader: (String -> UIView)?
 	private var title: String?
 	public var alwaysDisplaySectionHeader = false
@@ -168,11 +193,6 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 		return self
 	}
 	
-	public func onSelect(block: (T) -> UIViewController?) -> Self {
-		select = block
-		return self
-	}
-	
 	public func onHeader(block: String -> UIView) -> Self {
 		renderHeader = block
 		return self
@@ -180,18 +200,12 @@ public class TableViewData<T, U: UITableViewCell>: NSObject, SectionDataSource {
 	
 	var rowAnimation = UITableViewRowAnimation.None
 	
-	public var source: [T] {
-		set(data) {
-			self.data = data
-			switch rowAnimation {
-			case .None:
-				self.tableView?.reloadData()
-			default:
-				self.tableView?.reloadSections(NSIndexSet(index: section), withRowAnimation: rowAnimation)
-			}
-		}
-		get {
-			return self.data
+	override func onSourceChanged() {
+		switch rowAnimation {
+		case .None:
+			self.tableView?.reloadData()
+		default:
+			self.tableView?.reloadSections(NSIndexSet(index: section), withRowAnimation: rowAnimation)
 		}
 	}
 	
@@ -308,7 +322,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, didSelectRowAtIndexPath: indexPath)
 	}
-
+	
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
 	}
