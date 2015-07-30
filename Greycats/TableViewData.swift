@@ -49,6 +49,12 @@ public class TableViewSource<T>: NSObject, SectionData {
 		}
 	}
 	public weak var navigationController: UINavigationController?
+	private var title: String?
+	private var renderHeader: (String -> UIView)?
+	public func onHeader(block: String -> UIView) -> Self {
+		renderHeader = block
+		return self
+	}
 
 	public func willSetTableView(tableView: UITableView) {
 	}
@@ -72,7 +78,8 @@ public class TableViewSource<T>: NSObject, SectionData {
 		return self
 	}
 	
-	required override public init() {
+	required public init(title: String?) {
+		self.title = title
 		super.init()
 	}
 	
@@ -89,11 +96,19 @@ public class TableViewSource<T>: NSObject, SectionData {
 	}
 	
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if self.title != nil {
+			var height: CGFloat = 44
+			if let view = renderHeader?(title!) {
+				let size = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+				height = size.height
+			}
+			return height
+		}
 		return 0
 	}
 	
 	public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		return nil
+		return renderHeader?(title!)
 	}
 	
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -145,9 +160,7 @@ public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
 	private var willDisplay: ((U, NSIndexPath) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
-	private var renderHeader: (String -> UIView)?
-	private var title: String?
-	
+
 	private var placeholder: U!
 	private let rendering_cache = NSCache()
 	
@@ -189,9 +202,8 @@ public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
 	}
 	
 	public required init(title: String?) {
-		self.title = title
+		super.init(title: title)
 		className = "\(NSStringFromClass(U))"
-		super.init()
 	}
 	
 	public func willDisplay(block: (cell: U, indexPath: NSIndexPath) -> Void) -> Self {
@@ -212,13 +224,8 @@ public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
 		return self
 	}
 	
-	public func onFutureRender(render: (Cell, T, dispatch_block_t) -> Void) -> Self {
+	public func onFutureRender(render: (U, T, dispatch_block_t) -> Void) -> Self {
 		renderCell = render
-		return self
-	}
-	
-	public func onHeader(block: String -> UIView) -> Self {
-		renderHeader = block
 		return self
 	}
 	
@@ -263,22 +270,6 @@ public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
 		preRender?(cell)
 		render(cell, index: indexPath.row)
 		return cell
-	}
-	
-	public override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		if self.title != nil {
-			var height: CGFloat = 44
-			if let view = renderHeader?(title!) {
-				let size = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-				height = size.height
-			}
-			return height
-		}
-		return 0
-	}
-	
-	public override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		return renderHeader?(title!)
 	}
 	
 	public override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
