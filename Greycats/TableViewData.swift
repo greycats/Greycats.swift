@@ -128,6 +128,7 @@ public class TableViewDataNib<T, U: UITableViewCell where U: TableViewDataNibCel
 	}
 	
 	public override func didSetTableView(tableView: UITableView) {
+		cellIdentifier = "\(U.nibName)-\(section)"
 		tableView.registerNib(UINib(nibName: U.nibName, bundle: NSBundle(forClass: U.self)), forCellReuseIdentifier: cellIdentifier)
 	}
 }
