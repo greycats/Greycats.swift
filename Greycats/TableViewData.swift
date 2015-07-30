@@ -11,7 +11,7 @@ import UIKit
 
 private let skipHeightCalculation = UIDevice.currentDevice().systemVersion.compare("8.0", options: NSStringCompareOptions.NumericSearch) != .OrderedAscending
 
-public protocol SectionData: NSObjectProtocol {
+public protocol SectionData {
 	var section: Int {get set}
 	var tableView: UITableView? {get set}
 	weak var navigationController: UINavigationController? {get set}
@@ -28,7 +28,7 @@ public protocol TableViewDataNibCell {
 	static var nibName: String { get }
 }
 
-public class TableViewSource<T>: NSObject, SectionData {
+public class TableViewSource<T>: SectionData {
 	typealias Element = T
 	private var data: [T] = []
 	private var select: ((T) -> UIViewController?)?
@@ -80,7 +80,6 @@ public class TableViewSource<T>: NSObject, SectionData {
 	
 	required public init(title: String?) {
 		self.title = title
-		super.init()
 	}
 	
 	public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -285,7 +284,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool) {
 		joined = sections
 		self.alwaysDisplaySectionHeader = alwaysDisplaySectionHeader
-		for (index, obj) in enumerate(sections) {
+		for (index, var obj) in enumerate(sections) {
 			obj.section = index
 			obj.tableView = tableView
 		}
@@ -353,13 +352,13 @@ extension NSObject {
 	
 	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default", navigationController: UINavigationController?) {
 		if let joinedData = _joined_sections[key] {
-			for data in joinedData.joined {
+			for (var data) in joinedData.joined {
 				data.tableView = nil
 			}
 		}
 		
 		let joined = TableViewJoinedData(tableView, sections: sections, alwaysDisplaySectionHeader: alwaysDisplaySectionHeader)
-		for section in sections {
+		for (var section) in sections {
 			section.navigationController = navigationController
 		}
 		_joined_sections[key] = joined
