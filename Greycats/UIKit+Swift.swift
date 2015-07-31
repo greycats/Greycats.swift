@@ -208,6 +208,36 @@ extension UITextView {
 	}
 }
 
+
+extension UIView {
+	public func registerKeyboard() {
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
+	}
+	
+	public func unregisterKeyboard() {
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillChangeFrameNotification, object: nil)
+	}
+	public func keyboardConstraint() -> NSLayoutConstraint? {
+		return nil
+	}
+	
+	public func keyboardWillChange(notif: NSNotification) {
+		if let info = notif.userInfo {
+			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+			kbRect = convertRect(kbRect, fromView: window)
+			var height = bounds.size.height - kbRect.origin.y
+			if let constraint = keyboardConstraint() {
+				constraint.constant = height
+				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+					self.layoutIfNeeded()
+					}, completion: nil)
+				return
+			}
+		}
+		UIView.setAnimationsEnabled(true)
+	}
+}
+
 extension UIViewController {
 	public func registerKeyboard() {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
