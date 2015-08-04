@@ -28,7 +28,22 @@ public protocol TableViewDataNibCell {
 	static var nibName: String { get }
 }
 
-public class TableViewSource<T>: SectionData {
+public enum ChangeType {
+	case Create
+	case Update
+	case Delete
+}
+
+public struct Change<T: Equatable> {
+	let value: T
+	let type: ChangeType
+	public init(type: ChangeType, value: T) {
+		self.type = type
+		self.value = value
+	}
+}
+
+public class TableViewSource<T: Equatable>: SectionData {
 	typealias Element = T
 	private var data: [T] = []
 	private var select: ((T) -> UIViewController?)?
@@ -55,19 +70,39 @@ public class TableViewSource<T>: SectionData {
 		renderHeader = block
 		return self
 	}
-
+	
 	public func willSetTableView(tableView: UITableView) {
 	}
 	
 	public func didSetTableView(tableView: UITableView) {
 	}
-
+	
 	public var source: [T] {
 		get { return data }
 		set(value) {
 			data = value
 			onSourceChanged()
 		}
+	}
+	
+	public func applyChange(change: Change<T>) {
+		tableView?.beginUpdates()
+		switch change.type {
+		case .Create:
+			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: data.count, inSection: section)], withRowAnimation: .Automatic)
+			data.append(change.value)
+		case .Update:
+			if let index = find(data, change.value) {
+				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
+				data[index] = change.value
+			}
+		case .Delete:
+			if let index = find(data, change.value) {
+				tableView?.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
+				data.removeAtIndex(index)
+			}
+		}
+		tableView?.endUpdates()
 	}
 	
 	func onSourceChanged() {
@@ -121,7 +156,7 @@ public class TableViewSource<T>: SectionData {
 	}
 }
 
-public class TableViewDataNib<T, U: UITableViewCell where U: TableViewDataNibCell>: TableViewData<T, U> {
+public class TableViewDataNib<T: Equatable, U: UITableViewCell where U: TableViewDataNibCell>: TableViewData<T, U> {
 	public required init(title: String?) {
 		super.init(title: title)
 	}
@@ -137,7 +172,7 @@ public protocol TableViewDataCustomizeRegister {
 	static var defaultIdentifier: String { get }
 }
 
-public class TableViewDataCombine<T, U: UITableViewCell where U: TableViewDataCustomizeRegister>: TableViewData<T, U> {
+public class TableViewDataCombine<T: Equatable, U: UITableViewCell where U: TableViewDataCustomizeRegister>: TableViewData<T, U> {
 	
 	public required init(title: String?) {
 		super.init(title: title)
@@ -152,7 +187,7 @@ public class TableViewDataCombine<T, U: UITableViewCell where U: TableViewDataCu
 	}
 }
 
-public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
+public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
 	typealias Cell = U
 	public var alwaysDisplaySectionHeader = false
 	var className: String?
@@ -160,7 +195,7 @@ public class TableViewData<T, U: UITableViewCell>: TableViewSource<T> {
 	private var willDisplay: ((U, NSIndexPath) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
-
+	
 	private var placeholder: U!
 	private let rendering_cache = NSCache()
 	
