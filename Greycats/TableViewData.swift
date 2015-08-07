@@ -12,9 +12,10 @@ import UIKit
 private let skipHeightCalculation = UIDevice.currentDevice().systemVersion.compare("8.0", options: NSStringCompareOptions.NumericSearch) != .OrderedAscending
 
 public protocol SectionData {
-	var section: Int {get set}
-	var tableView: UITableView? {get set}
-	weak var navigationController: UINavigationController? {get set}
+	var section: Int { get set }
+	var tableView: UITableView? { get set }
+	var reversed: Bool { get set }
+	weak var navigationController: UINavigationController? { get set }
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell!
@@ -49,7 +50,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 	private var select: ((T) -> UIViewController?)?
 	public var cacheKey: (T -> String)?
 	private weak var _tableView: UITableView?
-	
+	public var reversed: Bool = false
 	public var section: Int = 0
 	public var tableView: UITableView? {
 		set(t) {
@@ -80,7 +81,11 @@ public class TableViewSource<T: Equatable>: SectionData {
 	public var source: [T] {
 		get { return data }
 		set(value) {
-			data = value
+			if reversed {
+				data = value.reverse()
+			} else {
+				data = value
+			}
 			onSourceChanged()
 		}
 	}
@@ -89,8 +94,9 @@ public class TableViewSource<T: Equatable>: SectionData {
 		tableView?.beginUpdates()
 		switch change.type {
 		case .Create:
-			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: data.count, inSection: section)], withRowAnimation: .Automatic)
-			data.append(change.value)
+			let index = reversed ? 0 : data.count
+			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: reversed ? .Top : .Bottom)
+			data.insert(change.value, atIndex: index)
 		case .Update:
 			if let index = find(data, change.value) {
 				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
@@ -299,6 +305,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		let object = data[indexPath.row]
 		let id = identifier?(object) ?? cellIdentifier
 		let cell = tableView.dequeueReusableCellWithIdentifier(id!, forIndexPath: indexPath) as! Cell
+		cell.transform = CGAffineTransformMake(1, 0, 0, reversed ? -1 : 1, 0, 0)
 		if skipHeightCalculation {
 			cell.layoutMargins = UIEdgeInsetsZero
 		}
@@ -316,11 +323,12 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	var joined: [SectionData]
 	var alwaysDisplaySectionHeader: Bool
 	
-	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool) {
+	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool, reversed: Bool) {
 		joined = sections
 		self.alwaysDisplaySectionHeader = alwaysDisplaySectionHeader
 		for (index, var obj) in enumerate(sections) {
 			obj.section = index
+			obj.reversed = reversed
 			obj.tableView = tableView
 		}
 		super.init()
@@ -385,14 +393,17 @@ extension NSObject {
 		}
 	}
 	
-	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default", navigationController: UINavigationController?) {
+	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default", reversed: Bool = false, navigationController: UINavigationController?) {
 		if let joinedData = _joined_sections[key] {
 			for (var data) in joinedData.joined {
 				data.tableView = nil
 			}
 		}
 		
-		let joined = TableViewJoinedData(tableView, sections: sections, alwaysDisplaySectionHeader: alwaysDisplaySectionHeader)
+		if reversed {
+			tableView.transform = CGAffineTransformMake(1, 0, 0, -1, 0, 0)
+		}
+		let joined = TableViewJoinedData(tableView, sections: sections, alwaysDisplaySectionHeader: alwaysDisplaySectionHeader, reversed: reversed)
 		for (var section) in sections {
 			section.navigationController = navigationController
 		}
