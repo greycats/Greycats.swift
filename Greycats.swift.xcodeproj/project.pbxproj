@@ -10,6 +10,11 @@
 		CF02A9531B33E00C006C010A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF02A9511B33E00C006C010A /* Box.swift */; };
 		CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */; };
 		CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3468761AC24ED900687762 /* UIKit+Swift.swift */; };
+		CF5A0E3D1B7663B2004431E1 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E381B7663B2004431E1 /* TextField.swift */; };
+		CF5A0E3E1B7663B2004431E1 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E391B7663B2004431E1 /* JSON.swift */; };
+		CF5A0E3F1B7663B2004431E1 /* ReactControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */; };
+		CF5A0E401B7663B2004431E1 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3B1B7663B2004431E1 /* Regex.swift */; };
+		CF5A0E411B7663B2004431E1 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3C1B7663B2004431E1 /* Schedule.swift */; };
 		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
 		CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */; };
 		CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */; };
@@ -23,6 +28,11 @@
 		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF3468761AC24ED900687762 /* UIKit+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Swift.swift"; sourceTree = "<group>"; };
 		CF403A0A1A7DFADF0049876A /* Try.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Try.playground; path = Example/Try.playground; sourceTree = "<group>"; };
+		CF5A0E381B7663B2004431E1 /* TextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
+		CF5A0E391B7663B2004431E1 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactControls.swift; sourceTree = "<group>"; };
+		CF5A0E3B1B7663B2004431E1 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
+		CF5A0E3C1B7663B2004431E1 /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		CFB62E7D1A7F5C2900D54010 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Breadcrumb.swift; sourceTree = "<group>"; };
 		CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
@@ -70,6 +80,11 @@
 				CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */,
 				CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */,
 				CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */,
+				CF5A0E381B7663B2004431E1 /* TextField.swift */,
+				CF5A0E391B7663B2004431E1 /* JSON.swift */,
+				CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */,
+				CF5A0E3B1B7663B2004431E1 /* Regex.swift */,
+				CF5A0E3C1B7663B2004431E1 /* Schedule.swift */,
 				CF3468761AC24ED900687762 /* UIKit+Swift.swift */,
 				CF21163A1A7DECF10065E3B2 /* Supporting Files */,
 			);
@@ -171,12 +186,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5A0E3F1B7663B2004431E1 /* ReactControls.swift in Sources */,
+				CF5A0E401B7663B2004431E1 /* Regex.swift in Sources */,
+				CF5A0E411B7663B2004431E1 /* Schedule.swift in Sources */,
 				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
 				CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */,
 				CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */,
+				CF5A0E3D1B7663B2004431E1 /* TextField.swift in Sources */,
 				CF02A9531B33E00C006C010A /* Box.swift in Sources */,
 				CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */,
 				CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */,
+				CF5A0E3E1B7663B2004431E1 /* JSON.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

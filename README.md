@@ -18,6 +18,11 @@ it, simply add the following line to your Podfile:
 
     pod "Greycats"
 
+
+or Cartfile
+    
+    github "greycats/Greycats.swift" >= 1.2.2
+
 ## Author
 
 Rex Sheng, shengning@gmail.com
