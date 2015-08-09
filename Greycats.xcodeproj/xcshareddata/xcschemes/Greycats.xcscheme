@@ -17,7 +17,7 @@
                BlueprintIdentifier = "CF2116361A7DECF10065E3B2"
                BuildableName = "Greycats.framework"
                BlueprintName = "Greycats"
-               ReferencedContainer = "container:Greycats.swift.xcodeproj">
+               ReferencedContainer = "container:Greycats.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "CF2116361A7DECF10065E3B2"
             BuildableName = "Greycats.framework"
             BlueprintName = "Greycats"
-            ReferencedContainer = "container:Greycats.swift.xcodeproj">
+            ReferencedContainer = "container:Greycats.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,7 +63,7 @@
             BlueprintIdentifier = "CF2116361A7DECF10065E3B2"
             BuildableName = "Greycats.framework"
             BlueprintName = "Greycats"
-            ReferencedContainer = "container:Greycats.swift.xcodeproj">
+            ReferencedContainer = "container:Greycats.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -27,7 +27,6 @@
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF3468761AC24ED900687762 /* UIKit+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Swift.swift"; sourceTree = "<group>"; };
-		CF403A0A1A7DFADF0049876A /* Try.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Try.playground; path = Example/Try.playground; sourceTree = "<group>"; };
 		CF5A0E381B7663B2004431E1 /* TextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CF5A0E391B7663B2004431E1 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactControls.swift; sourceTree = "<group>"; };
@@ -56,7 +55,6 @@
 		CF21162D1A7DECF10065E3B2 = {
 			isa = PBXGroup;
 			children = (
-				CF403A0A1A7DFADF0049876A /* Try.playground */,
 				CFC5571C1A7DF72E001951DE /* Podspec Metadata */,
 				CF2116391A7DECF10065E3B2 /* Greycats */,
 				CF2116381A7DECF10065E3B2 /* Products */,
@@ -154,7 +152,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CF2116311A7DECF10065E3B2 /* Build configuration list for PBXProject "Greycats.swift" */;
+			buildConfigurationList = CF2116311A7DECF10065E3B2 /* Build configuration list for PBXProject "Greycats" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -220,13 +218,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -266,7 +263,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -326,7 +323,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF2116311A7DECF10065E3B2 /* Build configuration list for PBXProject "Greycats.swift" */ = {
+		CF2116311A7DECF10065E3B2 /* Build configuration list for PBXProject "Greycats" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF21164B1A7DECF10065E3B2 /* Debug */,
