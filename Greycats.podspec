@@ -1,12 +1,3 @@
-#
-# Be sure to run `pod lib lint Greycats.swift.podspec' to ensure this is a
-# valid spec and remove all comments before submitting the spec.
-#
-# Any lines starting with a # are optional, but encouraged
-#
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = "Greycats"
   s.version          = "1.2.2"
@@ -17,7 +8,7 @@ Pod::Spec.new do |s|
 						* a Filter which applies regexp search on UISearchBar | UITextField
 						* AutolayoutStack
                        DESC
-  s.homepage         = "https://github.com/greycats/Greycats.swift"
+  s.homepage         = "http://github.com/greycats/Greycats.swift"
   s.license          = 'MIT'
   s.author           = { "Rex Sheng" => "shengning@gmail.com" }
   s.source           = { :git => "https://github.com/greycats/Greycats.swift.git", :tag => s.version.to_s }
