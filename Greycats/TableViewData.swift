@@ -101,7 +101,9 @@ public class TableViewSource<T: Equatable>: SectionData {
 		case .Create:
 			let index = reversed ? 0 : data.count
 			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: reversed ? .Top : .Bottom)
-			tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: reversed ? 0 : data.count - 1, inSection: section)], withRowAnimation: .Automatic)
+			if data.count > 0 {
+				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: reversed ? 0 : data.count - 1, inSection: section)], withRowAnimation: .Automatic)
+			}
 			data.insert(change.value, atIndex: index)
 		case .Update:
 			if let index = find(data, change.value) {
