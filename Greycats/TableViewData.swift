@@ -111,10 +111,6 @@ public class TableViewSource<T: Equatable>: SectionData {
 		case .Delete:
 			if let index = find(data, change.value) {
 				tableView?.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
-				let previous = reversed ? index + 1 : index - 1
-				if data.count > previous {
-					tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: previous, inSection: section)], withRowAnimation: .Automatic)
-				}
 				data.removeAtIndex(index)
 			}
 		}
