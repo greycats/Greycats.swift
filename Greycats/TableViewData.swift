@@ -90,12 +90,18 @@ public class TableViewSource<T: Equatable>: SectionData {
 		}
 	}
 	
-	public func applyChange(change: Change<T>) {
+	public func applyChanges(changes: [Change<T>]) {
 		tableView?.beginUpdates()
+		changes.map(self._applyChange)
+		tableView?.endUpdates()
+	}
+	
+	private func _applyChange(change: Change<T>) {
 		switch change.type {
 		case .Create:
 			let index = reversed ? 0 : data.count
 			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: reversed ? .Top : .Bottom)
+			tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: reversed ? 0 : data.count - 1, inSection: section)], withRowAnimation: .Automatic)
 			data.insert(change.value, atIndex: index)
 		case .Update:
 			if let index = find(data, change.value) {
@@ -105,9 +111,18 @@ public class TableViewSource<T: Equatable>: SectionData {
 		case .Delete:
 			if let index = find(data, change.value) {
 				tableView?.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
+				let previous = reversed ? index + 1 : index - 1
+				if data.count > previous {
+					tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: previous, inSection: section)], withRowAnimation: .Automatic)
+				}
 				data.removeAtIndex(index)
 			}
 		}
+	}
+	
+	public func applyChange(change: Change<T>) {
+		tableView?.beginUpdates()
+		_applyChange(change)
 		tableView?.endUpdates()
 	}
 	
@@ -201,7 +216,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	private var willDisplay: ((U, Int) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
-	
+	private var postRender: ((U, Int) -> Void)?
 	private var placeholder: U!
 	private let rendering_cache = NSCache()
 	
@@ -265,6 +280,11 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		return self
 	}
 	
+	public func postRender(block: (cell: U, row: Int) -> Void) -> Self {
+		postRender = block
+		return self
+	}
+	
 	public func onFutureRender(render: (U, T, dispatch_block_t) -> Void) -> Self {
 		renderCell = render
 		return self
@@ -311,6 +331,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		}
 		preRender?(cell)
 		render(cell, index: indexPath.row)
+		postRender?(cell, indexPath.row)
 		return cell
 	}
 	
