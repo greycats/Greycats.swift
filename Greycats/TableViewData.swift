@@ -198,7 +198,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	public var alwaysDisplaySectionHeader = false
 	var className: String?
 	public var cellIdentifier: String!
-	private var willDisplay: ((U, NSIndexPath) -> Void)?
+	private var willDisplay: ((U, Int) -> Void)?
 	private var preRender: (U -> Void)?
 	private var renderCell: ((U, T, dispatch_block_t) -> Void)?
 	
@@ -247,7 +247,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		className = "\(NSStringFromClass(U))"
 	}
 	
-	public func willDisplay(block: (cell: U, indexPath: NSIndexPath) -> Void) -> Self {
+	public func willDisplay(block: (cell: U, row: Int) -> Void) -> Self {
 		willDisplay = block
 		return self
 	}
@@ -315,7 +315,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	}
 	
 	public override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-		willDisplay?(cell as! Cell, indexPath)
+		willDisplay?(cell as! Cell, indexPath.row)
 	}
 }
 
