@@ -45,3 +45,17 @@ public func =~ (input: String, pattern: String) -> Bool {
 public func =~ (input: String, pattern: Regex) -> Bool {
 	return pattern.test(input)
 }
+
+public func =~ (input: AnyObject?, pattern: String) -> Bool {
+	if let input = input as? String {
+		return Regex(pattern).test(input)
+	}
+	return false
+}
+
+public func =~ (input: AnyObject?, pattern: Regex) -> Bool {
+	if let input = input as? String {
+		return pattern.test(input)
+	}
+	return false
+}
