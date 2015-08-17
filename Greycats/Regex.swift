@@ -9,7 +9,7 @@
 
 import Foundation
 
-public class Regex {
+public final class Regex {
 	let internalExpression: NSRegularExpression
 	let pattern: String
 	
@@ -37,20 +37,25 @@ public class Regex {
 	}
 }
 
-infix operator =~ {}
-public func =~ (input: String, pattern: String) -> Bool {
-	return Regex(pattern).test(input)
+extension Regex: StringLiteralConvertible {
+	public typealias ExtendedGraphemeClusterLiteralType = StringLiteralType
+	public typealias UnicodeScalarLiteralType = StringLiteralType
+	public convenience init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
+		self.init(value)
+	}
+	
+	public convenience init(extendedGraphemeClusterLiteral value: ExtendedGraphemeClusterLiteralType) {
+		self.init(value)
+	}
+	
+	public convenience init(stringLiteral value: StringLiteralType) {
+		self.init(value)
+	}
 }
 
+infix operator =~ {}
 public func =~ (input: String, pattern: Regex) -> Bool {
 	return pattern.test(input)
-}
-
-public func =~ (input: AnyObject?, pattern: String) -> Bool {
-	if let input = input as? String {
-		return Regex(pattern).test(input)
-	}
-	return false
 }
 
 public func =~ (input: AnyObject?, pattern: Regex) -> Bool {
