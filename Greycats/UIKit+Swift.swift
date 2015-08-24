@@ -390,7 +390,13 @@ public class _Control: UIControl {
 
 @IBDesignable
 public class StyledView: UIView {
-	@IBInspectable public var layout: String = "" { didSet { setup() } }
+	@IBInspectable public var layout: String = "" {
+		didSet {
+			if oldValue != layout {
+				setup()
+			}
+		}
+	}
 	weak public var view: UIView!
 	public var nibNamePrefix: String { return "" }
 	
