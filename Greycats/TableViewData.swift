@@ -283,6 +283,12 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		return self
 	}
 	
+	var didChange: (Void -> Void)?
+	public func didChange(block: Void -> Void) -> Self {
+		didChange = block
+		return self
+	}
+	
 	public func onFutureRender(render: (U, T, dispatch_block_t) -> Void) -> Self {
 		renderCell = render
 		return self
@@ -291,12 +297,18 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	var rowAnimation = UITableViewRowAnimation.None
 	
 	override func onSourceChanged() {
+		didChange?()
 		switch rowAnimation {
 		case .None:
 			self.tableView?.reloadData()
 		default:
 			self.tableView?.reloadSections(NSIndexSet(index: section), withRowAnimation: rowAnimation)
 		}
+	}
+	
+	private override func _applyChange(change: Change<T>) {
+		super._applyChange(change)
+		didChange?()
 	}
 	
 	public override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
