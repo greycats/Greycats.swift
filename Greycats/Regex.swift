@@ -29,7 +29,9 @@ public final class Regex {
 			var results: [String] = []
 			for i in 1..<match.numberOfRanges {
 				let r = match.rangeAtIndex(i)
-				results.append((input as NSString).substringWithRange(r))
+				if r.location != Int.max {
+					results.append((input as NSString).substringWithRange(r))
+				}
 			}
 			return results
 		}
