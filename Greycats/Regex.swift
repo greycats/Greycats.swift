@@ -37,6 +37,20 @@ public final class Regex {
 		}
 		return nil
 	}
+	
+	public func findall(input: String) -> [[String]] {
+		let matches = internalExpression.matchesInString(input, options: nil, range: NSMakeRange(0, count(input)))
+		return matches.map { match in
+			var results: [String] = []
+			for i in 1..<match.numberOfRanges {
+				let r = match.rangeAtIndex(i)
+				if r.location != Int.max {
+					results.append((input as NSString).substringWithRange(r))
+				}
+			}
+			return results
+		}
+	}
 }
 
 extension Regex: StringLiteralConvertible {
