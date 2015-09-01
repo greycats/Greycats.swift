@@ -36,8 +36,8 @@ public enum ChangeType {
 }
 
 public struct Change<T: Equatable> {
-	let value: T
-	let type: ChangeType
+	public let value: T
+	public let type: ChangeType
 	public init(type: ChangeType, value: T) {
 		self.type = type
 		self.value = value
@@ -101,10 +101,11 @@ public class TableViewSource<T: Equatable>: SectionData {
 		case .Create:
 			let index = reversed ? 0 : data.count
 			tableView?.insertRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: reversed ? .Top : .Bottom)
-			if data.count > 0 {
-				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: reversed ? 0 : data.count - 1, inSection: section)], withRowAnimation: .Automatic)
-			}
 			data.insert(change.value, atIndex: index)
+			if data.count > 0 {
+				let index = reversed ? 0 : data.count - 1
+				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
+			}
 		case .Update:
 			if let index = find(data, change.value) {
 				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
