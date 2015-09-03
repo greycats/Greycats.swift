@@ -14,12 +14,31 @@ public let LineWidth = 1 / UIScreen.mainScreen().scale
 public let ScreenSize = UIScreen.mainScreen().bounds.size
 public let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8
 
-public func dispatch_time_in(delay: Double) -> dispatch_time_t {
+public func dispatch_time_in(delay: NSTimeInterval) -> dispatch_time_t {
 	return dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
 }
 
-public func delay(delay: Double, closure: dispatch_block_t) {
-	dispatch_after(dispatch_time_in(delay), dispatch_get_main_queue(), closure)
+public typealias Task = (cancel : Bool) -> ()
+public func delay(delay: NSTimeInterval, closure: dispatch_block_t) -> Task? {
+	var task: dispatch_block_t? = closure
+	var result: Task?
+	let delayedClosure: Task = { cancel in
+		if let internalClosure = task {
+			if cancel == false {
+				foreground(internalClosure)
+			}
+		}
+		task = nil
+		result = nil
+	}
+	result = delayedClosure
+	dispatch_after(dispatch_time_in(delay), dispatch_get_main_queue()) {
+		result?(cancel: false)
+	}
+	return result
+}
+public func cancel(task: Task?) {
+	task?(cancel: true)
 }
 
 public func background(closure: dispatch_block_t) {
