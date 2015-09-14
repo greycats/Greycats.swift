@@ -30,41 +30,6 @@ func perpendicularDimension(axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
 }
 
 extension UIView {
-	public func horizontalStack(views: [UIView], marginX: CGFloat = 0, equalWidth: Bool = false) -> [NSLayoutConstraint] {
-		for v in subviews {
-			v.removeFromSuperview()
-		}
-		var previous: UIView? = nil
-		var constraints: [NSLayoutConstraint] = []
-		for view in views {
-			view.setTranslatesAutoresizingMaskIntoConstraints(false)
-			addSubview(view)
-			constraints.append(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0))
-			constraints.append(NSLayoutConstraint(item: view, attribute: .Height, relatedBy: .Equal, toItem: self, attribute: .Height, multiplier: 1, constant: -2))
-			constraints.append(NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: -2))
-			if equalWidth {
-				if self is UIScrollView {
-					constraints.append(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: self, attribute: .Width, multiplier: 1, constant: -2 * marginX))
-				} else if let previous = previous {
-					constraints.append(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: previous, attribute: .Width, multiplier: 1, constant: 0))
-				}
-			}
-			if let previous = previous {
-				constraints.append(NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: previous, attribute: .Trailing, multiplier: 1, constant: 2 * marginX))
-			} else {
-				constraints.append(NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: self, attribute: .Leading, multiplier: 1, constant: marginX))
-			}
-			previous = view
-		}
-		if let previous = previous {
-			let constraint = NSLayoutConstraint(item: previous, attribute: .Trailing, relatedBy: .Equal, toItem: self, attribute: .Trailing, multiplier: 1, constant: -marginX)
-			constraint.priority = 999
-			constraints.append(constraint)
-		}
-		addConstraints(constraints)
-		return constraints
-	}
-	
 	public func verticalStack(views: [UIView], marginX: CGFloat = 0) {
 		for v in subviews {
 			v.removeFromSuperview()
@@ -72,6 +37,24 @@ extension UIView {
 		var previous: UIView? = nil
 		for view in views {
 			injectView(view, axis: .Vertical, after: previous, marginX: marginX)
+			previous = view
+		}
+	}
+	
+	public func horizontalStack(views: [UIView], marginX: CGFloat = 0, equalWidth: Bool = false) {
+		for v in subviews {
+			v.removeFromSuperview()
+		}
+		var previous: UIView? = nil
+		for view in views {
+			injectView(view, axis: .Horizontal, after: previous, marginX: marginX)
+			if equalWidth {
+				if self is UIScrollView {
+					addConstraint(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: self, attribute: .Width, multiplier: 1, constant: -2 * marginX))
+				} else if let previous = previous {
+					addConstraint(NSLayoutConstraint(item: view, attribute: .Width, relatedBy: .Equal, toItem: previous, attribute: .Width, multiplier: 1, constant: 0))
+				}
+			}
 			previous = view
 		}
 	}
@@ -149,9 +132,9 @@ extension UIView {
 		let pedge0 = perpendicularEdge0(axis)
 		let pedge1 = perpendicularEdge1(axis)
 		let attr = perpendicularDimension(axis)
-		addConstraint(NSLayoutConstraint(item: view, attribute: pedge0, relatedBy: .Equal, toItem: self, attribute: pedge0, multiplier: 1, constant: marginX))
-		addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .Equal, toItem: self, attribute: pedge1, multiplier: 1, constant: -marginX))
-		addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .Equal, toItem: self, attribute: attr, multiplier: 1, constant: -2 * marginX))
+		addConstraint(NSLayoutConstraint(item: view, attribute: pedge0, relatedBy: .Equal, toItem: self, attribute: pedge0, multiplier: 1, constant: 0))
+		addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .Equal, toItem: self, attribute: pedge1, multiplier: 1, constant: -2))
+		addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .Equal, toItem: self, attribute: attr, multiplier: 1, constant: -2))
 		
 		let edge0Constraint: NSLayoutConstraint
 		if let previous = previous {
@@ -161,7 +144,7 @@ extension UIView {
 				let bottom = NSLayoutConstraint(item: c.firstItem, attribute: c.firstAttribute, relatedBy: .Equal, toItem: view, attribute: _edge1, multiplier: 1, constant: c.constant)
 				addConstraint(bottom)
 			}
-			edge0Constraint = NSLayoutConstraint(item: view, attribute: _edge0, relatedBy: .Equal, toItem: previous, attribute: _edge1, multiplier: 1, constant: 0)
+			edge0Constraint = NSLayoutConstraint(item: view, attribute: _edge0, relatedBy: .Equal, toItem: previous, attribute: _edge1, multiplier: 1, constant: marginX)
 		} else {
 			// view is gonna be first, find current first and unlink it
 			if let c = _firstView(axis) {
