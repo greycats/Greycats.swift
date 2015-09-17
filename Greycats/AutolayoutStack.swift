@@ -60,7 +60,7 @@ extension UIView {
 	}
 	
 	func _previousView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints() as! [NSLayoutConstraint]
+		let gaps = constraints 
 		let attr = edge0(axis)
 		for gap in gaps {
 			if gap.firstAttribute == attr && gap.firstItem as? UIView == view {
@@ -71,7 +71,7 @@ extension UIView {
 	}
 	
 	func _firstView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints() as! [NSLayoutConstraint]
+		let gaps = constraints 
 		let attr = edge0(axis)
 		for gap in gaps {
 			if gap.secondAttribute == attr && gap.secondItem as? UIView == self {
@@ -82,7 +82,7 @@ extension UIView {
 	}
 	
 	func _lastView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints() as! [NSLayoutConstraint]
+		let gaps = constraints 
 		let attr = edge1(axis)
 		for gap in gaps {
 			if gap.firstAttribute == attr && gap.firstItem as? UIView == self {
@@ -93,7 +93,7 @@ extension UIView {
 	}
 	
 	func _nextView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints() as! [NSLayoutConstraint]
+		let gaps = constraints 
 		let attr = edge1(axis)
 		for gap in gaps {
 			if gap.secondAttribute == attr && gap.secondItem as? UIView == view {
@@ -125,7 +125,7 @@ extension UIView {
 	}
 	
 	public func injectView(view: UIView, axis: UILayoutConstraintAxis, after previous: UIView?, marginX: CGFloat = 0, animated: Bool = false) {
-		view.setTranslatesAutoresizingMaskIntoConstraints(false)
+		view.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(view)
 		let _edge0 = edge0(axis)
 		let _edge1 = edge1(axis)

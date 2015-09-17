@@ -20,16 +20,16 @@ public struct JSON {
 	
 	public init(_ json: RawValue?) {
 		switch json {
-		case let string as String:
+		case _ as String:
 			type = .String
 			object = json
-		case let number as Double:
+		case _ as Double:
 			type = .Number
 			object = json
-		case let raw as [RawValue]:
+		case _ as [RawValue]:
 			type = .Array
 			object = json
-		case let raw as [String: RawValue]:
+		case _ as [String: RawValue]:
 			type = .Dictionary
 			object = json
 		default:

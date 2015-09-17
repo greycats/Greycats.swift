@@ -59,19 +59,20 @@ extension UIColor {
 	}
 }
 
-private var bitmapInfo: CGBitmapInfo = {
-	var bitmapInfo = CGBitmapInfo.ByteOrder32Little
-	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask
-	bitmapInfo |= CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+private var bitmapInfo: UInt32 = {
+	var bitmapInfo = CGBitmapInfo.ByteOrder32Little.rawValue
+	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask.rawValue
+	bitmapInfo |= CGImageAlphaInfo.PremultipliedFirst.rawValue
 	return bitmapInfo
 	}()
 
 extension CGImage {
-	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage {
+	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
 		let width = CGImageGetWidth(self)
 		let height = CGImageGetHeight(self)
 		let rect = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
+		
 		let context = CGBitmapContextCreate(nil, width, height, CGImageGetBitsPerComponent(self), width * 4, colourSpace, bitmapInfo)
 		
 		CGContextSetFillColorWithColor(context, color)
@@ -82,17 +83,16 @@ extension CGImage {
 		return CGBitmapContextCreateImage(context)
 	}
 	
-	public static func op(width: Int, _ height: Int, closure: (CGContextRef) -> Void) -> CGImage! {
+	public static func op(width: Int, _ height: Int, closure: (CGContextRef?) -> Void) -> CGImage? {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
-		let rect = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
 		let context = CGBitmapContextCreate(nil, width, height, 8, width * 4, colourSpace, bitmapInfo)
 		closure(context)
 		return CGBitmapContextCreateImage(context)
 	}
 	
-	public static func create(color: CGColor, size: CGSize) -> CGImage! {
+	public static func create(color: CGColor, size: CGSize) -> CGImage? {
 		return op(Int(size.width), Int(size.height)) { (context) in
-			let rect = CGRect(origin: .zeroPoint, size: size)
+			let rect = CGRect(origin: .zero, size: size)
 			CGContextSetFillColorWithColor(context, color)
 			CGContextFillRect(context, rect)
 		}
@@ -101,27 +101,27 @@ extension CGImage {
 
 extension UIView {
 	public func fullDimension() {
-		setTranslatesAutoresizingMaskIntoConstraints(false)
+		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
 		let parent = self.superview!
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: nil, metrics: nil, views: views))
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[v]|", options: nil, metrics: nil, views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[v]|", options: [], metrics: nil, views: views))
 	}
 	
 	public func bottom(height: CGFloat = 1) {
-		setTranslatesAutoresizingMaskIntoConstraints(false)
+		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
 		let parent = self.superview!
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: nil, metrics: nil, views: views))
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[v(h)]|", options: nil, metrics: ["h": height / UIScreen.mainScreen().scale], views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[v(h)]|", options: [], metrics: ["h": height / UIScreen.mainScreen().scale], views: views))
 	}
 	
 	public func right(width: CGFloat = 1, margin: CGFloat = 0) {
-		setTranslatesAutoresizingMaskIntoConstraints(false)
+		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
 		let parent = self.superview!
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-m-[v]-m-|", options: nil, metrics: ["m": margin], views: views))
-		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:[v(w)]|", options: nil, metrics: ["w": width / UIScreen.mainScreen().scale], views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-m-[v]-m-|", options: [], metrics: ["m": margin], views: views))
+		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:[v(w)]|", options: [], metrics: ["w": width / UIScreen.mainScreen().scale], views: views))
 	}
 }
 
@@ -160,7 +160,7 @@ public class NibView: UIView, _NibView {
 	public var view: UIView!
 	
 	public convenience init() {
-		self.init(frame: .zeroRect)
+		self.init(frame: .zero)
 	}
 	
 	public override init(frame: CGRect) {
@@ -174,7 +174,7 @@ public class NibView: UIView, _NibView {
 		view = loadFromNib(nibName, index: nibIndex)
 		view.frame = bounds
 		view.backgroundColor = nil
-		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
+		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
 		if lineWidth != nil {
 			for c in lineWidth {
 				c.constant = LineWidth
@@ -183,7 +183,7 @@ public class NibView: UIView, _NibView {
 		insertSubview(view, atIndex: 0)
 	}
 	
-	public required init(coder aDecoder: NSCoder) {
+	public required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setup()
 	}
@@ -191,17 +191,22 @@ public class NibView: UIView, _NibView {
 
 extension UIImage {
 	public func blend(color: UIColor) -> UIImage? {
-		return blend(kCGBlendModeDestinationIn, color: color)
+		return blend(CGBlendMode.DestinationIn, color: color)
 	}
 	
 	public func blend(mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
-		let cgImage = CGImage.blend(mode, color: color.CGColor, alpha: alpha)
-		let image = UIImage(CGImage: cgImage, scale: scale, orientation: imageOrientation)
-		return image
+		if let cgImage = CGImage?.blend(mode, color: color.CGColor, alpha: alpha) {
+			let image = UIImage(CGImage: cgImage, scale: scale, orientation: imageOrientation)
+			return image
+		}
+		return nil
 	}
 	
 	public convenience init?(fromColor: UIColor) {
-		self.init(CGImage: CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)))
+		if let cgImage = CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)) {
+			self.init(CGImage: cgImage)
+		}
+		return nil
 	}
 }
 
@@ -210,7 +215,7 @@ extension UILabel {
 	public func keepUpdating(time: NSTimeInterval, closure: (NSTimeInterval) -> (String)) {
 		let timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
 		dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, NSEC_PER_SEC, 0)
-		objc_setAssociatedObject(self, &labelTimer, timer, objc_AssociationPolicy(OBJC_ASSOCIATION_RETAIN))
+		objc_setAssociatedObject(self, &labelTimer, timer, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 		weak var weakLabel = self
 		dispatch_source_set_event_handler(timer) {
 			weakLabel?.text = closure(time - NSDate.timeIntervalSinceReferenceDate())
@@ -244,10 +249,10 @@ extension UIView {
 		if let info = notif.userInfo {
 			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
 			kbRect = convertRect(kbRect, fromView: window)
-			var height = bounds.size.height - kbRect.origin.y
+			let height = bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardConstraint() {
 				constraint.constant = height
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
 					self.layoutIfNeeded()
 					}, completion: nil)
 				return
@@ -285,13 +290,13 @@ extension UIViewController {
 		if let info = notif.userInfo {
 			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
 			kbRect = view.convertRect(kbRect, fromView: view.window)
-			var height = view.bounds.size.height - kbRect.origin.y
+			let height = view.bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardConstraint() {
-				println(notif)
-				println("height to bottom layout = \(height)")
+				print(notif)
+				print("height to bottom layout = \(height)")
 				constraint.constant = height
 				keyboardHeightDidUpdate(height)
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
 					self.view.layoutIfNeeded()
 					}, completion: nil)
 				return
@@ -324,7 +329,7 @@ public class GradientView: UIView {
 		CGContextDrawLinearGradient(context, gradient,
 			CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
 			CGPointMake(rect.size.width * loc2.x, rect.size.height * loc2.y),
-			UInt32(kCGGradientDrawsBeforeStartLocation) | UInt32(kCGGradientDrawsAfterEndLocation))
+			CGGradientDrawingOptions.DrawsBeforeStartLocation.union(CGGradientDrawingOptions.DrawsAfterEndLocation))
 		CGContextRestoreGState(context)
 		super.drawRect(rect)
 	}
@@ -376,7 +381,7 @@ public class _Control: UIControl {
 		opaque = false
 	}
 	
-	required public init(coder aDecoder: NSCoder) {
+	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if iOS8Less {
 			contentMode = .Redraw
@@ -426,7 +431,7 @@ public class StyledView: UIView {
 		view = loadFromNib("\(nibNamePrefix)\(layout)", index: 0)
 		view.frame = bounds
 		view.backgroundColor = nil
-		view.autoresizingMask = .FlexibleHeight | .FlexibleWidth
+		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
 		insertSubview(view, atIndex: 0)
 	}
 	
@@ -435,7 +440,7 @@ public class StyledView: UIView {
 		setup()
 	}
 	
-	required public init(coder aDecoder: NSCoder) {
+	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setup()
 	}

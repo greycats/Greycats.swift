@@ -82,7 +82,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 		get { return data }
 		set(value) {
 			if reversed {
-				data = value.reverse()
+				data = Array(value.reverse())
 			} else {
 				data = value
 			}
@@ -92,7 +92,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 	
 	public func applyChanges(changes: [Change<T>]) {
 		tableView?.beginUpdates()
-		changes.map(self._applyChange)
+		changes.forEach(self._applyChange)
 		tableView?.endUpdates()
 	}
 	
@@ -107,12 +107,12 @@ public class TableViewSource<T: Equatable>: SectionData {
 			}
 			data.insert(change.value, atIndex: index)
 		case .Update:
-			if let index = find(data, change.value) {
+			if let index = data.indexOf(change.value) {
 				tableView?.reloadRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
 				data[index] = change.value
 			}
 		case .Delete:
-			if let index = find(data, change.value) {
+			if let index = data.indexOf(change.value) {
 				tableView?.deleteRowsAtIndexPaths([NSIndexPath(forRow: index, inSection: section)], withRowAnimation: .Automatic)
 				data.removeAtIndex(index)
 			}
@@ -221,7 +221,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	
 	public override func didSetTableView(tableView: UITableView) {
 		cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
-		println("\(self) register cell \(cellIdentifier)")
+		print("\(self) register cell \(cellIdentifier)")
 		_tableView?.registerClass(U.self, forCellReuseIdentifier: cellIdentifier)
 	}
 	
@@ -235,10 +235,10 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		let object = data[index]
 		if let c = cacheKey {
 			let key = c(object)
-			var data = rendering_cache.objectForKey(key) as? NSData
+			let data = rendering_cache.objectForKey(key) as? NSData
 			if data == nil {
 				renderCell?(cell, object) {[weak self] _ in
-					var mdata = NSMutableData()
+					let mdata = NSMutableData()
 					let coder = NSKeyedArchiver(forWritingWithMutableData: mdata)
 					cell.encodeRestorableStateWithCoder(coder)
 					coder.finishEncoding()
@@ -322,7 +322,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 				cell.layoutMargins = UIEdgeInsetsZero
 			}
 			placeholder = cell
-			placeholder.setTranslatesAutoresizingMaskIntoConstraints(false)
+			placeholder.translatesAutoresizingMaskIntoConstraints = false
 		}
 		preRender?(placeholder)
 		render(placeholder, index: indexPath.row)
@@ -358,7 +358,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool, reversed: Bool) {
 		joined = sections
 		self.alwaysDisplaySectionHeader = alwaysDisplaySectionHeader
-		for (index, var obj) in enumerate(sections) {
+		for (index, var obj) in sections.enumerate() {
 			obj.section = index
 			obj.reversed = reversed
 			obj.tableView = tableView
@@ -415,13 +415,13 @@ extension NSObject {
 			if let cache = objc_getAssociatedObject(self, &joinedAssociationKey) as? [String: TableViewJoinedData] {
 				return cache
 			} else {
-				var newValue: [String: TableViewJoinedData] = [:]
-				objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy(OBJC_ASSOCIATION_RETAIN))
+				let newValue: [String: TableViewJoinedData] = [:]
+				objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 				return newValue
 			}
 		}
 		set(newValue) {
-			objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy(OBJC_ASSOCIATION_RETAIN))
+			objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 		}
 	}
 	

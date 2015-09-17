@@ -28,17 +28,17 @@ public enum Filter {
 		switch self {
 		case .CharacterSequences:
 			string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByComposedCharacterSequences) { (substring, substringRange, enclosingRange, stop) -> () in
-				let escaped = NSRegularExpression.escapedPatternForString(substring)
+				let escaped = NSRegularExpression.escapedPatternForString(substring!)
 				pattern += "(\(escaped))(?:.*?)"
 			}
 		case .WordSequences:
 			string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByWords) { (substring, substringRange, enclosingRange, stop) -> () in
-				let escaped = NSRegularExpression.escapedPatternForString(substring)
+				let escaped = NSRegularExpression.escapedPatternForString(substring!)
 				pattern += "(\(escaped))(?:.*?)"
 			}
 		case .WordInitialSequences:
 			string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByWords) { (substring, substringRange, enclosingRange, stop) -> () in
-				let escaped = NSRegularExpression.escapedPatternForString(substring)
+				let escaped = NSRegularExpression.escapedPatternForString(substring!)
 				pattern += "\\b(\(escaped))(?:.*?)"
 			}
 		case .StartWith:
@@ -48,7 +48,7 @@ public enum Filter {
 			let escaped = NSRegularExpression.escapedPatternForString(string)
 			pattern = ".*?(\(escaped)).*?"
 		}
-		let r = NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions.CaseInsensitive, error: nil)!
+		let r = try! NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions.CaseInsensitive)
 		return r
 	}
 	
@@ -58,7 +58,7 @@ public enum Filter {
 			let r = self.pattern(keyword)
 			filtered = objects.filter() {
 				if let name = selector($0) {
-					return r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, count(name))) != nil
+					return r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, name.characters.count)) != nil
 				}
 				return false
 			}
@@ -73,7 +73,7 @@ public enum Filter {
 		for i in 0..<num {
 			let item: AnyObject = delegate.itemPassingToFilterAt(i)
 			let name = delegate.comparingStringOf(item)
-			if let m = r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, count(name))) {
+			if let _ = r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, name.characters.count)) {
 				filtered.append(item)
 			}
 		}
@@ -102,8 +102,8 @@ public enum Filter {
 		}
 		
 		public func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-			let filter = (textField.text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-			if count(filter) > 0 {
+			let filter = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
+			if filter.characters.count > 0 {
 				applyFilter(filter, hitReturn: false)
 			} else {
 				applyFilter(nil, hitReturn: false)
@@ -117,13 +117,13 @@ public enum Filter {
 		}
 		
 		public func textFieldShouldReturn(textField: UITextField) -> Bool {
-			applyFilter(count(textField.text) > 0 ? textField.text : nil, hitReturn: true)
+			applyFilter(textField.text!.characters.count > 0 ? textField.text : nil, hitReturn: true)
 			textField.resignFirstResponder()
 			return true
 		}
 		
 		public func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-			applyFilter(count(searchBar.text) > 0 ? searchBar.text : nil, hitReturn: false)
+			applyFilter(searchBar.text!.characters.count > 0 ? searchBar.text : nil, hitReturn: false)
 		}
 		
 		public func searchBarCancelButtonClicked(searchBar: UISearchBar) {

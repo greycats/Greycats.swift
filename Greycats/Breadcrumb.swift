@@ -22,34 +22,34 @@ class TapTap: NSObject {
 }
 
 public class Breadcrumb<T: NSCoding> {
-	private let attributes: [NSObject: AnyObject]
-	private let highlightAttributes: [NSObject: AnyObject]?
+	private let attributes: [String: AnyObject]
+	private let highlightAttributes: [String: AnyObject]?
 	private let transform: T -> String
 	public var slash = " / "
 	public var dots = "..."
 	public var within: CGSize = CGSizeMake(CGFloat.max, CGFloat.max)
 	
-	public init(attributes: [NSObject: AnyObject], highlightAttributes: [NSObject: AnyObject] = [:], transform: T -> String) {
+	public init(attributes: [String: AnyObject], highlightAttributes: [String: AnyObject] = [:], transform: T -> String) {
 		self.attributes = attributes
 		self.highlightAttributes = highlightAttributes
 		self.transform = transform
 	}
 	
 	func join(elements: [T]) -> (NSMutableAttributedString, [NSRange]) {
-		var attempt = NSMutableAttributedString()
+		let attempt = NSMutableAttributedString()
 		let slash = NSAttributedString(string: "\(self.slash)", attributes: attributes)
 		let lastIndex = elements.count - 1
 		var ranges: [NSRange] = []
 		
-		for (index, el) in enumerate(elements) {
+		for (index, el) in elements.enumerate() {
 			let str = transform(el)
 			var attr = attributes
-			var data = NSMutableData()
+			let data = NSMutableData()
 			let coder = NSKeyedArchiver(forWritingWithMutableData: data)
 			el.encodeWithCoder(coder)
 			coder.finishEncoding()
 			attr["archived-data"] = data
-			var text = NSMutableAttributedString(string: str, attributes: attr)
+			let text = NSMutableAttributedString(string: str, attributes: attr)
 			let loc = attempt.length
 			attempt.appendAttributedString(text)
 			if index != lastIndex {
@@ -66,12 +66,10 @@ public class Breadcrumb<T: NSCoding> {
 		if let highlight = highlight {
 			if let highlightAttributes = highlightAttributes {
 				if let r = range {
-					let matches = highlight.matchesInString(text.string, options: nil, range: r)
+					let matches = highlight.matchesInString(text.string, options: [], range: r)
 					for match in matches {
-						if let n = match.numberOfRanges {
-							for i in 1..<n {
-								text.addAttributes(highlightAttributes, range: match.rangeAtIndex(i))
-							}
+						for i in 1..<match.numberOfRanges {
+							text.addAttributes(highlightAttributes, range: match.rangeAtIndex(i))
 						}
 					}
 				}
@@ -102,7 +100,7 @@ public class Breadcrumb<T: NSCoding> {
 	}
 	
 	public func create(elements: [T], highlight: NSRegularExpression? = nil) -> NSMutableAttributedString {
-		var (attempt, ranges) = join(elements)
+		let (attempt, ranges) = join(elements)
 		_highlight(attempt, range: ranges.last, highlight: highlight)
 		_cut(attempt, ranges: ranges)
 		return attempt
@@ -119,9 +117,10 @@ public class Breadcrumb<T: NSCoding> {
 			if index < textView.textStorage.length {
 				if let value = textView.attributedText.attribute("archived-data", atIndex: index, effectiveRange: nil) as? NSData {
 					let coder = NSKeyedUnarchiver(forReadingWithData: value)
-					let category = T(coder: coder)
-					println("click \(value)")
-					block(category)
+					if let category = T(coder: coder) {
+						block(category)
+					}
+					print("click \(value)")
 				}
 			}
 		}

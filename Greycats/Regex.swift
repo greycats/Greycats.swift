@@ -15,17 +15,16 @@ public final class Regex {
 	
 	public init(_ pattern: String) {
 		self.pattern = pattern
-		var error: NSError?
-		internalExpression = NSRegularExpression(pattern: pattern, options: .CaseInsensitive, error: &error)!
+		internalExpression = try! NSRegularExpression(pattern: pattern, options: .CaseInsensitive)
 	}
 	
 	public func test(input: String) -> Bool {
-		let matches = internalExpression.matchesInString(input, options: nil, range:NSMakeRange(0, count(input)))
+		let matches = internalExpression.matchesInString(input, options: [], range:NSMakeRange(0, input.characters.count))
 		return matches.count > 0
 	}
 	
 	public func exec(input: String) -> [String]? {
-		if let match = internalExpression.firstMatchInString(input, options: nil, range: NSMakeRange(0, count(input))) {
+		if let match = internalExpression.firstMatchInString(input, options: [], range: NSMakeRange(0, input.characters.count)) {
 			var results: [String] = []
 			for i in 1..<match.numberOfRanges {
 				let r = match.rangeAtIndex(i)
@@ -39,7 +38,7 @@ public final class Regex {
 	}
 	
 	public func findall(input: String) -> [[String]] {
-		let matches = internalExpression.matchesInString(input, options: nil, range: NSMakeRange(0, count(input)))
+		let matches = internalExpression.matchesInString(input, options: [], range: NSMakeRange(0, input.characters.count))
 		return matches.map { match in
 			var results: [String] = []
 			for i in 1..<match.numberOfRanges {

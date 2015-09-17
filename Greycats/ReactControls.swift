@@ -29,7 +29,7 @@ public class ReactControls: NSObject {
 		b.removeObserver(self, forKeyPath: "highlighted")
 	}
 	
-	override public func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+	override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
 		if keyPath == "highlighted" {
 			if object as? UIControl == a {
 				b.highlighted = a.highlighted
@@ -39,7 +39,7 @@ public class ReactControls: NSObject {
 						self.a.alpha = 0.2
 					}
 				} else {
-					UIView.animateWithDuration(0.02, delay: 0.04, options: nil, animations: {
+					UIView.animateWithDuration(0.02, delay: 0.04, options: [], animations: {
 						self.a.alpha = 1
 						}, completion: nil)
 				}

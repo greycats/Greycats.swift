@@ -14,9 +14,9 @@ public class TextField: UITextField {
 	
 	override public func drawPlaceholderInRect(rect: CGRect) {
 		if let placeholder = placeholder {
-			let color = textColor.colorWithAlphaComponent(placeholderAlpha)
+			let color = textColor!.colorWithAlphaComponent(placeholderAlpha)
 			NSAttributedString(string: placeholder, attributes: [
-				NSFontAttributeName: font,
+				NSFontAttributeName: font!,
 				NSForegroundColorAttributeName: color
 				]).drawInRect(rect)
 		}

@@ -9,8 +9,8 @@ import UIKit
 
 public extension UIView {
 	@IBInspectable public var borderColor: UIColor? {
-		get { return UIColor(CGColor: layer.borderColor) }
-		set(value) { layer.borderColor = value!.CGColor }
+		get { if let color = layer.borderColor { return UIColor(CGColor: color) } else { return nil } }
+		set(value) { if let value = value { layer.borderColor = value.CGColor } }
 	}
 	@IBInspectable public var borderWidth: CGFloat {
 		get { return layer.borderWidth }
