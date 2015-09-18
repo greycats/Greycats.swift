@@ -133,8 +133,8 @@ extension UIView {
 		let pedge1 = perpendicularEdge1(axis)
 		let attr = perpendicularDimension(axis)
 		addConstraint(NSLayoutConstraint(item: view, attribute: pedge0, relatedBy: .Equal, toItem: self, attribute: pedge0, multiplier: 1, constant: 0))
-		addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .Equal, toItem: self, attribute: pedge1, multiplier: 1, constant: -2))
-		addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .Equal, toItem: self, attribute: attr, multiplier: 1, constant: -2))
+		addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .Equal, toItem: self, attribute: pedge1, multiplier: 1, constant: 0))
+		addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .Equal, toItem: self, attribute: attr, multiplier: 1, constant: 0))
 		
 		let edge0Constraint: NSLayoutConstraint
 		if let previous = previous {
@@ -151,7 +151,7 @@ extension UIView {
 				addConstraint(NSLayoutConstraint(item: c.firstItem, attribute: _edge0, relatedBy: .Equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 0))
 				removeConstraint(c)
 			} else {
-				let bottom = NSLayoutConstraint(item: self, attribute: _edge1, relatedBy: .Equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 2)
+				let bottom = NSLayoutConstraint(item: self, attribute: _edge1, relatedBy: .Equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 0)
 				addConstraint(bottom)
 			}
 			edge0Constraint = NSLayoutConstraint(item: view, attribute: _edge0, relatedBy: .Equal, toItem: self, attribute: _edge0, multiplier: 1, constant: 0)
