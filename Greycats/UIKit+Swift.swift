@@ -205,8 +205,9 @@ extension UIImage {
 	public convenience init?(fromColor: UIColor) {
 		if let cgImage = CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)) {
 			self.init(CGImage: cgImage)
+		} else {
+			return nil
 		}
-		return nil
 	}
 }
 
