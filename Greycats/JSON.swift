@@ -84,6 +84,17 @@ public struct JSON {
 		}
 		return nil
 	}
+	
+	public func tryDictionary(keys: String...) -> JSON? {
+		if let object = object as? [String: AnyObject] {
+			for key in keys {
+				if let v = object[key] {
+					return JSON(v)
+				}
+			}
+		}
+		return nil
+	}
 
 	public var json: AnyObject {
 		if let o: AnyObject = object {
