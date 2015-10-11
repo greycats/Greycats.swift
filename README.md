@@ -21,7 +21,7 @@ it, simply add the following line to your Podfile:
 
 or Cartfile
     
-    github "greycats/Greycats.swift" >= 1.2.2
+    github "greycats/Greycats.swift" >= 2.0.3
 
 ## Author
 
