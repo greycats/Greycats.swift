@@ -252,10 +252,13 @@ extension UIView {
 			kbRect = convertRect(kbRect, fromView: window)
 			let height = bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardConstraint() {
-				constraint.constant = height
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
-					self.layoutIfNeeded()
-					}, completion: nil)
+				if constraint.constant != height {
+					layoutIfNeeded()
+					constraint.constant = height
+					UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+						self.layoutIfNeeded()
+						}, completion: nil)
+				}
 				return
 			}
 		}
@@ -293,13 +296,16 @@ extension UIViewController {
 			kbRect = view.convertRect(kbRect, fromView: view.window)
 			let height = view.bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardConstraint() {
-				print(notif)
-				print("height to bottom layout = \(height)")
-				constraint.constant = height
-				keyboardHeightDidUpdate(height)
-				UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
-					self.view.layoutIfNeeded()
-					}, completion: nil)
+				if constraint.constant != height {
+					print(notif)
+					print("height to bottom layout = \(height)")
+					view.layoutIfNeeded()
+					constraint.constant = height
+					keyboardHeightDidUpdate(height)
+					UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+						self.view.layoutIfNeeded()
+						}, completion: nil)
+				}
 				return
 			}
 			let insets = UIEdgeInsetsMake(0, 0, height, 0)
