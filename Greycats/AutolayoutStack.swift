@@ -59,7 +59,7 @@ extension UIView {
 		}
 	}
 	
-	func _previousView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+	public func _previousView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints 
 		let attr = edge0(axis)
 		for gap in gaps {
@@ -70,7 +70,7 @@ extension UIView {
 		return nil
 	}
 	
-	func _firstView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+	public func _firstView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints 
 		let attr = edge0(axis)
 		for gap in gaps {
@@ -81,7 +81,7 @@ extension UIView {
 		return nil
 	}
 	
-	func _lastView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+	public func _lastView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints 
 		let attr = edge1(axis)
 		for gap in gaps {
@@ -92,7 +92,7 @@ extension UIView {
 		return nil
 	}
 	
-	func _nextView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+	public func _nextView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
 		let gaps = constraints 
 		let attr = edge1(axis)
 		for gap in gaps {
