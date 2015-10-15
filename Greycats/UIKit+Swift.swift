@@ -396,7 +396,7 @@ public class _Control: UIControl {
 		opaque = false
 	}
 	
-	public func centerScale(originalSize: CGSize, closure: (scale: CGFloat) -> ()) {
+	public func centerScale(originalSize: CGSize, @noescape closure: (scale: CGFloat) -> ()) {
 		var width = desiredWidth
 		let rect = self.bounds
 		if width == 0 {
