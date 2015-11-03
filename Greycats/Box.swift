@@ -20,7 +20,12 @@ public extension UIView {
 		get { return layer.cornerRadius }
 		set(value) {
 			layer.cornerRadius = value
-			layer.masksToBounds = layer.shadowOpacity == 0
+		}
+	}
+	@IBInspectable public var masksToBounds: Bool {
+		get { return layer.masksToBounds }
+		set(value) {
+			layer.masksToBounds = value
 		}
 	}
 	@IBInspectable public var shadowOffset: CGPoint {
