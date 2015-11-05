@@ -53,4 +53,17 @@ public extension UIView {
 
 @IBDesignable
 public class BoxView: UIView {
+	@IBInspectable public var cornerRadii: CGSize = CGSize(width: 4, height: 4)
+	@IBInspectable public var corners: UInt = 0 {
+		didSet {
+			updateCorners()
+		}
+	}
+	private func updateCorners() {
+		if corners > 0 {
+			let shape = CAShapeLayer()
+			shape.path = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: corners), cornerRadii: cornerRadii).CGPath
+			layer.mask = shape
+		}
+	}
 }
