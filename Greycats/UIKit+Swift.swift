@@ -64,7 +64,7 @@ private var bitmapInfo: UInt32 = {
 	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask.rawValue
 	bitmapInfo |= CGImageAlphaInfo.PremultipliedFirst.rawValue
 	return bitmapInfo
-	}()
+}()
 
 extension CGImage {
 	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
@@ -72,9 +72,9 @@ extension CGImage {
 		let width = CGImageGetWidth(self)
 		let height = CGImageGetHeight(self)
 		let rect = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
-		
+
 		let context = CGBitmapContextCreate(nil, width, height, CGImageGetBitsPerComponent(self), width * 4, colourSpace, bitmapInfo)
-		
+
 		CGContextSetFillColorWithColor(context, color)
 		CGContextFillRect(context, rect)
 		CGContextSetBlendMode(context, mode)
@@ -82,14 +82,14 @@ extension CGImage {
 		CGContextDrawImage(context, rect, self)
 		return CGBitmapContextCreateImage(context)
 	}
-	
+
 	public static func op(width: Int, _ height: Int, closure: (CGContextRef?) -> Void) -> CGImage? {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
 		let context = CGBitmapContextCreate(nil, width, height, 8, width * 4, colourSpace, bitmapInfo)
 		closure(context)
 		return CGBitmapContextCreateImage(context)
 	}
-	
+
 	public static func create(color: CGColor, size: CGSize) -> CGImage? {
 		return op(Int(size.width), Int(size.height)) { (context) in
 			let rect = CGRect(origin: .zero, size: size)
@@ -107,7 +107,7 @@ extension UIView {
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[v]|", options: [], metrics: nil, views: views))
 	}
-	
+
 	public func bottom(height: CGFloat = 1) {
 		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
@@ -115,7 +115,7 @@ extension UIView {
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[v(h)]|", options: [], metrics: ["h": height / UIScreen.mainScreen().scale], views: views))
 	}
-	
+
 	public func right(width: CGFloat = 1, margin: CGFloat = 0) {
 		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
@@ -158,18 +158,18 @@ public class NibView: UIView, _NibView {
 	public var nibName: String { return "-" }
 	var nibIndex: Int { return 0 }
 	public var view: UIView!
-	
+
 	public convenience init() {
 		self.init(frame: .zero)
 	}
-	
+
 	public override init(frame: CGRect) {
 		super.init(frame: frame)
 		setup()
 	}
-	
+
 	@IBOutlet var lineWidth: [NSLayoutConstraint]!
-	
+
 	public func setup() {
 		view = loadFromNib(nibName, index: nibIndex)
 		view.frame = bounds
@@ -182,7 +182,7 @@ public class NibView: UIView, _NibView {
 		}
 		insertSubview(view, atIndex: 0)
 	}
-	
+
 	public required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setup()
@@ -193,7 +193,7 @@ extension UIImage {
 	public func blend(color: UIColor) -> UIImage? {
 		return blend(CGBlendMode.DestinationIn, color: color)
 	}
-	
+
 	public func blend(mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
 		if let cgImage = CGImage?.blend(mode, color: color.CGColor, alpha: alpha) {
 			let image = UIImage(CGImage: cgImage, scale: scale, orientation: imageOrientation)
@@ -201,7 +201,7 @@ extension UIImage {
 		}
 		return nil
 	}
-	
+
 	public convenience init?(fromColor: UIColor) {
 		if let cgImage = CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)) {
 			self.init(CGImage: cgImage)
@@ -238,14 +238,14 @@ extension UIView {
 	public func registerKeyboard() {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
 	}
-	
+
 	public func unregisterKeyboard() {
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillChangeFrameNotification, object: nil)
 	}
 	public func keyboardConstraint() -> NSLayoutConstraint? {
 		return nil
 	}
-	
+
 	public func keyboardWillChange(notif: NSNotification) {
 		if let info = notif.userInfo {
 			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
@@ -270,26 +270,26 @@ extension UIViewController {
 	public func registerKeyboard() {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
 	}
-	
+
 	public func unregisterKeyboard() {
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillChangeFrameNotification, object: nil)
 	}
-	
+
 	public func activeField() -> UIView? {
 		return nil
 	}
-	
+
 	public func scrollingView() -> UIScrollView? {
 		return nil
 	}
-	
+
 	public func keyboardConstraint() -> NSLayoutConstraint? {
 		return nil
 	}
-	
+
 	public func keyboardHeightDidUpdate(height: CGFloat) {
 	}
-	
+
 	public func keyboardWillChange(notif: NSNotification) {
 		if let info = notif.userInfo {
 			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
@@ -328,7 +328,7 @@ public class GradientView: UIView {
 	@IBInspectable public var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
 	@IBInspectable public var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
 	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
-	
+
 	override public func drawRect(rect: CGRect) {
 		let context = UIGraphicsGetCurrentContext()
 		CGContextSaveGState(context)
@@ -345,20 +345,20 @@ public class GradientView: UIView {
 public struct Polar {
 	public let r: CGFloat
 	public var θ: CGFloat
-	
+
 	public init(_ a: CGFloat, _ b: CGFloat) {
 		r = sqrt(pow(a, 2) + pow(b, 2))
 		θ = atan2(b, a)
 	}
-	
+
 	public mutating func rotate(angle: CGFloat) {
 		θ -= angle
 	}
-	
+
 	public var x: CGFloat {
 		return r * cos(θ)
 	}
-	
+
 	public var y: CGFloat {
 		return r * sin(θ)
 	}
@@ -369,17 +369,25 @@ public class _Control: UIControl {
 	override public func tintColorDidChange() {
 		setNeedsDisplay()
 	}
-	
+
 	@IBInspectable public var disabledColor: UIColor = UIColor.grayColor()
-	
+
+	@IBInspectable public var respectHeight: Bool = false {
+		didSet { setNeedsDisplay() }
+	}
+
 	@IBInspectable public var desiredWidth: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
-	
+
+	@IBInspectable public var scaleBoost: CGFloat = 1 {
+		didSet { setNeedsDisplay() }
+	}
+
 	@IBInspectable public var angle: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
-	
+
 	required override public init(frame: CGRect) {
 		super.init(frame: frame)
 		if iOS8Less {
@@ -387,7 +395,7 @@ public class _Control: UIControl {
 		}
 		opaque = false
 	}
-	
+
 	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		if iOS8Less {
@@ -395,17 +403,28 @@ public class _Control: UIControl {
 		}
 		opaque = false
 	}
-	
+
 	public func centerScale(originalSize: CGSize, @noescape closure: (scale: CGFloat) -> ()) {
-		var width = desiredWidth
-		let rect = self.bounds
-		if width == 0 {
-			width = rect.size.width
+		let rect = bounds
+		let scale: CGFloat
+		let width: CGFloat
+		let height: CGFloat
+		if respectHeight {
+			height = rect.size.width * scaleBoost
+			scale = height / originalSize.height
+			width = height * originalSize.width / originalSize.height
+		} else {
+			if desiredWidth == 0 {
+				width = rect.size.width * scaleBoost
+			} else {
+				width = desiredWidth * scaleBoost
+			}
+			scale = width / originalSize.width
+			height = width * originalSize.height / originalSize.width
 		}
-		let scale = width / originalSize.width
 		let context = UIGraphicsGetCurrentContext()
 		CGContextSaveGState(context)
-		CGContextTranslateCTM(context, (rect.size.width - width) / 2, (rect.size.height - width * originalSize.height / originalSize.width) / 2)
+		CGContextTranslateCTM(context, (rect.size.width - width) / 2, (rect.size.height - height) / 2)
 		CGContextScaleCTM(context, scale, scale)
 		if enabled {
 			tintColor.setFill()
@@ -430,7 +449,7 @@ public class StyledView: UIView {
 	}
 	weak public var view: UIView!
 	public var nibNamePrefix: String { return "" }
-	
+
 	public func setup() {
 		if view != nil {
 			view.removeFromSuperview()
@@ -441,12 +460,12 @@ public class StyledView: UIView {
 		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
 		insertSubview(view, atIndex: 0)
 	}
-	
+
 	override public init(frame: CGRect) {
 		super.init(frame: frame)
 		setup()
 	}
-	
+
 	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setup()
