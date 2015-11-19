@@ -390,17 +390,13 @@ public class _Control: UIControl {
 
 	required override public init(frame: CGRect) {
 		super.init(frame: frame)
-		if iOS8Less {
-			contentMode = .Redraw
-		}
+		contentMode = .Redraw
 		opaque = false
 	}
 
 	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
-		if iOS8Less {
-			contentMode = .Redraw
-		}
+		contentMode = .Redraw
 		opaque = false
 	}
 
