@@ -15,7 +15,7 @@ public final class Regex {
 	
 	public init(_ pattern: String) {
 		self.pattern = pattern
-		internalExpression = try! NSRegularExpression(pattern: pattern, options: .CaseInsensitive)
+		internalExpression = try! NSRegularExpression(pattern: pattern, options: [.CaseInsensitive, .AnchorsMatchLines])
 	}
 	
 	public func test(input: String) -> Bool {
