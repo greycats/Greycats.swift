@@ -47,7 +47,7 @@ public struct Change<T: Equatable> {
 public class TableViewSource<T: Equatable>: SectionData {
 	typealias Element = T
 	private var data: [T] = []
-	private var select: ((T) -> UIViewController?)?
+	private var select: ((T, Int) -> UIViewController?)?
 	public var cacheKey: (T -> String)?
 	private weak var _tableView: UITableView?
 	public var reversed: Bool = false
@@ -124,11 +124,16 @@ public class TableViewSource<T: Equatable>: SectionData {
 	func onSourceChanged() {
 	}
 	
-	public func onSelect(block: (T) -> UIViewController?) -> Self {
+	public func onSelect(block: (T, Int) -> UIViewController?) -> Self {
 		select = block
 		return self
 	}
-	
+
+	public func onSelect(block: (T) -> UIViewController?) -> Self {
+		select = { (t, _) in block(t) }
+		return self
+	}
+
 	required public init(title: String?) {
 		self.title = title
 	}
@@ -163,7 +168,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 	
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		tableView.deselectRowAtIndexPath(indexPath, animated: true)
-		if let vc = select?(data[indexPath.row]) {
+		if let vc = select?(data[indexPath.row], indexPath.row) {
 			navigationController?.pushViewController(vc, animated: true)
 		}
 	}
