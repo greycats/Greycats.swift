@@ -40,7 +40,7 @@ extension UIView {
 			previous = view
 		}
 	}
-	
+
 	public func horizontalStack(views: [UIView], marginX: CGFloat = 0, equalWidth: Bool = false) {
 		for v in subviews {
 			v.removeFromSuperview()
@@ -58,9 +58,9 @@ extension UIView {
 			previous = view
 		}
 	}
-	
+
 	public func _previousView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints 
+		let gaps = constraints
 		let attr = edge0(axis)
 		for gap in gaps {
 			if gap.firstAttribute == attr && gap.firstItem as? UIView == view {
@@ -69,9 +69,9 @@ extension UIView {
 		}
 		return nil
 	}
-	
+
 	public func _firstView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints 
+		let gaps = constraints
 		let attr = edge0(axis)
 		for gap in gaps {
 			if gap.secondAttribute == attr && gap.secondItem as? UIView == self {
@@ -80,9 +80,9 @@ extension UIView {
 		}
 		return nil
 	}
-	
+
 	public func _lastView(axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints 
+		let gaps = constraints
 		let attr = edge1(axis)
 		for gap in gaps {
 			if gap.firstAttribute == attr && gap.firstItem as? UIView == self {
@@ -91,9 +91,9 @@ extension UIView {
 		}
 		return nil
 	}
-	
+
 	public func _nextView(view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
-		let gaps = constraints 
+		let gaps = constraints
 		let attr = edge1(axis)
 		for gap in gaps {
 			if gap.secondAttribute == attr && gap.secondItem as? UIView == view {
@@ -102,28 +102,36 @@ extension UIView {
 		}
 		return nil
 	}
-	
-	public func ejectView(view: UIView, axis: UILayoutConstraintAxis) {
+
+	public func ejectView(view: UIView, axis: UILayoutConstraintAxis, animated: Bool = true) {
 		if let prev = _previousView(view, axis: axis),
 			let next = _nextView(view, axis: axis) {
 				let newConstraint = NSLayoutConstraint(item: next.firstItem, attribute: next.firstAttribute, relatedBy: .Equal, toItem: prev.secondItem, attribute: prev.secondAttribute, multiplier: 1, constant: view.bounds.height)
-				self.addConstraint(newConstraint)
-				self.layoutIfNeeded()
-				UIView.animateWithDuration(0.25, animations: {
-					view.alpha = 0
-					}) { _ in
-						self.removeConstraint(prev)
-						self.removeConstraint(next)
-						view.removeFromSuperview()
-				}
-				
-				UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
+				if animated {
+					addConstraint(newConstraint)
+					layoutIfNeeded()
+					UIView.animateWithDuration(0.25, animations: {
+						view.alpha = 0
+						}) { _ in
+							self.removeConstraint(prev)
+							self.removeConstraint(next)
+							view.removeFromSuperview()
+					}
+					UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
+						newConstraint.constant = 0
+						self.layoutIfNeeded()
+						}, completion: nil)
+				} else {
 					newConstraint.constant = 0
-					self.layoutIfNeeded()
-					}, completion: nil)
+					addConstraint(newConstraint)
+					removeConstraint(prev)
+					removeConstraint(next)
+					view.removeFromSuperview()
+					layoutIfNeeded()
+				}
 		}
 	}
-	
+
 	public func injectView(view: UIView, axis: UILayoutConstraintAxis, after previous: UIView?, marginX: CGFloat = 0, animated: Bool = false) {
 		view.translatesAutoresizingMaskIntoConstraints = false
 		addSubview(view)
@@ -135,7 +143,7 @@ extension UIView {
 		addConstraint(NSLayoutConstraint(item: view, attribute: pedge0, relatedBy: .Equal, toItem: self, attribute: pedge0, multiplier: 1, constant: 0))
 		addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .Equal, toItem: self, attribute: pedge1, multiplier: 1, constant: 0))
 		addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .Equal, toItem: self, attribute: attr, multiplier: 1, constant: 0))
-		
+
 		let edge0Constraint: NSLayoutConstraint
 		if let previous = previous {
 			// let us found original next view, and link it to this view
@@ -166,7 +174,7 @@ extension UIView {
 				edge0Constraint.constant = 0
 				self.layoutIfNeeded()
 			}
-			
+
 			UIView.animateWithDuration(0.15, delay: 0.2, options: .CurveEaseIn, animations: {
 				view.alpha = 1
 				}, completion: nil)
