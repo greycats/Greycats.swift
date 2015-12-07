@@ -71,13 +71,13 @@ public class TableViewSource<T: Equatable>: SectionData {
 		renderHeader = block
 		return self
 	}
-	
+
 	public func willSetTableView(tableView: UITableView) {
 	}
-	
+
 	public func didSetTableView(tableView: UITableView) {
 	}
-	
+
 	public var source: [T] {
 		get { return data }
 		set(value) {
@@ -89,13 +89,17 @@ public class TableViewSource<T: Equatable>: SectionData {
 			onSourceChanged()
 		}
 	}
-	
-	public func applyChanges(changes: [Change<T>]) {
-		tableView?.beginUpdates()
+
+	public func applyChanges(changes: [Change<T>], animated: Bool = true) {
+		if animated {
+			tableView?.beginUpdates()
+		}
 		changes.forEach(self._applyChange)
-		tableView?.endUpdates()
+		if animated {
+			tableView?.endUpdates()
+		}
 	}
-	
+
 	private func _applyChange(change: Change<T>) {
 		switch change.type {
 		case .Create:
@@ -114,19 +118,23 @@ public class TableViewSource<T: Equatable>: SectionData {
 			}
 		}
 	}
-	
-	public func applyChange(change: Change<T>) {
-		tableView?.beginUpdates()
-		_applyChange(change)
-		tableView?.endUpdates()
-	}
-	
-	func onSourceChanged() {
-	}
+
+	public func applyChange(change: Change<T>, animated: Bool = true) {
+		if animated {
+			tableView?.beginUpdates()
+		}
 	
 	public func onSelect(block: (T, Int) -> UIViewController?) -> Self {
 		select = block
 		return self
+	}
+		_applyChange(change)
+		if animated {
+			tableView?.endUpdates()
+		}
+	}
+
+	func onSourceChanged() {
 	}
 
 	public func onSelect(block: (T) -> UIViewController?) -> Self {
@@ -137,19 +145,19 @@ public class TableViewSource<T: Equatable>: SectionData {
 	required public init(title: String?) {
 		self.title = title
 	}
-	
+
 	public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return data.count
 	}
-	
+
 	public func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		return UITableViewAutomaticDimension
 	}
-	
+
 	public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell! {
 		return nil
 	}
-	
+
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if self.title != nil {
 			var height: CGFloat = 44
@@ -161,18 +169,18 @@ public class TableViewSource<T: Equatable>: SectionData {
 		}
 		return 0
 	}
-	
+
 	public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		return renderHeader?(title!)
 	}
-	
+
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		tableView.deselectRowAtIndexPath(indexPath, animated: true)
 		if let vc = select?(data[indexPath.row], indexPath.row) {
 			navigationController?.pushViewController(vc, animated: true)
 		}
 	}
-	
+
 	public func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 	}
 }
@@ -181,7 +189,7 @@ public class TableViewDataNib<T: Equatable, U: UITableViewCell where U: TableVie
 	public required init(title: String?) {
 		super.init(title: title)
 	}
-	
+
 	public override func didSetTableView(tableView: UITableView) {
 		cellIdentifier = "\(U.nibName)-\(section)"
 		tableView.registerNib(UINib(nibName: U.nibName, bundle: NSBundle(forClass: U.self)), forCellReuseIdentifier: cellIdentifier)
@@ -194,15 +202,15 @@ public protocol TableViewDataCustomizeRegister {
 }
 
 public class TableViewDataCombine<T: Equatable, U: UITableViewCell where U: TableViewDataCustomizeRegister>: TableViewData<T, U> {
-	
+
 	public required init(title: String?) {
 		super.init(title: title)
 	}
-	
+
 	public override func willSetTableView(tableView: UITableView) {
 		cellIdentifier = Cell.defaultIdentifier
 	}
-	
+
 	public override func didSetTableView(tableView: UITableView) {
 		Cell.register(tableView)
 	}
@@ -219,19 +227,19 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 	private var postRender: ((U, Int) -> Void)?
 	private var placeholder: U!
 	private let rendering_cache = NSCache()
-	
+
 	public override func didSetTableView(tableView: UITableView) {
 		cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
 		print("\(self) register cell \(cellIdentifier)")
 		_tableView?.registerClass(U.self, forCellReuseIdentifier: cellIdentifier)
 	}
-	
+
 	var identifier: ((T) -> (String))?
 	public func interceptIdentifier(closure: ((T) -> (String))) -> Self {
 		identifier = closure
 		return self
 	}
-	
+
 	func render(cell: U, index: Int) {
 		let object = data[index]
 		if let c = cacheKey {
@@ -256,22 +264,22 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 			renderCell?(cell, object) {}
 		}
 	}
-	
+
 	public required init(title: String?) {
 		super.init(title: title)
 		className = "\(NSStringFromClass(U))"
 	}
-	
+
 	public func willDisplay(block: (cell: U, row: Int) -> Void) -> Self {
 		willDisplay = block
 		return self
 	}
-	
+
 	public func preRender(block: (cell: U) -> Void) -> Self {
 		preRender = block
 		return self
 	}
-	
+
 	public func onRender(block: (cell: U, object: T) -> Void) -> Self {
 		renderCell = {
 			block(cell: $0, object: $1)
@@ -279,25 +287,25 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		}
 		return self
 	}
-	
+
 	public func postRender(block: (cell: U, row: Int) -> Void) -> Self {
 		postRender = block
 		return self
 	}
-	
+
 	var didChange: (Void -> Void)?
 	public func didChange(block: Void -> Void) -> Self {
 		didChange = block
 		return self
 	}
-	
+
 	public func onFutureRender(render: (U, T, dispatch_block_t) -> Void) -> Self {
 		renderCell = render
 		return self
 	}
-	
+
 	var rowAnimation = UITableViewRowAnimation.None
-	
+
 	override func onSourceChanged() {
 		didChange?()
 		switch rowAnimation {
@@ -307,12 +315,12 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 			self.tableView?.reloadSections(NSIndexSet(index: section), withRowAnimation: rowAnimation)
 		}
 	}
-	
+
 	private override func _applyChange(change: Change<T>) {
 		super._applyChange(change)
 		didChange?()
 	}
-	
+
 	public override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		if skipHeightCalculation {
 			return UITableViewAutomaticDimension
@@ -332,7 +340,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		let height = CGFloat(ceil(placeholder.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height)) + 0.5
 		return height
 	}
-	
+
 	public override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let object = data[indexPath.row]
 		let id = identifier?(object) ?? cellIdentifier
@@ -346,7 +354,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		postRender?(cell, indexPath.row)
 		return cell
 	}
-	
+
 	public override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		willDisplay?(cell as! Cell, indexPath.row)
 	}
@@ -355,7 +363,7 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate {
 	var joined: [SectionData]
 	var alwaysDisplaySectionHeader: Bool
-	
+
 	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool, reversed: Bool) {
 		joined = sections
 		self.alwaysDisplaySectionHeader = alwaysDisplaySectionHeader
@@ -371,38 +379,38 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 		tableView.delegate = self
 		tableView.dataSource = self
 	}
-	
+
 	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
 		return joined.count
 	}
-	
+
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return joined[section].tableView(tableView, numberOfRowsInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if !alwaysDisplaySectionHeader && joined[section].tableView(tableView, numberOfRowsInSection: section) == 0 {
 			return 0
 		}
 		return joined[section].tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		return joined[section].tableView(tableView, viewForHeaderInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		return joined[indexPath.section].tableView(tableView, heightForRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		return joined[indexPath.section].tableView(tableView, cellForRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, didSelectRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
 	}
@@ -425,14 +433,14 @@ extension NSObject {
 			objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 		}
 	}
-	
+
 	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default", reversed: Bool = false, navigationController: UINavigationController?) {
 		if let joinedData = _joined_sections[key] {
 			for (var data) in joinedData.joined {
 				data.tableView = nil
 			}
 		}
-		
+
 		if reversed {
 			tableView.transform = CGAffineTransformMake(1, 0, 0, -1, 0, 0)
 		}
