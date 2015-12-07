@@ -123,11 +123,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 		if animated {
 			tableView?.beginUpdates()
 		}
-	
-	public func onSelect(block: (T, Int) -> UIViewController?) -> Self {
-		select = block
-		return self
-	}
+
 		_applyChange(change)
 		if animated {
 			tableView?.endUpdates()
@@ -135,6 +131,11 @@ public class TableViewSource<T: Equatable>: SectionData {
 	}
 
 	func onSourceChanged() {
+	}
+
+	public func onSelect(block: (T, Int) -> UIViewController?) -> Self {
+		select = block
+		return self
 	}
 
 	public func onSelect(block: (T) -> UIViewController?) -> Self {
