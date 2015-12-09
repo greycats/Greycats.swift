@@ -10,15 +10,36 @@ import UIKit
 
 @IBDesignable
 public class TextField: UITextField {
-	@IBInspectable public var placeholderAlpha: CGFloat = 0.5
-	
-	override public func drawPlaceholderInRect(rect: CGRect) {
-		if let placeholder = placeholder {
-			let color = textColor!.colorWithAlphaComponent(placeholderAlpha)
-			NSAttributedString(string: placeholder, attributes: [
-				NSFontAttributeName: font!,
-				NSForegroundColorAttributeName: color
-				]).drawInRect(rect)
+	@IBInspectable public var placeholderAlpha: CGFloat = 0.5 {
+		didSet {
+			updatePlaceholder()
+		}
+	}
+
+	private func updatePlaceholder() {
+		if let placeholder = placeholder, font = font, textColor = textColor {
+			attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [
+				NSFontAttributeName: font,
+				NSForegroundColorAttributeName: textColor.colorWithAlphaComponent(placeholderAlpha)
+				])
+		}
+	}
+
+	override public var placeholder: String? {
+		didSet {
+			updatePlaceholder()
+		}
+	}
+
+	override public var font: UIFont? {
+		didSet {
+			updatePlaceholder()
+		}
+	}
+
+	override public var textColor: UIColor? {
+		didSet {
+			updatePlaceholder()
 		}
 	}
 }
