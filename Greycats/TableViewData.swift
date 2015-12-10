@@ -45,7 +45,7 @@ public struct Change<T: Equatable> {
 }
 
 public class TableViewSource<T: Equatable>: SectionData {
-	typealias Element = T
+	public typealias Element = T
 	private var data: [T] = []
 	private var select: ((T, Int) -> UIViewController?)?
 	public var cacheKey: (T -> String)?
