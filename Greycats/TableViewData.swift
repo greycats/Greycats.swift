@@ -350,17 +350,8 @@ public class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T>
 		if skipHeightCalculation {
 			cell.layoutMargins = UIEdgeInsetsZero
 		}
-}
-
-class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate {
-	var joined: [SectionData]
-	var alwaysDisplaySectionHeader: Bool
-	weak var scrollViewDelegate: UIScrollViewDelegate?
 		preRender?(cell)
-
-	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool, reversed: Bool, scrollViewDelegate: UIScrollViewDelegate? = nil) {
 		render(cell, index: indexPath.row)
-		joined = sections
 		postRender?(cell, indexPath.row)
 		return cell
 	}
@@ -368,6 +359,15 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	public override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		willDisplay?(cell as! Cell, indexPath.row)
 	}
+}
+
+class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate {
+	var joined: [SectionData]
+	var alwaysDisplaySectionHeader: Bool
+	weak var scrollViewDelegate: UIScrollViewDelegate?
+
+	init(_ tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool, reversed: Bool, scrollViewDelegate: UIScrollViewDelegate? = nil) {
+		joined = sections
 		self.scrollViewDelegate = scrollViewDelegate
 		self.alwaysDisplaySectionHeader = alwaysDisplaySectionHeader
 		for (index, var obj) in sections.enumerate() {
@@ -433,34 +433,34 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
 		return joined.count
 	}
-	
+
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return joined[section].tableView(tableView, numberOfRowsInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if !alwaysDisplaySectionHeader && joined[section].tableView(tableView, numberOfRowsInSection: section) == 0 {
 			return 0
 		}
 		return joined[section].tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		return joined[section].tableView(tableView, viewForHeaderInSection: section)
 	}
-	
+
 	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		return joined[indexPath.section].tableView(tableView, heightForRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		return joined[indexPath.section].tableView(tableView, cellForRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, didSelectRowAtIndexPath: indexPath)
 	}
-	
+
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
 	}
@@ -490,7 +490,7 @@ extension NSObject {
 				data.tableView = nil
 			}
 		}
-		
+
 		if reversed {
 			tableView.transform = CGAffineTransformMake(1, 0, 0, -1, 0, 0)
 		}
