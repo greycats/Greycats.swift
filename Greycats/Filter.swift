@@ -10,23 +10,24 @@
 import UIKit
 
 public class FilterHook<T: Equatable> {
-	public var original: [T]! {
+	public var source: [T]! {
 		didSet {
+			data.source = source
 			delegate.applyFilter(term)
 		}
 	}
 	
 	let delegate = Filter.Delegate()
 	var term: String?
-
+	weak var data: TableViewSource<T>!
 	public init(data: TableViewSource<T>, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil, selector: T -> String?) {
 		delegate.startEditing = shouldStart
-		weak var _data = data
+		self.data = data
 		delegate.applyFilter = {[weak self] string in
 			if let this = self {
 				this.term = string
-				let results = filter.apply(string, objects: this.original, selector: selector)
-				_data?.source = results
+				let results = filter.apply(string, objects: this.source, selector: selector)
+				self?.data.source = results
 			}
 		}
 		input.delegate = delegate
