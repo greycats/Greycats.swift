@@ -9,38 +9,44 @@
 
 import UIKit
 
-public class FilterHook<T: Equatable> {
+public protocol Filtering {
+	var valueToFilter: String? { get }
+	func highlightMatches(matches: [NSTextCheckingResult])
+	func clearMatches()
+}
+
+public class FilterHook<T: Equatable where T: Filtering> {
 	public var source: [T]! {
 		didSet {
 			data.source = source
 			delegate.applyFilter(term)
 		}
 	}
-	
+
 	let delegate = Filter.Delegate()
 	var term: String?
 	weak var data: TableViewSource<T>!
-	public init(data: TableViewSource<T>, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil, selector: T -> String?) {
+	public init(data: TableViewSource<T>, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil) {
 		delegate.startEditing = shouldStart
 		self.data = data
 		delegate.applyFilter = {[weak self] string in
 			if let this = self {
 				this.term = string
-				let results = filter.apply(string, objects: this.source, selector: selector)
+				let results = filter.apply(string, objects: this.source)
 				self?.data.source = results
 			}
 		}
 		input.delegate = delegate
 	}
 
-	public init(data: TableViewSource<T>, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil, selector: T -> String?) {
+	public init(data: TableViewSource<T>, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil) {
 		delegate.startEditing = shouldStart
 		self.data = data
 		delegate.applyFilter = {[weak self] string in
 			if let this = self {
 				this.term = string
-				let results = filter.apply(string, objects: this.source, selector: selector)
-				self?.data.source = results
+				let results = filter.apply(string, objects: this.source)
+				this.data.source = results
 			}
 		}
 		input.delegate = delegate
@@ -55,7 +61,7 @@ public enum Filter {
 	case Contains
 
 	func pattern(string: String) -> NSRegularExpression {
-		var pattern = "(.*?)"
+		var pattern = "(?:.*?)"
 		let range = Range(start: string.startIndex, end: string.endIndex)
 		switch self {
 		case .CharacterSequences:
@@ -84,18 +90,26 @@ public enum Filter {
 		return r
 	}
 
-	public func apply<T>(string: String?, objects: [T], selector: (T) -> String?) -> [T] {
-		var filtered: [T] = objects
+	public func apply<T: Filtering>(string: String?, objects: [T]) -> [T] {
 		if let keyword = string {
 			let r = pattern(keyword)
-			filtered = objects.filter { object in
-				if let name = selector(object) {
-					return r.firstMatchInString(name, options: NSMatchingOptions.Anchored, range: NSMakeRange(0, name.characters.count)) != nil
+			var filtered: [T] = []
+			objects.forEach { object in
+				if let name = object.valueToFilter {
+					let matches = r.matchesInString(name, options: .Anchored, range: NSMakeRange(0, name.characters.count))
+					if matches.count > 0 {
+						object.highlightMatches(matches)
+						filtered.append(object)
+					}
 				}
-				return false
 			}
+			return filtered
+		} else {
+			for t in objects {
+				t.clearMatches()
+			}
+			return objects
 		}
-		return filtered
 	}
 
 	class Delegate: NSObject, UITextFieldDelegate, UISearchBarDelegate {
