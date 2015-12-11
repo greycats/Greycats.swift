@@ -32,6 +32,19 @@ public class FilterHook<T: Equatable> {
 		}
 		input.delegate = delegate
 	}
+
+	public init(data: TableViewSource<T>, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil, selector: T -> String?) {
+		delegate.startEditing = shouldStart
+		self.data = data
+		delegate.applyFilter = {[weak self] string in
+			if let this = self {
+				this.term = string
+				let results = filter.apply(string, objects: this.source, selector: selector)
+				self?.data.source = results
+			}
+		}
+		input.delegate = delegate
+	}
 }
 
 public enum Filter {
@@ -90,11 +103,7 @@ public enum Filter {
 		var startEditing: (() -> Bool)? = nil
 
 		func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-			var start = true
-			if startEditing != nil {
-				start = startEditing!()
-			}
-			return start
+			return startEditing?() ?? true
 		}
 
 		func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
@@ -124,6 +133,13 @@ public enum Filter {
 
 		func searchBarCancelButtonClicked(searchBar: UISearchBar) {
 			applyFilter(nil)
+			searchBar.showsCancelButton = false
+			searchBar.resignFirstResponder()
+		}
+
+		func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+			searchBar.showsCancelButton = true
+			return startEditing?() ?? true
 		}
 
 		func searchBarSearchButtonClicked(searchBar: UISearchBar) {
