@@ -22,11 +22,12 @@ public class FilterHook<T: Equatable where T: Filtering> {
 			delegate.applyFilter(term)
 		}
 	}
-
+	public typealias Data = TableViewSource<T>
 	let delegate = Filter.Delegate()
 	var term: String?
-	weak var data: TableViewSource<T>!
-	public init(data: TableViewSource<T>, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil) {
+	weak var data: Data!
+
+	public init(data: Data, filter: Filter, shouldStart: (() -> Bool)? = nil) {
 		delegate.startEditing = shouldStart
 		self.data = data
 		delegate.applyFilter = {[weak self] string in
@@ -36,19 +37,15 @@ public class FilterHook<T: Equatable where T: Filtering> {
 				self?.data.source = results
 			}
 		}
+	}
+
+	convenience public init(data: Data, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil) {
+		self.init(data: data, filter: filter, shouldStart: shouldStart)
 		input.delegate = delegate
 	}
 
-	public init(data: TableViewSource<T>, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil) {
-		delegate.startEditing = shouldStart
-		self.data = data
-		delegate.applyFilter = {[weak self] string in
-			if let this = self {
-				this.term = string
-				let results = filter.apply(string, objects: this.source)
-				this.data.source = results
-			}
-		}
+	convenience public init(data: Data, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil) {
+		self.init(data: data, filter: filter, shouldStart: shouldStart)
 		input.delegate = delegate
 	}
 }
