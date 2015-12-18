@@ -10,7 +10,7 @@
 import UIKit
 
 public func _id<T: AnyObject>(object: T) -> String {
-	return "<\(_stdlib_getDemangledTypeName(object)): 0x\(String(ObjectIdentifier(object).uintValue, radix: 16))>"
+	return "[\(_stdlib_getDemangledTypeName(object)):0x\(String(ObjectIdentifier(object).uintValue, radix: 16))]"
 }
 
 func edge0(axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
@@ -106,6 +106,9 @@ extension UIView {
 	public func ejectView(view: UIView, axis: UILayoutConstraintAxis, animated: Bool = true) {
 		if let prev = _previousView(view, axis: axis),
 			let next = _nextView(view, axis: axis) {
+				if let prevNext = _previousView(next.firstItem as! UIView, axis: axis) {
+					removeConstraint(prevNext)
+				}
 				let newConstraint = NSLayoutConstraint(item: next.firstItem, attribute: next.firstAttribute, relatedBy: .Equal, toItem: prev.secondItem, attribute: prev.secondAttribute, multiplier: 1, constant: view.bounds.height)
 				if animated {
 					addConstraint(newConstraint)
