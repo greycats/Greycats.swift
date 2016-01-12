@@ -27,25 +27,30 @@ public class FilterHook<T: Equatable where T: Filtering> {
 	var term: String?
 	weak var data: Data!
 
-	public init(data: Data, filter: Filter, shouldStart: (() -> Bool)? = nil) {
+	public init(data: Data, filter: Filter, shouldStart: (() -> Bool)? = nil, didCancel: () -> () = { }, didSearch: ((UIResponder) -> ())? = nil) {
 		delegate.startEditing = shouldStart
+		delegate.didCancel = didCancel
+		if let didSearch = didSearch {
+			delegate.didSearch = didSearch
+		}
 		self.data = data
 		delegate.applyFilter = {[weak self] string in
 			if let this = self {
 				this.term = string
-				let results = filter.apply(string, objects: this.source)
-				self?.data.source = results
+				guard let source = this.source else { return }
+				let results = filter.apply(string, objects: source)
+				this.data.source = results
 			}
 		}
 	}
 
-	convenience public init(data: Data, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil) {
-		self.init(data: data, filter: filter, shouldStart: shouldStart)
+	convenience public init(data: Data, filter: Filter, input: UITextField, shouldStart: (() -> Bool)? = nil, didSearch: ((UIResponder) -> ())? = nil) {
+		self.init(data: data, filter: filter, shouldStart: shouldStart, didSearch: didSearch)
 		input.delegate = delegate
 	}
 
-	convenience public init(data: Data, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil) {
-		self.init(data: data, filter: filter, shouldStart: shouldStart)
+	convenience public init(data: Data, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil, didCancel: () -> () = {}, didSearch: ((UIResponder) -> ())? = nil) {
+		self.init(data: data, filter: filter, shouldStart: shouldStart, didCancel: didCancel, didSearch: didSearch)
 		input.delegate = delegate
 	}
 }
@@ -111,6 +116,8 @@ public enum Filter {
 
 	class Delegate: NSObject, UITextFieldDelegate, UISearchBarDelegate {
 		var applyFilter: (String? -> ()) = { _ in }
+		var didCancel: () -> () = {}
+		var didSearch: ((UIResponder) -> ())? = { $0.resignFirstResponder() }
 		var startEditing: (() -> Bool)? = nil
 
 		func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
@@ -134,7 +141,7 @@ public enum Filter {
 
 		func textFieldShouldReturn(textField: UITextField) -> Bool {
 			applyFilter(textField.text!.characters.count > 0 ? textField.text : nil)
-			textField.resignFirstResponder()
+			didSearch?(textField)
 			return true
 		}
 
@@ -144,6 +151,7 @@ public enum Filter {
 
 		func searchBarCancelButtonClicked(searchBar: UISearchBar) {
 			applyFilter(nil)
+			didCancel()
 			searchBar.showsCancelButton = false
 			searchBar.resignFirstResponder()
 		}
@@ -154,7 +162,7 @@ public enum Filter {
 		}
 
 		func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-			searchBar.resignFirstResponder()
+			didSearch?(searchBar)
 		}
 	}
 }
