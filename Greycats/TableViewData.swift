@@ -23,6 +23,8 @@ public protocol SectionData {
 	func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
+	func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath)
+	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle
 }
 
 public protocol TableViewDataNibCell {
@@ -69,6 +71,12 @@ public class TableViewSource<T: Equatable>: SectionData {
 	private var renderHeader: (String -> UIView)?
 	public func onHeader(block: String -> UIView) -> Self {
 		renderHeader = block
+		return self
+	}
+
+	private var _editingStyle: (Int -> UITableViewCellEditingStyle)?
+	public func editingStyle(block: Int -> UITableViewCellEditingStyle) -> Self {
+		_editingStyle = block
 		return self
 	}
 
@@ -171,6 +179,10 @@ public class TableViewSource<T: Equatable>: SectionData {
 		return 0
 	}
 
+	public func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+		return _editingStyle?(indexPath.row) ?? .Delete
+	}
+
 	public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		return renderHeader?(title!)
 	}
@@ -180,6 +192,11 @@ public class TableViewSource<T: Equatable>: SectionData {
 		if let vc = select?(data[indexPath.row], indexPath.row) {
 			navigationController?.pushViewController(vc, animated: true)
 		}
+	}
+
+	public func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+		let object = data.removeAtIndex(sourceIndexPath.row)
+		data.insert(object, atIndex: destinationIndexPath.row)
 	}
 
 	public func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -438,6 +455,10 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 		return joined[section].tableView(tableView, numberOfRowsInSection: section)
 	}
 
+	func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+		joined[sourceIndexPath.section].tableView(tableView, moveRowAtIndexPath: sourceIndexPath, toIndexPath: destinationIndexPath)
+	}
+
 	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		if !alwaysDisplaySectionHeader && joined[section].tableView(tableView, numberOfRowsInSection: section) == 0 {
 			return 0
@@ -463,6 +484,14 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		joined[indexPath.section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
+	}
+
+	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+		return joined[indexPath.section].tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+	}
+
+	func tableView(tableView: UITableView, shouldIndentWhileEditingRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+		return false
 	}
 }
 
