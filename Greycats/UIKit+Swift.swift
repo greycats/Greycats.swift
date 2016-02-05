@@ -36,15 +36,6 @@ extension UIView {
 	}
 }
 
-extension NSObjectProtocol {
-	public func loadFromNib(nibName: String, index: Int = 0) -> UIView {
-		let buddle = NSBundle(forClass: self.dynamicType)
-		let nib = UINib(nibName: nibName, bundle: buddle)
-		let view = nib.instantiateWithOwner(self, options: nil)[index] as! UIView
-		return view
-	}
-}
-
 extension UIStoryboardSegue {
 	public func topViewController<T>() -> T? {
 		var dest: T? = nil
@@ -62,13 +53,30 @@ extension UIStoryboardSegue {
 }
 
 public protocol _NibView {
+	func setup()
 	var nibName: String { get }
 }
 
+private var viewKey: Void?
+extension _NibView where Self: UIView {
+	private func replaceFirstChildWith<T: UIView>(nibName: String) -> T {
+		if let view = objc_getAssociatedObject(self, &viewKey) as? T {
+			view.removeFromSuperview()
+		}
+		let buddle = NSBundle(forClass: self.dynamicType)
+		let nib = UINib(nibName: nibName, bundle: buddle)
+		let view = nib.instantiateWithOwner(self, options: nil).first as! T
+		view.frame = bounds
+		view.backgroundColor = nil
+		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+		insertSubview(view, atIndex: 0)
+		objc_setAssociatedObject(self, &viewKey, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+		return view
+	}
+}
+
 public class NibView: UIView, _NibView {
-	public var nibName: String { return "-" }
-	var nibIndex: Int { return 0 }
-	public var view: UIView!
+	public var nibName: String { return String(self.dynamicType) }
 
 	public convenience init() {
 		self.init(frame: .zero)
@@ -79,64 +87,32 @@ public class NibView: UIView, _NibView {
 		setup()
 	}
 
+	public required init?(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		setup()
+	}
+
 	@IBOutlet var lineWidth: [NSLayoutConstraint]!
 
 	public func setup() {
-		view = loadFromNib(nibName, index: nibIndex)
-		view.frame = bounds
-		view.backgroundColor = nil
-		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+		replaceFirstChildWith(nibName)
 		if lineWidth != nil {
 			for c in lineWidth {
 				c.constant = LineWidth
 			}
 		}
-		insertSubview(view, atIndex: 0)
-	}
-
-	public required init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
-		setup()
-	}
-}
-
-extension UITextView {
-	public func notEditable() {
-		textContainerInset = UIEdgeInsetsZero
-		editable = false
 	}
 }
 
 @IBDesignable
-public class StyledView: UIView {
+public class StyledView: NibView {
+	public override var nibName: String { return "\(nibNamePrefix)\(layout)" }
+	public var nibNamePrefix: String { return String(self.dynamicType) }
 	@IBInspectable public var layout: String = "" {
 		didSet {
 			if oldValue != layout {
 				setup()
 			}
 		}
-	}
-	weak public var view: UIView!
-	public var nibNamePrefix: String { return "" }
-
-	public func setup() {
-		if view != nil {
-			view.removeFromSuperview()
-		}
-		view = loadFromNib("\(nibNamePrefix)\(layout)", index: 0)
-		view.frame = bounds
-		view.backgroundColor = nil
-		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-		insertSubview(view, atIndex: 0)
-	}
-
-	override public init(frame: CGRect) {
-		super.init(frame: frame)
-		setup()
-	}
-
-	required public init?(coder aDecoder: NSCoder) {
-		super.init(coder: aDecoder)
-		setup()
 	}
 }

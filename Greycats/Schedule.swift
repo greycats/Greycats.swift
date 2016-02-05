@@ -69,7 +69,7 @@ public struct Schedule {
 			flag = 0
 		}
 		let f = flag
-		dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), interval, 0)
+		dispatch_source_set_timer(timer, dispatch_time_in(delay), interval, 0)
 		dispatch_source_set_event_handler(timer) {
 			if f == self.flag {
 				closure { f == self.flag }
