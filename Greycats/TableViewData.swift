@@ -1,8 +1,9 @@
 //
 //  TableViewData.swift
+//	Greycats
 //
 //  Created by Rex Sheng on 1/29/15.
-//  Copyright (c) 2015 iLabs. All rights reserved.
+//  Copyright (c) 2015 Interactive Labs. All rights reserved.
 //
 
 // available in pod 'Greycats', '~> 0.1.5'
@@ -210,7 +211,9 @@ public class TableViewDataNib<T: Equatable, U: UITableViewCell where U: TableVie
 
 	public override func didSetTableView(tableView: UITableView) {
 		cellIdentifier = "\(U.nibName)-\(section)"
-		tableView.registerNib(UINib(nibName: U.nibName, bundle: NSBundle(forClass: U.self)), forCellReuseIdentifier: cellIdentifier)
+		let nib = UINib(nibName: U.nibName, bundle: NSBundle(forClass: U.self))
+		print("\(self) register cell \(cellIdentifier) \(nib)")
+		tableView.registerNib(nib, forCellReuseIdentifier: cellIdentifier)
 	}
 }
 

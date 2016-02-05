@@ -1,9 +1,9 @@
 //
 //  TextField.swift
-//  Trusted
+//	Greycats
 //
 //  Created by Rex Sheng on 5/19/15.
-//  Copyright (c) 2015 Trusted. All rights reserved.
+//  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
 import UIKit

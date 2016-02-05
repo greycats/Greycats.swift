@@ -1,5 +1,6 @@
 //
 //  Box.swift
+//	Greycats
 //
 //  Created by Rex Sheng on 5/1/15.
 //  Copyright (c) 2015 Interactive Labs. All rights reserved.

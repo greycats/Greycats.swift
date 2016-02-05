@@ -1,13 +1,12 @@
 //
 //  AutolayoutStack.swift
+//  Greycats
 //
 //  Created by Rex Sheng on 3/25/15.
-//  Copyright (c) 2015 Rex Sheng. All rights reserved.
+//  Copyright (c) 2015 Interactive Labs. All rights reserved.
 //
 
 // available in pod 'Greycats', '~> 0.4.0'
-
-import UIKit
 
 public func _id<T: AnyObject>(object: T) -> String {
 	return "[\(_stdlib_getDemangledTypeName(object)):0x\(String(ObjectIdentifier(object).uintValue, radix: 16))]"
