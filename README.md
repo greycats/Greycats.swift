@@ -1,6 +1,6 @@
 # Greycats.swift
 
-[![CI Status](http://img.shields.io/travis/Rex Sheng/Greycats.swift.svg?style=flat)](https://travis-ci.org/Rex Sheng/Greycats.swift)
+[![CI Status](https://travis-ci.org/greycats/Greycats.swift.svg?branch=master)](https://travis-ci.org/greycats/Greycats.swift)
 [![Version](https://img.shields.io/cocoapods/v/Greycats.svg?style=flat)](http://cocoadocs.org/docsets/Greycats)
 [![License](https://img.shields.io/cocoapods/l/Greycats.svg?style=flat)](http://cocoadocs.org/docsets/Greycats)
 [![Platform](https://img.shields.io/cocoapods/p/Greycats.svg?style=flat)](http://cocoadocs.org/docsets/Greycats)

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "E39BB0B0E2BF257872D8181879ED276133E0AB8F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E39BB0B0E2BF257872D8181879ED276133E0AB8F" : 0,
+    "8953232000CD4D7F315F0F74EB9628C2D0A8EA04" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "588843E5-366C-47C3-BAB1-204D954AA509",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E39BB0B0E2BF257872D8181879ED276133E0AB8F" : "Greycats.swift\/",
+    "8953232000CD4D7F315F0F74EB9628C2D0A8EA04" : "altitude-ios\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Greycats",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Greycats.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:aspiringinc\/altitude-ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "8953232000CD4D7F315F0F74EB9628C2D0A8EA04"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:greycats\/Greycats.swift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E39BB0B0E2BF257872D8181879ED276133E0AB8F"
+    }
+  ]
+}
