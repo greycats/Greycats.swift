@@ -21,7 +21,6 @@
 		CFA68DA91C75F958007CC9CA /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA41C75F958007CC9CA /* Keyboard.swift */; };
 		CFA68DAA1C75F958007CC9CA /* Polar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA51C75F958007CC9CA /* Polar.swift */; };
 		CFA68DAE1C75F9E2007CC9CA /* Greycats.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA68DAD1C75F9E2007CC9CA /* Greycats.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFA68DCA1C75FB63007CC9CA /* FormFieldDemo.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA68DC91C75FB63007CC9CA /* FormFieldDemo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFA68DD11C75FB83007CC9CA /* FormFieldDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */; };
 		CFA68DD21C75FB94007CC9CA /* Greycats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2116371A7DECF10065E3B2 /* Greycats.framework */; };
 		CFA68DD31C75FBAF007CC9CA /* ValidatingField.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */; };
@@ -53,8 +52,6 @@
 		CFA68DBA1C75FB2E007CC9CA /* FormFieldDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormFieldDemo.h; sourceTree = "<group>"; };
 		CFA68DBC1C75FB2E007CC9CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CFA68DC71C75FB62007CC9CA /* FormFieldDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FormFieldDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFA68DC91C75FB63007CC9CA /* FormFieldDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormFieldDemo.h; sourceTree = "<group>"; };
-		CFA68DCB1C75FB63007CC9CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FormFieldDemo.swift; path = FormFieldDemo/FormFieldDemo.swift; sourceTree = "<group>"; };
 		CFA68DD41C75FE93007CC9CA /* Fields.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Fields.xib; path = FormFieldDemo/Fields.xib; sourceTree = "<group>"; };
 		CFB62E7D1A7F5C2900D54010 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
@@ -91,7 +88,6 @@
 				CFC5571C1A7DF72E001951DE /* Podspec Metadata */,
 				CF2116391A7DECF10065E3B2 /* Greycats */,
 				CFA68DB91C75FB2E007CC9CA /* FormFieldDemo */,
-				CFA68DC81C75FB63007CC9CA /* FormFieldDemo */,
 				CF2116381A7DECF10065E3B2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -158,15 +154,6 @@
 			path = FormFieldDemo;
 			sourceTree = "<group>";
 		};
-		CFA68DC81C75FB63007CC9CA /* FormFieldDemo */ = {
-			isa = PBXGroup;
-			children = (
-				CFA68DC91C75FB63007CC9CA /* FormFieldDemo.h */,
-				CFA68DCB1C75FB63007CC9CA /* Info.plist */,
-			);
-			path = FormFieldDemo;
-			sourceTree = "<group>";
-		};
 		CFC5571C1A7DF72E001951DE /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,7 +179,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFA68DCA1C75FB63007CC9CA /* FormFieldDemo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

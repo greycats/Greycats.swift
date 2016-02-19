@@ -498,8 +498,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	}
 }
 
-private var joinedAssociationKey: UInt8 = 0x01
-
+private var joinedAssociationKey: Void?
 extension NSObject {
 	private var _joined_sections: [String: TableViewJoinedData] {
 		get {
