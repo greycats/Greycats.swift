@@ -32,7 +32,7 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-
+	
 	public var error: String? {
 		didSet {
 			if let error = error {
@@ -49,19 +49,18 @@ public class FormField: NibView, UITextFieldDelegate {
 	}
 	var everEdited = false
 	var onReturn: (() -> Bool)?
-	private var triggerValidate: (() -> (Bool))?
-
+	private var triggers: [() -> ()] = []
 	@IBAction func valueUpdated(sender: AnyObject) {
-		triggerValidate?()
+		triggers.forEach { $0() }
 	}
-
+	
 	public var handle: (UITextField) -> Bool = { _ in return true }
-
+	
 	@IBAction func didBeginEditing(sender: AnyObject) {
 		everEdited = true
-		triggerValidate?()
+		triggers.forEach { $0() }
 	}
-
+	
 	public func pass(validateText: String = "", reportError: Bool = true) -> Bool {
 		let allowsError = everEdited == true && field.isFirstResponder() == false
 		let passed = field.text ?? "" =~ regex
@@ -78,14 +77,14 @@ public class FormField: NibView, UITextFieldDelegate {
 		}
 		return passed
 	}
-
+	
 	@IBInspectable public var secure: Bool = false {
 		didSet {
 			field.secureTextEntry = secure
 			field.clearButtonMode = secure ? .Never : .WhileEditing
 		}
 	}
-
+	
 	public var text: String? {
 		get {
 			return field.text
@@ -94,7 +93,7 @@ public class FormField: NibView, UITextFieldDelegate {
 			field.text = value
 		}
 	}
-
+	
 	@IBInspectable public var keyboardType: Int {
 		get { return field.keyboardType.rawValue }
 		set(value) {
@@ -103,7 +102,7 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-
+	
 	@IBInspectable public var autocorrection: Int {
 		get { return field.autocorrectionType.rawValue }
 		set(value) {
@@ -112,7 +111,7 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-
+	
 	@IBInspectable public var autocapitalizationType: Int {
 		get { return field.autocapitalizationType.rawValue }
 		set(value) {
@@ -121,7 +120,7 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-
+	
 	@IBInspectable public var placeholder: String = "Email Address" {
 		didSet {
 			if let captionLabel = captionLabel {
@@ -131,23 +130,23 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-
+	
 	@IBInspectable public var textColor: UIColor? {
 		didSet {
 			field.textColor = textColor
 		}
 	}
-
+	
 	@IBInspectable public var lineColor: UIColor? {
 		didSet {
 			line.backgroundColor = lineColor
 		}
 	}
-
+	
 	public func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
 		return handle(textField)
 	}
-
+	
 	public func textFieldShouldReturn(textField: UITextField) -> Bool {
 		return onReturn?() ?? true
 	}
@@ -159,6 +158,31 @@ public protocol TextValueFieldContainer {
 
 extension FormField: TextValueFieldContainer {
 	public var containingField: UITextField? { return field }
+}
+
+public protocol FormFieldData {
+	mutating func parse(input: String)
+	var text: String? { get }
+	init()
+}
+
+extension String: FormFieldData {
+	public mutating func parse(input: String) { self = input }
+	public var text: String? { return self }
+}
+
+extension FormField {
+	public func bind<T: FormFieldData>(value: UnsafeMutablePointer<T!>) {
+		triggers.append {[weak self] _ in
+			if let input = self?.text {
+				if value.memory == nil {
+					value.initialize(T())
+				}
+				value.memory.parse(input)
+			}
+		}
+		field.text = value.memory?.text
+	}
 }
 
 extension UITextField {
@@ -176,36 +200,36 @@ extension UITextField {
 public class FormFieldGroup {
 	var _onSubmit: (() -> ())?
 	var _onChange: ((Bool) -> ())?
-
+	
 	let valid: () -> (Bool)
-
+	
 	private init(closure: () -> Bool) {
 		valid = closure
 	}
-
+	
 	func validate() -> Bool {
 		let v = valid()
 		_onChange?(v)
 		return v
 	}
-
+	
 	public func onSubmit(closure: () -> ()) -> Self {
 		_onSubmit = closure
 		return self
 	}
-
+	
 	public func onChange(closure: (Bool) -> ()) -> Self {
 		_onChange = closure
 		validate()
 		return self
 	}
-
+	
 	public func bindButton(button: UIControl?) -> Self {
 		weak var button = button
 		return onChange { valid in
 			button?.enabled = valid
-		}.onSubmit {
-			button?.sendActionsForControlEvents(.TouchUpInside)
+			}.onSubmit {
+				button?.sendActionsForControlEvents(.TouchUpInside)
 		}
 	}
 }
@@ -217,8 +241,8 @@ extension CollectionType where Generator.Element: FormField, Index == Int {
 			return self.filter { !$0.pass(validatePrefix, reportError: reportsError) }.count == 0
 		}
 		for item in self {
-			item.triggerValidate = {[weak group] in
-				return group?.validate() ?? false
+			item.triggers.append {[weak group] in
+				group?.validate()
 			}
 			if let next = item.field.nextField(self) {
 				item.field.returnKeyType = .Next
