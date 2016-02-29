@@ -15,27 +15,48 @@
 		CF5A0E3F1B7663B2004431E1 /* ReactControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */; };
 		CF5A0E401B7663B2004431E1 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3B1B7663B2004431E1 /* Regex.swift */; };
 		CF5A0E411B7663B2004431E1 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E3C1B7663B2004431E1 /* Schedule.swift */; };
+		CFA68DA61C75F958007CC9CA /* _Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA11C75F958007CC9CA /* _Control.swift */; };
+		CFA68DA71C75F958007CC9CA /* FormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA21C75F958007CC9CA /* FormField.swift */; };
+		CFA68DA81C75F958007CC9CA /* ImageOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA31C75F958007CC9CA /* ImageOperation.swift */; };
+		CFA68DA91C75F958007CC9CA /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA41C75F958007CC9CA /* Keyboard.swift */; };
+		CFA68DAA1C75F958007CC9CA /* Polar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DA51C75F958007CC9CA /* Polar.swift */; };
+		CFA68DAE1C75F9E2007CC9CA /* Greycats.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA68DAD1C75F9E2007CC9CA /* Greycats.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CFA68DD11C75FB83007CC9CA /* FormFieldDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */; };
+		CFA68DD21C75FB94007CC9CA /* Greycats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2116371A7DECF10065E3B2 /* Greycats.framework */; };
+		CFA68DD31C75FBAF007CC9CA /* ValidatingField.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */; };
+		CFA68DD51C75FE93007CC9CA /* Fields.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA68DD41C75FE93007CC9CA /* Fields.xib */; };
 		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
 		CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */; };
 		CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */; };
-		CFC557101A7DF6A0001951DE /* Greycats.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC5570F1A7DF6A0001951DE /* Greycats.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CF02A9511B33E00C006C010A /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutolayoutStack.swift; sourceTree = "<group>"; };
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF21163B1A7DECF10065E3B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF3468761AC24ED900687762 /* UIKit+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Swift.swift"; sourceTree = "<group>"; };
 		CF5A0E381B7663B2004431E1 /* TextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		CF5A0E391B7663B2004431E1 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		CF5A0E3A1B7663B2004431E1 /* ReactControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactControls.swift; sourceTree = "<group>"; };
 		CF5A0E3B1B7663B2004431E1 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		CF5A0E3C1B7663B2004431E1 /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
+		CF9F59BA1C7602D9009460DF /* FormField.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = FormField.playground; path = FormFieldDemo/FormField.playground; sourceTree = "<group>"; };
+		CFA68DA11C75F958007CC9CA /* _Control.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = _Control.swift; sourceTree = "<group>"; };
+		CFA68DA21C75F958007CC9CA /* FormField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FormField.swift; path = Greycats/FormField.swift; sourceTree = "<group>"; };
+		CFA68DA31C75F958007CC9CA /* ImageOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageOperation.swift; sourceTree = "<group>"; };
+		CFA68DA41C75F958007CC9CA /* Keyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
+		CFA68DA51C75F958007CC9CA /* Polar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Polar.swift; sourceTree = "<group>"; };
+		CFA68DAB1C75F98F007CC9CA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		CFA68DAD1C75F9E2007CC9CA /* Greycats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Greycats.h; sourceTree = SOURCE_ROOT; };
+		CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ValidatingField.xib; path = "../altitude-ios/altitude/ValidatingField.xib"; sourceTree = "<group>"; };
+		CFA68DBA1C75FB2E007CC9CA /* FormFieldDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormFieldDemo.h; sourceTree = "<group>"; };
+		CFA68DBC1C75FB2E007CC9CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CFA68DC71C75FB62007CC9CA /* FormFieldDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FormFieldDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FormFieldDemo.swift; path = FormFieldDemo/FormFieldDemo.swift; sourceTree = "<group>"; };
+		CFA68DD41C75FE93007CC9CA /* Fields.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Fields.xib; path = FormFieldDemo/Fields.xib; sourceTree = "<group>"; };
 		CFB62E7D1A7F5C2900D54010 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Breadcrumb.swift; sourceTree = "<group>"; };
 		CFB62E7F1A7F5C2900D54010 /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
-		CFC5570F1A7DF6A0001951DE /* Greycats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Greycats.h; sourceTree = "<group>"; };
 		CFC557161A7DF729001951DE /* Greycats.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Greycats.podspec; sourceTree = "<group>"; };
 		CFC557171A7DF729001951DE /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CFC557181A7DF729001951DE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -49,14 +70,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFA68DC31C75FB62007CC9CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA68DD21C75FB94007CC9CA /* Greycats.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		CF21162D1A7DECF10065E3B2 = {
 			isa = PBXGroup;
 			children = (
+				CFA68DB11C75FAD3007CC9CA /* FormField */,
 				CFC5571C1A7DF72E001951DE /* Podspec Metadata */,
 				CF2116391A7DECF10065E3B2 /* Greycats */,
+				CFA68DB91C75FB2E007CC9CA /* FormFieldDemo */,
 				CF2116381A7DECF10065E3B2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				CF2116371A7DECF10065E3B2 /* Greycats.framework */,
+				CFA68DC71C75FB62007CC9CA /* FormFieldDemo.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,8 +104,12 @@
 		CF2116391A7DECF10065E3B2 /* Greycats */ = {
 			isa = PBXGroup;
 			children = (
+				CFA68DA11C75F958007CC9CA /* _Control.swift */,
+				CFA68DAD1C75F9E2007CC9CA /* Greycats.h */,
+				CFA68DA31C75F958007CC9CA /* ImageOperation.swift */,
+				CFA68DA41C75F958007CC9CA /* Keyboard.swift */,
+				CFA68DA51C75F958007CC9CA /* Polar.swift */,
 				CF02A9511B33E00C006C010A /* Box.swift */,
-				CFC5570F1A7DF6A0001951DE /* Greycats.h */,
 				CFB62E7D1A7F5C2900D54010 /* Filter.swift */,
 				CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */,
 				CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */,
@@ -92,9 +128,30 @@
 		CF21163A1A7DECF10065E3B2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CF21163B1A7DECF10065E3B2 /* Info.plist */,
+				CFA68DAB1C75F98F007CC9CA /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CFA68DB11C75FAD3007CC9CA /* FormField */ = {
+			isa = PBXGroup;
+			children = (
+				CF9F59BA1C7602D9009460DF /* FormField.playground */,
+				CFA68DA21C75F958007CC9CA /* FormField.swift */,
+				CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */,
+				CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */,
+				CFA68DD41C75FE93007CC9CA /* Fields.xib */,
+			);
+			name = FormField;
+			sourceTree = "<group>";
+		};
+		CFA68DB91C75FB2E007CC9CA /* FormFieldDemo */ = {
+			isa = PBXGroup;
+			children = (
+				CFA68DBA1C75FB2E007CC9CA /* FormFieldDemo.h */,
+				CFA68DBC1C75FB2E007CC9CA /* Info.plist */,
+			);
+			path = FormFieldDemo;
 			sourceTree = "<group>";
 		};
 		CFC5571C1A7DF72E001951DE /* Podspec Metadata */ = {
@@ -114,7 +171,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFC557101A7DF6A0001951DE /* Greycats.h in Headers */,
+				CFA68DAE1C75F9E2007CC9CA /* Greycats.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFA68DC41C75FB62007CC9CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +203,24 @@
 			productReference = CF2116371A7DECF10065E3B2 /* Greycats.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		CFA68DC61C75FB62007CC9CA /* FormFieldDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFA68DCC1C75FB63007CC9CA /* Build configuration list for PBXNativeTarget "FormFieldDemo" */;
+			buildPhases = (
+				CFA68DC21C75FB62007CC9CA /* Sources */,
+				CFA68DC31C75FB62007CC9CA /* Frameworks */,
+				CFA68DC41C75FB62007CC9CA /* Headers */,
+				CFA68DC51C75FB62007CC9CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FormFieldDemo;
+			productName = FormFieldDemo;
+			productReference = CFA68DC71C75FB62007CC9CA /* FormFieldDemo.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -151,6 +233,9 @@
 				TargetAttributes = {
 					CF2116361A7DECF10065E3B2 = {
 						CreatedOnToolsVersion = 6.2;
+					};
+					CFA68DC61C75FB62007CC9CA = {
+						CreatedOnToolsVersion = 7.2.1;
 					};
 				};
 			};
@@ -167,6 +252,7 @@
 			projectRoot = "";
 			targets = (
 				CF2116361A7DECF10065E3B2 /* Greycats */,
+				CFA68DC61C75FB62007CC9CA /* FormFieldDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -179,6 +265,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFA68DC51C75FB62007CC9CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA68DD51C75FE93007CC9CA /* Fields.xib in Resources */,
+				CFA68DD31C75FBAF007CC9CA /* ValidatingField.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -187,16 +282,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF5A0E3F1B7663B2004431E1 /* ReactControls.swift in Sources */,
+				CFA68DA81C75F958007CC9CA /* ImageOperation.swift in Sources */,
 				CF5A0E401B7663B2004431E1 /* Regex.swift in Sources */,
 				CF5A0E411B7663B2004431E1 /* Schedule.swift in Sources */,
+				CFA68DAA1C75F958007CC9CA /* Polar.swift in Sources */,
 				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
 				CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */,
+				CFA68DA71C75F958007CC9CA /* FormField.swift in Sources */,
+				CFA68DA91C75F958007CC9CA /* Keyboard.swift in Sources */,
+				CFA68DA61C75F958007CC9CA /* _Control.swift in Sources */,
 				CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */,
 				CF5A0E3D1B7663B2004431E1 /* TextField.swift in Sources */,
 				CF02A9531B33E00C006C010A /* Box.swift in Sources */,
 				CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */,
 				CFB62E821A7F5C2900D54010 /* TableViewData.swift in Sources */,
 				CF5A0E3E1B7663B2004431E1 /* JSON.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFA68DC21C75FB62007CC9CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFA68DD11C75FB83007CC9CA /* FormFieldDemo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,7 +405,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Greycats/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -316,11 +424,53 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Greycats/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rexsheng.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CFA68DCD1C75FB63007CC9CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = FormFieldDemo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = co.interactivelabs.FormFieldDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CFA68DCE1C75FB63007CC9CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = FormFieldDemo/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = co.interactivelabs.FormFieldDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -343,6 +493,15 @@
 			buildConfigurations = (
 				CF21164E1A7DECF10065E3B2 /* Debug */,
 				CF21164F1A7DECF10065E3B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFA68DCC1C75FB63007CC9CA /* Build configuration list for PBXNativeTarget "FormFieldDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFA68DCD1C75FB63007CC9CA /* Debug */,
+				CFA68DCE1C75FB63007CC9CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
