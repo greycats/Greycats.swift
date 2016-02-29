@@ -75,6 +75,12 @@ public class TableViewSource<T: Equatable>: SectionData {
 		return self
 	}
 
+	private var deselectAfterward: Bool = true
+	public func keepSelection() -> Self {
+		deselectAfterward = false
+		return self
+	}
+
 	private var _editingStyle: (Int -> UITableViewCellEditingStyle)?
 	public func editingStyle(block: Int -> UITableViewCellEditingStyle) -> Self {
 		_editingStyle = block
@@ -189,7 +195,9 @@ public class TableViewSource<T: Equatable>: SectionData {
 	}
 
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		tableView.deselectRowAtIndexPath(indexPath, animated: true)
+		if deselectAfterward {
+			tableView.deselectRowAtIndexPath(indexPath, animated: true)
+		}
 		if let vc = select?(data[indexPath.row], indexPath.row) {
 			navigationController?.pushViewController(vc, animated: true)
 		}
@@ -498,8 +506,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
 	}
 }
 
-private var joinedAssociationKey: UInt8 = 0x01
-
+private var joinedAssociationKey: Void?
 extension NSObject {
 	private var _joined_sections: [String: TableViewJoinedData] {
 		get {
@@ -515,7 +522,7 @@ extension NSObject {
 			objc_setAssociatedObject(self, &joinedAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
 		}
 	}
-	
+
 	public func connectTableView(tableView: UITableView, sections: [SectionData], alwaysDisplaySectionHeader: Bool = false, key: String = "default", reversed: Bool = false, navigationController: UINavigationController?, scrollViewDelegate: UIScrollViewDelegate? = nil) {
 		if let joinedData = _joined_sections[key] {
 			for (var data) in joinedData.joined {
