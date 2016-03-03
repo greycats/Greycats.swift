@@ -14,6 +14,25 @@ extension UIColor {
 		let b = CGFloat(hex & 0xff) / ff
 		self.init(red: r, green: g, blue: b, alpha: alpha)
 	}
+
+	public func overlay(color: UIColor) -> UIColor {
+		var ra: CGFloat = 0, ga: CGFloat = 0, ba: CGFloat = 0, aa: CGFloat = 0
+		var rb: CGFloat = 0, gb: CGFloat = 0, bb: CGFloat = 0, ab: CGFloat = 0
+		color.getRed(&ra, green: &ga, blue: &ba, alpha: &aa)
+		func blend(b: CGFloat, _ a: CGFloat) -> CGFloat {
+			if a < 0.5 {
+				return 2 * a * b
+			} else {
+				return 1 - 2 * (1 - a) * (1 - b)
+			}
+		}
+		getRed(&rb, green: &gb, blue: &bb, alpha: &ab)
+		let r = blend(ra, rb)
+		let g = blend(ga, gb)
+		let b = blend(ba, bb)
+		let a = blend(aa, ab)
+		return UIColor(red: r, green: g, blue: b, alpha: a)
+	}
 }
 
 private var bitmapInfo: UInt32 = {
