@@ -91,8 +91,9 @@ public class GradientView: UIView {
 		super.drawRect(rect)
 	}
 
-	public func drawGradient(context: CGContextRef?, rect: CGRect) {
+	public func drawGradient(context: CGContextRef?, rect: CGRect, @noescape closure: () -> () = {}) {
 		CGContextSaveGState(context)
+		closure()
 		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
 		CGContextDrawLinearGradient(context, gradient,
 			CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
