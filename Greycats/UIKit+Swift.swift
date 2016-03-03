@@ -116,3 +116,23 @@ public class StyledView: NibView {
 		}
 	}
 }
+
+@IBDesignable
+public class KernLabel: UILabel {
+	@IBInspectable public var kern: Int = 0 {
+		didSet { updateAttributedText() }
+	}
+	public override var text: String? {
+		didSet { updateAttributedText() }
+	}
+
+	func updateAttributedText() {
+		if let text = text {
+			attributedText = NSAttributedString(string: text, attributes: [
+				NSFontAttributeName: font,
+				NSForegroundColorAttributeName: textColor,
+				NSKernAttributeName: kern
+				])
+		}
+	}
+}
