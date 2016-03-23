@@ -64,7 +64,7 @@ public enum Filter {
 
 	func pattern(string: String) -> NSRegularExpression {
 		var pattern = "(?:.*?)"
-		let range = Range(start: string.startIndex, end: string.endIndex)
+		let range = (string.startIndex..<string.endIndex)
 		switch self {
 		case .CharacterSequences:
 			string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByComposedCharacterSequences) { (substring, substringRange, enclosingRange, stop) -> () in

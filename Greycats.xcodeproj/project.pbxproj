@@ -23,7 +23,6 @@
 		CFA68DAE1C75F9E2007CC9CA /* Greycats.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA68DAD1C75F9E2007CC9CA /* Greycats.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFA68DD11C75FB83007CC9CA /* FormFieldDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */; };
 		CFA68DD21C75FB94007CC9CA /* Greycats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2116371A7DECF10065E3B2 /* Greycats.framework */; };
-		CFA68DD31C75FBAF007CC9CA /* ValidatingField.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */; };
 		CFA68DD51C75FE93007CC9CA /* Fields.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA68DD41C75FE93007CC9CA /* Fields.xib */; };
 		CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7D1A7F5C2900D54010 /* Filter.swift */; };
 		CFB62E811A7F5C2900D54010 /* Breadcrumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB62E7E1A7F5C2900D54010 /* Breadcrumb.swift */; };
@@ -48,7 +47,6 @@
 		CFA68DA51C75F958007CC9CA /* Polar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Polar.swift; sourceTree = "<group>"; };
 		CFA68DAB1C75F98F007CC9CA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		CFA68DAD1C75F9E2007CC9CA /* Greycats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Greycats.h; sourceTree = SOURCE_ROOT; };
-		CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ValidatingField.xib; path = "../altitude-ios/altitude/ValidatingField.xib"; sourceTree = "<group>"; };
 		CFA68DBA1C75FB2E007CC9CA /* FormFieldDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormFieldDemo.h; sourceTree = "<group>"; };
 		CFA68DBC1C75FB2E007CC9CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CFA68DC71C75FB62007CC9CA /* FormFieldDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FormFieldDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,7 +136,6 @@
 			children = (
 				CF9F59BA1C7602D9009460DF /* FormField.playground */,
 				CFA68DA21C75F958007CC9CA /* FormField.swift */,
-				CFA68DAF1C75FAC6007CC9CA /* ValidatingField.xib */,
 				CFA68DCF1C75FB75007CC9CA /* FormFieldDemo.swift */,
 				CFA68DD41C75FE93007CC9CA /* Fields.xib */,
 			);
@@ -270,7 +267,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFA68DD51C75FE93007CC9CA /* Fields.xib in Resources */,
-				CFA68DD31C75FBAF007CC9CA /* ValidatingField.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

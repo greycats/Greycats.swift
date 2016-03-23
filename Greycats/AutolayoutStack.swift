@@ -9,7 +9,7 @@
 // available in pod 'Greycats', '~> 0.4.0'
 
 public func _id<T: AnyObject>(object: T) -> String {
-	return "[\(_stdlib_getDemangledTypeName(object)):0x\(String(ObjectIdentifier(object).uintValue, radix: 16))]"
+	return "[\(object.dynamicType):0x\(String(ObjectIdentifier(object).uintValue, radix: 16))]"
 }
 
 func edge0(axis: UILayoutConstraintAxis) -> NSLayoutAttribute {

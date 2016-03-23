@@ -13,7 +13,7 @@ public class ReactControls: NSObject {
 		super.init()
 		self.a = a
 		self.b = b
-		a.addTarget(self, action: "sendBTouchUpInside", forControlEvents: .TouchUpInside)
+		a.addTarget(self, action: #selector(sendBTouchUpInside), forControlEvents: .TouchUpInside)
 		a.addObserver(self, forKeyPath: "highlighted", options: .New, context: nil)
 		b.addObserver(self, forKeyPath: "highlighted", options: .New, context: nil)
 	}

@@ -64,7 +64,7 @@ public struct Schedule {
 	private var flag: UInt8 = 0
 	
 	mutating public func schedule(closure: (check: () -> Bool) -> ()) {
-		flag++
+		flag += 1
 		if flag > 250 {
 			flag = 0
 		}

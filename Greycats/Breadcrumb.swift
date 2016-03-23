@@ -107,7 +107,7 @@ public class Breadcrumb<T: NSCoding> {
 	
 	public func onClick(textView: UITextView, block: T -> Void) -> AnyObject {
 		let taptap = TapTap()
-		textView.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: "tapped:"))
+		textView.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: #selector(TapTap.tapped(_:))))
 		taptap.block = {[unowned textView] tap in
 			var loc = tap.locationInView(textView)
 			loc.x -= textView.textContainerInset.left
