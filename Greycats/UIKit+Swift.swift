@@ -119,7 +119,7 @@ public class StyledView: NibView {
 
 @IBDesignable
 public class KernLabel: UILabel {
-	@IBInspectable public var kern: Int = 0 {
+	@IBInspectable public var kern: Float = 0 {
 		didSet { updateAttributedText() }
 	}
 	public override var text: String? {
