@@ -1,12 +1,13 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.4.7"
+  s.version          = "2.5.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
 						* a TableViewData which binds Section to DataSource
 						* a Filter which applies regexp search on UISearchBar | UITextField
 						* AutolayoutStack
+            * Customizable NavigationViewController
                        DESC
   s.homepage         = "http://github.com/greycats/Greycats.swift"
   s.license          = 'MIT'
@@ -18,7 +19,7 @@ Pod::Spec.new do |s|
   s.default_subspecs = %w[Professional ReactControls Filter Breadcrumb]
 
   s.subspec "Core" do |s|
-    s.source_files = "Greycats/{Box,UIKit+Swift,_Control,Schedule,Regex}.swift"
+    s.source_files = "Greycats/{Box,UIKit+Swift,_Control,Schedule,Regex,NavigationViewController}.swift"
   end
 
   s.subspec "JSON" do |s|

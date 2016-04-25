@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CF02A9531B33E00C006C010A /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF02A9511B33E00C006C010A /* Box.swift */; };
+		CF11350C1CCE34B600509278 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11350B1CCE34B600509278 /* NavigationViewController.swift */; };
 		CF15BAA41AC254B400D3B623 /* AutolayoutStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */; };
 		CF3468771AC24ED900687762 /* UIKit+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3468761AC24ED900687762 /* UIKit+Swift.swift */; };
 		CF5A0E3D1B7663B2004431E1 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5A0E381B7663B2004431E1 /* TextField.swift */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		CF02A9511B33E00C006C010A /* Box.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
+		CF11350B1CCE34B600509278 /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		CF15BAA31AC254B400D3B623 /* AutolayoutStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutolayoutStack.swift; sourceTree = "<group>"; };
 		CF2116371A7DECF10065E3B2 /* Greycats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Greycats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3468761AC24ED900687762 /* UIKit+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIKit+Swift.swift"; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			children = (
 				CFA68DA11C75F958007CC9CA /* _Control.swift */,
 				CFA68DAD1C75F9E2007CC9CA /* Greycats.h */,
+				CF11350B1CCE34B600509278 /* NavigationViewController.swift */,
 				CFA68DA31C75F958007CC9CA /* ImageOperation.swift */,
 				CFA68DA41C75F958007CC9CA /* Keyboard.swift */,
 				CFA68DA51C75F958007CC9CA /* Polar.swift */,
@@ -280,6 +283,7 @@
 				CF5A0E3F1B7663B2004431E1 /* ReactControls.swift in Sources */,
 				CFA68DA81C75F958007CC9CA /* ImageOperation.swift in Sources */,
 				CF5A0E401B7663B2004431E1 /* Regex.swift in Sources */,
+				CF11350C1CCE34B600509278 /* NavigationViewController.swift in Sources */,
 				CF5A0E411B7663B2004431E1 /* Schedule.swift in Sources */,
 				CFA68DAA1C75F958007CC9CA /* Polar.swift in Sources */,
 				CFB62E801A7F5C2900D54010 /* Filter.swift in Sources */,
