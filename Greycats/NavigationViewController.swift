@@ -28,6 +28,13 @@ public protocol NavigationBackProxy {
 	func navigateBack(next: () ->())
 }
 
+/*
+intergration steps:
+1. drag a view controller into storyboard set its class to NavigationViewController
+2. create your navigationbar class, accept NavigationBarProtocol
+3. drag a view into your controller, and set it class to your navigationbar class, connect it to navigationBar outlet
+4. create a custom segue to your root view controller, select 'root view controller relationship', name it 'root'
+*/
 public class NavigationViewController: UIViewController, UINavigationControllerDelegate {
 	@IBOutlet weak var navigationBar: UIView! {
 		didSet {
@@ -67,7 +74,6 @@ public class NavigationViewController: UIViewController, UINavigationControllerD
 		view.addConstraint(NSLayoutConstraint(item: container, attribute: .Trailing, relatedBy: .Equal, toItem: view, attribute: .Trailing, multiplier: 1, constant: 0))
 		//V
 		view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1, constant: 0))
-		view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0, constant: 82))
 		view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .Bottom, relatedBy: .Equal, toItem: container, attribute: .Top, multiplier: 1, constant: 0))
 		view.addConstraint(NSLayoutConstraint(item: container, attribute: .Bottom, relatedBy: .Equal, toItem: bottomLayoutGuide, attribute: .Top, multiplier: 1, constant: 0))
 		performSegueWithIdentifier("root", sender: nil)
