@@ -20,9 +20,9 @@ public class FormField: NibView, UITextFieldDelegate {
 	@IBOutlet weak public var field: UITextField!
 	@IBOutlet weak public var line: UIView!
 	public var regex: Regex = ".*"
-	@IBOutlet weak public var redLine: UIView!
-	@IBOutlet weak public var errorLabel: UILabel!
-	@IBOutlet weak public var errorHeight: NSLayoutConstraint!
+	@IBOutlet weak public var redLine: UIView?
+	@IBOutlet weak public var errorLabel: UILabel?
+	@IBOutlet weak public var errorHeight: NSLayoutConstraint?
 	@IBInspectable public var pattern: String = ".*" {
 		didSet {
 			if pattern == "EmailRegex" {
@@ -36,14 +36,14 @@ public class FormField: NibView, UITextFieldDelegate {
 	public var error: String? {
 		didSet {
 			if let error = error {
-				errorHeight.constant = 16
-				redLine.hidden = false
-				errorLabel.hidden = false
-				errorLabel.text = error
+				errorHeight?.constant = 16
+				redLine?.hidden = false
+				errorLabel?.hidden = false
+				errorLabel?.text = error
 			} else {
-				errorHeight.constant = 0
-				redLine.hidden = true
-				errorLabel.hidden = true
+				errorHeight?.constant = 0
+				redLine?.hidden = true
+				errorLabel?.hidden = true
 			}
 		}
 	}
@@ -120,6 +120,16 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
+
+	@IBInspectable public var keyboardApperance: Int {
+		get { return field.keyboardAppearance.rawValue }
+		set(value) {
+			if let type = UIKeyboardAppearance(rawValue: value) {
+				field.keyboardAppearance = type
+			}
+		}
+	}
+
 	
 	@IBInspectable public var placeholder: String = "Email Address" {
 		didSet {
@@ -207,7 +217,7 @@ public class FormFieldGroup {
 		valid = closure
 	}
 	
-	func validate() -> Bool {
+	public func validate() -> Bool {
 		let v = valid()
 		_onChange?(v)
 		return v

@@ -8,6 +8,14 @@
 
 import UIKit
 
+/**
+intergration steps:
+
+1. drag a view controller into storyboard set its class to NavigationViewController
+2. create your navigationbar class, accept NavigationBarProtocol
+3. drag a view into your controller, and set it class to your navigationbar class, connect it to navigationBar outlet
+4. create a custom segue to your root view controller, select 'root view controller relationship', name it 'root'
+*/
 public protocol NavigationBarProtocol {
 	var titleLabel: UILabel! {get set}
 	var backButton: UIButton! {get set}
@@ -28,13 +36,10 @@ public protocol NavigationBackProxy {
 	func navigateBack(next: () ->())
 }
 
-/*
-intergration steps:
-1. drag a view controller into storyboard set its class to NavigationViewController
-2. create your navigationbar class, accept NavigationBarProtocol
-3. drag a view into your controller, and set it class to your navigationbar class, connect it to navigationBar outlet
-4. create a custom segue to your root view controller, select 'root view controller relationship', name it 'root'
-*/
+public protocol Navigation {
+	var hidesNavigationBarWhenPushed: Bool {get}
+}
+
 public class NavigationViewController: UIViewController, UINavigationControllerDelegate {
 	@IBOutlet weak var navigationBar: UIView! {
 		didSet {
@@ -91,7 +96,12 @@ public class NavigationViewController: UIViewController, UINavigationControllerD
 
 	public func navigationController(navigationController: UINavigationController, willShowViewController viewController: UIViewController, animated: Bool) {
 		let showBackButton = childNavigationController?.viewControllers.count > 1
+		var hides = false
+		if let customNav = viewController as? Navigation {
+			hides = customNav.hidesNavigationBarWhenPushed
+		}
 		UIView.animateWithDuration(animated ? 0.25 : 0) {
+			self.navigationBar.alpha = hides ? 0 : 1
 			self.bar?.navigationItem = viewController.navigationItem
 			self.bar?.backButton.alpha = showBackButton ? 1 : 0
 		}
