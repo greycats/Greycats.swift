@@ -39,6 +39,11 @@ public extension UIView {
 		}
 	}
 
+	@IBInspectable public var shadowColor: UIColor? {
+		get { if let color = layer.shadowColor { return UIColor(CGColor: color) } else { return nil } }
+		set(value) { if let value = value { layer.shadowColor = value.CGColor } }
+	}
+
 	@IBInspectable public var shadowOffset: CGPoint {
 		get { return CGPoint(x: layer.shadowOffset.width, y: layer.shadowOffset.height) }
 		set(value) { layer.shadowOffset = CGSize(width: value.x, height: value.y) }
