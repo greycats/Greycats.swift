@@ -10,6 +10,7 @@
 public protocol KeyboardResponder: NSObjectProtocol {
 	var keyboardHeight: NSLayoutConstraint! { get }
 	func keyboardWillChange(notif: NSNotification)
+	func keyboardHeightDidUpdate(height: CGFloat)
 }
 
 public protocol AutoFocus: NSObjectProtocol {
@@ -17,13 +18,13 @@ public protocol AutoFocus: NSObjectProtocol {
 	func scrollingView() -> UIScrollView?
 }
 
-private protocol _KeyboardResponder: AnyObject {
-	var gc_view: UIView! { get }
-}
-
 private var observerKey: Void?
 
 extension KeyboardResponder {
+	public func keyboardHeightDidUpdate(height: CGFloat) {
+
+	}
+
 	public func registerKeyboard() {
 		let observer = NSNotificationCenter.defaultCenter().addObserverForName(UIKeyboardWillChangeFrameNotification, object: nil, queue: .mainQueue()) {[weak self] notif in
 				self?.keyboardWillChange(notif)
@@ -47,6 +48,7 @@ extension KeyboardResponder {
 				if constraint.constant != height {
 					print(notif)
 					print("height to bottom layout = \(height)")
+					keyboardHeightDidUpdate(height)
 					view.layoutIfNeeded()
 					constraint.constant = height
 					UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
