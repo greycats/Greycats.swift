@@ -22,6 +22,7 @@ public class Animation: NSObject {
 		if let displayLink = displayLink {
 			displayLink.invalidate()
 		}
+		displayLink = nil
 	}
 
 	var closure: ((elapsedTime: NSTimeInterval) -> ())!
