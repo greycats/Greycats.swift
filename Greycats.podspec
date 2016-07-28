@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.6.2"
+  s.version          = "2.6.3"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.default_subspecs = %w[Professional ReactControls Filter Breadcrumb]
 
   s.subspec "Core" do |s|
-    s.source_files = "Greycats/{TextField,Polar,Box,UIKit+Swift,_Control,Schedule,Regex,NavigationViewController}.swift"
+    s.source_files = "Greycats/{TextField,Polar,Box,Geocode,UIKit+Swift,_Control,Schedule,Regex,NavigationViewController}.swift"
   end
 
   s.subspec "JSON" do |s|
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Graphics" do |s|
-    s.source_files = "Greycats/ImageOperation.swift"
+    s.source_files = "Greycats/{ImageOperation,Animation}.swift"
   end
 
   s.subspec "Keyboard" do |s|

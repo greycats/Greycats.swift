@@ -110,7 +110,7 @@ public class GradientView: UIView {
 		super.drawRect(rect)
 	}
 
-	public func drawGradient(context: CGContextRef?, rect: CGRect, @noescape closure: () -> () = {}) {
+	public func drawGradient(context: CGContext?, rect: CGRect, @noescape closure: () -> () = {}) {
 		CGContextSaveGState(context)
 		closure()
 		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
