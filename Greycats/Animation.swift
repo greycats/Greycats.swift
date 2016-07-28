@@ -93,7 +93,7 @@ public struct AnimationValue {
 			}
 			let a = inputRange[found], b = inputRange[found + 1], c = outputRange[found], d = outputRange[found + 1]
 			let t = (time - a) / (b - a)
-			var f = fn.calc(t)
+			let f = fn.calc(t)
 			return CGFloat(f) * (d - c) + c
 		})
 	}
