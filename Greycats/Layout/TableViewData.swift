@@ -32,6 +32,12 @@ public protocol TableViewDataNibCell {
 	static var nibName: String { get }
 }
 
+extension TableViewDataNibCell {
+	public static var nibName: String {
+		return String(Self)
+	}
+}
+
 public enum ChangeType {
 	case Create
 	case Update

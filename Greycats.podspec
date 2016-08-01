@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Layout" do |s|
+    s.dependency "Greycats/Core"
     s.source_files = "Greycats/Layout/*.swift"
   end
 
@@ -40,6 +41,7 @@ Pod::Spec.new do |s|
 
   s.subspec "Camera" do |s|
     s.dependency "Greycats/Graphics"
+    s.dependency "Greycats/Core"
     s.source_files = "Greycats/Camera.swift"
   end
 
