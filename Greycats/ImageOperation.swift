@@ -42,6 +42,37 @@ private var bitmapInfo: UInt32 = {
 	return bitmapInfo
 }()
 
+public protocol SVG {
+	var path: UIBezierPath { get }
+	init()
+}
+
+extension UIButton {
+	@IBInspectable public var svg: String? {
+		get { return nil }
+		set(value) {
+			if let value = value,
+				svg = NSClassFromString(value) as? SVG.Type {
+				let path = svg.init().path
+				setImage(UIImage.fillPath(path, color: tintColor), forState: .Normal)
+			}
+		}
+	}
+}
+
+extension UIImage {
+	public static func fillPath(path: UIBezierPath, color: UIColor) -> UIImage? {
+		let size = path.bounds.size
+		let image = CGImageRef.op(Int(ceil(size.width)), Int(ceil(size.height))) { context in
+			CGContextSetFillColorWithColor(context, color.CGColor)
+			CGContextAddPath(context, path.CGPath)
+			CGContextFillPath(context)
+		}
+		let uiimage = image.flatMap { UIImage(CGImage: $0, scale: UIScreen.mainScreen().scale, orientation: .Up) }
+		return uiimage
+	}
+}
+
 extension CGImage {
 	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
@@ -60,8 +91,13 @@ extension CGImage {
 	}
 
 	public static func op(width: Int, _ height: Int, closure: (CGContextRef?) -> Void) -> CGImage? {
+		let scale = UIScreen.mainScreen().scale
+		let w = width * Int(scale)
+		let h = height * Int(scale)
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
-		let context = CGBitmapContextCreate(nil, width, height, 8, width * 4, colourSpace, bitmapInfo)
+		let context = CGBitmapContextCreate(nil, w, h, 8, w * 8, colourSpace, bitmapInfo)
+		CGContextTranslateCTM(context, 0, CGFloat(h))
+		CGContextScaleCTM(context, scale, -scale)
 		closure(context)
 		return CGBitmapContextCreateImage(context)
 	}
@@ -94,31 +130,5 @@ extension UIImage {
 		} else {
 			return nil
 		}
-	}
-}
-
-@IBDesignable
-public class GradientView: UIView {
-	@IBInspectable public var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable public var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable public var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
-	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
-
-	override public func drawRect(rect: CGRect) {
-		drawGradient(rect)
-		super.drawRect(rect)
-	}
-
-	public func drawGradient(rect: CGRect, @noescape closure: () -> () = {}) {
-		let context = UIGraphicsGetCurrentContext()
-
-		CGContextSaveGState(context)
-		closure()
-		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
-		CGContextDrawLinearGradient(context, gradient,
-			CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
-			CGPointMake(rect.size.width * loc2.x, rect.size.height * loc2.y),
-			[.DrawsBeforeStartLocation, .DrawsAfterEndLocation])
-		CGContextRestoreGState(context)
 	}
 }

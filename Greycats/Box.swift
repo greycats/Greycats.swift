@@ -95,3 +95,29 @@ public class BoxView: UIView {
 		}
 	}
 }
+
+@IBDesignable
+public class GradientView: UIView {
+	@IBInspectable public var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+	@IBInspectable public var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
+	@IBInspectable public var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
+	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
+
+	override public func drawRect(rect: CGRect) {
+		drawGradient(rect)
+		super.drawRect(rect)
+	}
+
+	public func drawGradient(rect: CGRect, @noescape closure: () -> () = {}) {
+		let context = UIGraphicsGetCurrentContext()
+
+		CGContextSaveGState(context)
+		closure()
+		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
+		CGContextDrawLinearGradient(context, gradient,
+		                            CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
+		                            CGPointMake(rect.size.width * loc2.x, rect.size.height * loc2.y),
+		                            [.DrawsBeforeStartLocation, .DrawsAfterEndLocation])
+		CGContextRestoreGState(context)
+	}
+}

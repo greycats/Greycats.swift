@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.6.4"
+  s.version          = "2.6.5"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.requires_arc     = true
   s.platform         = :ios, "8.0"
 
-  s.default_subspecs = %w[Professional ReactControls Filter Breadcrumb]
+  s.default_subspecs = %w[Professional ReactControls Filter Breadcrumb Camera]
 
   s.subspec "Core" do |s|
     s.source_files = "Greycats/{TextField,Polar,Box,Geocode,UIKit+Swift,_Control,Schedule,Regex,NavigationViewController}.swift"
@@ -39,9 +39,15 @@ Pod::Spec.new do |s|
   end
 
   s.subspec "Graphics" do |s|
-    s.source_files = "Greycats/{ImageOperation,Animation}.swift"
+    s.source_files = "Greycats/{ImageOperation,Animation,UIImage+Extention}.swift"
   end
 
+  s.subspec "Camera" do |s|
+    s.dependency "Greycats/Core"
+    s.dependency "Greycats/Graphics"
+    s.source_files = "Greycats/Camera.swift"
+  end
+  
   s.subspec "Keyboard" do |s|
     s.source_files = "Greycats/Keyboard.swift"
   end
