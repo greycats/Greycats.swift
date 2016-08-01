@@ -83,7 +83,6 @@ public class Camera {
 				} else {
 					device.flashMode = .Off
 				}
-				print(device.flashMode.rawValue)
 				device.unlockForConfiguration()
 			} catch {
 			}

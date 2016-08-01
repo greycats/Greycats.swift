@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.6.5"
+  s.version          = "2.7.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -16,68 +16,40 @@ Pod::Spec.new do |s|
   s.requires_arc     = true
   s.platform         = :ios, "8.0"
 
-  s.default_subspecs = %w[Professional ReactControls Filter Breadcrumb Camera]
+  s.default_subspecs = %w[Core Layout Graphics]
 
   s.subspec "Core" do |s|
-    s.source_files = "Greycats/{TextField,Polar,Box,Geocode,UIKit+Swift,_Control,Schedule,Regex,NavigationViewController}.swift"
-  end
-
-  s.subspec "JSON" do |s|
-    s.source_files = "Greycats/JSON.swift"
-  end
-
-  s.subspec "ReactControls" do |s|
-    s.source_files = "Greycats/ReactControls.swift"
+    s.source_files = "Greycats/{Graphics/Graphics,Core/*,Layout/Designable}.swift"
   end
 
   s.subspec "Layout" do |s|
-    s.source_files = "Greycats/AutolayoutStack.swift"
-  end
-
-  s.subspec "TableView" do |s|
-    s.source_files = "Greycats/TableViewData.swift"
+    s.source_files = "Greycats/Layout/*.swift"
   end
 
   s.subspec "Graphics" do |s|
-    s.source_files = "Greycats/{ImageOperation,Animation,UIImage+Extention}.swift"
+    s.source_files = "Greycats/Graphics/*.swift"
+  end
+
+  s.subspec "Geocode" do |s|
+    s.source_files = "Greycats/Geocode.swift"
+  end
+
+  s.subspec "NavigationViewController" do |s|
+    s.source_files = "Greycats/NavigationViewController.swift"
   end
 
   s.subspec "Camera" do |s|
-    s.dependency "Greycats/Core"
     s.dependency "Greycats/Graphics"
     s.source_files = "Greycats/Camera.swift"
   end
-  
-  s.subspec "Keyboard" do |s|
-    s.source_files = "Greycats/Keyboard.swift"
-  end
-
-  s.subspec "FormField" do |s|
-    s.source_files = "Greycats/FormField.swift"
-    s.dependency "Greycats/Core"
-  end
 
   s.subspec "Filter" do |s|
+    s.dependency "Greycats/Layout"
     s.source_files = "Greycats/Filter.swift"
-    s.dependency "Greycats/TableView"
   end
 
   s.subspec "Breadcrumb" do |s|
     s.source_files = "Greycats/Breadcrumb.swift"
-  end
-
-  s.subspec "Standard" do |s|
-    s.dependency "Greycats/Core"
-    s.dependency "Greycats/JSON"
-    s.dependency "Greycats/TableView"
-    s.dependency "Greycats/Keyboard"
-  end
-
-  s.subspec "Professional" do |s|
-    s.dependency "Greycats/Standard"
-    s.dependency "Greycats/Layout"
-    s.dependency "Greycats/Graphics"
-    s.dependency "Greycats/FormField"
   end
 
 end
