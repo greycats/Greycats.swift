@@ -105,12 +105,13 @@ public class GradientView: UIView {
 	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
 
 	override public func drawRect(rect: CGRect) {
-		let context = UIGraphicsGetCurrentContext()
-		drawGradient(context, rect: rect)
+		drawGradient(rect)
 		super.drawRect(rect)
 	}
 
-	public func drawGradient(context: CGContext?, rect: CGRect, @noescape closure: () -> () = {}) {
+	public func drawGradient(rect: CGRect, @noescape closure: () -> () = {}) {
+		let context = UIGraphicsGetCurrentContext()
+
 		CGContextSaveGState(context)
 		closure()
 		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])

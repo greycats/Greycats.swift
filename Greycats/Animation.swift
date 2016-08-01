@@ -1,53 +1,112 @@
 import UIKit
 
-public class Animation: NSObject {
+public protocol Animatable {
+	func render(elapsedTime: NSTimeInterval) -> Bool
+}
+
+class DisplayLink: NSObject {
+	let animatable: Animatable
+	let end: () -> ()
+
+	var ended: Bool = false
+
 	var lastDrawTime: CFTimeInterval = 0
 	var displayLink: CADisplayLink?
+	private var pausedTime: CFTimeInterval?
+	private var bindAppStatus = false
 
-	public func start(closure: NSTimeInterval -> ()) {
-		self.closure = closure
-		if let displayLink = displayLink {
-			displayLink.invalidate()
-			lastDrawTime = 0
+	required init(animatable: Animatable, end: () -> ()) {
+		self.animatable = animatable
+		self.end = end
+		super.init()
+		resume()
+	}
+
+	func invalidate() {
+		displayLink?.invalidate()
+		lastDrawTime = 0
+		displayLink = nil
+		if !ended {
+			end()
+			ended = true
 		}
-		displayLink = CADisplayLink(target: self, selector: #selector(update))
-		displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 	}
 
 	deinit {
-		stop()
+		invalidate()
 	}
-
-	public func stop() {
-		if let displayLink = displayLink {
-			displayLink.invalidate()
-		}
-		displayLink = nil
-	}
-
-	var closure: ((elapsedTime: NSTimeInterval) -> ())!
 
 	func update() {
-		if let displayLink = displayLink {
-			if lastDrawTime == 0 {
-				lastDrawTime = displayLink.timestamp
-			}
-			let elapsedTime = displayLink.timestamp - lastDrawTime
-			closure(elapsedTime: elapsedTime)
+		guard let displayLink = displayLink else { return }
+
+		if lastDrawTime == 0 {
+			lastDrawTime = displayLink.timestamp
 		}
+		if let time = pausedTime {
+			lastDrawTime += displayLink.timestamp - time
+			pausedTime = nil
+		}
+		let done = animatable.render(displayLink.timestamp - lastDrawTime)
+		if done {
+			invalidate()
+		}
+	}
+
+	func pause() {
+		displayLink?.paused = true
+		pausedTime = displayLink?.timestamp
+	}
+
+	func resume() {
+		if displayLink == nil {
+			displayLink = CADisplayLink(target: self, selector: #selector(update))
+			displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+		}
+		if !bindAppStatus {
+			bindAppStatus = true
+			NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(resume), name: UIApplicationDidBecomeActiveNotification, object: nil)
+			NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(pause), name: UIApplicationWillResignActiveNotification, object: nil)
+		}
+		displayLink?.paused = false
 	}
 }
 
-public enum Easing {
-	case Linear
-	case Quad
-	case Cubic
-	case Sin
-	case Cos
-	case Circle
-	case Exp
-	case Elastic(bounciness: Double)
+public class Animation {
 
+	public enum Easing {
+		case Linear
+		case Quad
+		case Cubic
+		case Sin
+		case Cos
+		case Circle
+		case Exp
+		case Elastic(bounciness: Double)
+	}
+
+	public struct Value {
+		let _value: (time: NSTimeInterval, easing: Easing) -> CGFloat
+
+		public func value(time: NSTimeInterval, easing: Easing = .Linear) -> CGFloat {
+			return _value(time: time, easing: easing)
+		}
+	}
+
+	var displayLink: DisplayLink?
+
+	public init() {
+	}
+
+	public func start(animatable: Animatable, end: () -> ()) {
+		displayLink = DisplayLink(animatable: animatable, end: end)
+	}
+
+	public func stop() {
+		displayLink = nil
+	}
+}
+
+extension Animation.Easing {
 	func calc(t: NSTimeInterval) -> NSTimeInterval {
 		switch self {
 		case .Linear:
@@ -71,12 +130,9 @@ public enum Easing {
 	}
 }
 
-public struct AnimationValue {
-
-	var _timingFunction: (NSTimeInterval, Easing) -> CGFloat
-
-	public static func interpolate(inputRange inputRange: [NSTimeInterval], outputRange: [CGFloat]) -> AnimationValue {
-		return AnimationValue(_timingFunction: { time, fn in
+extension Animation.Value {
+	public static func interpolate(inputRange inputRange: [NSTimeInterval], outputRange: [CGFloat]) -> Animation.Value {
+		return Animation.Value(_value: { time, fn in
 			if time >= inputRange.last {
 				return outputRange.last!
 			}
@@ -97,9 +153,5 @@ public struct AnimationValue {
 			let f = fn.calc(t)
 			return CGFloat(f) * (d - c) + c
 		})
-	}
-
-	public func currentValue(time: NSTimeInterval, easing: Easing = .Linear) -> CGFloat {
-		return _timingFunction(time, easing)
 	}
 }

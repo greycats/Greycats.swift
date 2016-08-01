@@ -21,32 +21,32 @@ public enum Geocode {
 				locationManager = CLLocationManager()
 				locationManager.delegate = self
 				locationManager.desiredAccuracy = accuracy
-				if #available(iOS 9.0, *) {
-					locationManager.requestLocation()
-				} else {
+//				if #available(iOS 9.0, *) {
+//					locationManager.requestLocation()
+//				} else {
 					locationManager.requestWhenInUseAuthorization()
 					locationManager.startUpdatingLocation()
-				}
+//				}
 			}
 		}
 
 		func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 			callback?(locations.last)
 			callback = nil
-			if #available(iOS 9.0, *) {
-			} else {
+//			if #available(iOS 9.0, *) {
+//			} else {
 				manager.stopUpdatingLocation()
-			}
+//			}
 		}
 
 		func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
 			callback?(manager.location)
 			callback = nil
-			print(error.localizedDescription)
-			if #available(iOS 9.0, *) {
-			} else {
+			print("location failed with error \(error.localizedDescription)")
+//			if #available(iOS 9.0, *) {
+//			} else {
 				manager.stopUpdatingLocation()
-			}
+//			}
 		}
 
 		deinit {

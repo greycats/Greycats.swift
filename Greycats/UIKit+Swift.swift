@@ -126,12 +126,20 @@ public class KernLabel: UILabel {
 		didSet { updateAttributedText() }
 	}
 
+	@IBInspectable public var lineHeight: CGFloat = 0 {
+		didSet { updateAttributedText() }
+	}
+
 	func updateAttributedText() {
 		if let text = text {
+			let style = NSMutableParagraphStyle()
+			style.lineHeightMultiple = lineHeight / font.lineHeight
+			style.alignment = textAlignment
 			attributedText = NSAttributedString(string: text, attributes: [
 				NSFontAttributeName: font,
 				NSForegroundColorAttributeName: textColor,
-				NSKernAttributeName: kern
+				NSKernAttributeName: kern,
+				NSParagraphStyleAttributeName: style,
 				])
 		}
 	}
