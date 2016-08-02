@@ -115,7 +115,7 @@ public class TableViewSource<T: Equatable>: SectionData {
 		if animated {
 			tableView?.beginUpdates()
 		}
-		changes.forEach(self._applyChange)
+		changes.forEach(_applyChange)
 		if animated {
 			tableView?.endUpdates()
 		}
@@ -144,7 +144,6 @@ public class TableViewSource<T: Equatable>: SectionData {
 		if animated {
 			tableView?.beginUpdates()
 		}
-
 		_applyChange(change)
 		if animated {
 			tableView?.endUpdates()

@@ -71,21 +71,4 @@ public enum Geocode {
 			}
 		}
 	}
-
-	public func zipcode(closure: (String?) -> ()) {
-		getLocation { location in
-			guard let location = location else { return closure(nil) }
-			CLGeocoder().reverseGeocodeLocation(location) { (addresses, error) in
-				if let addresses = addresses {
-					for address in addresses where address.ISOcountryCode == "US" {
-						if let postalCode = address.postalCode {
-							closure(postalCode)
-							return
-						}
-					}
-				}
-				closure(nil)
-			}
-		}
-	}
 }

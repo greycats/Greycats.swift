@@ -16,10 +16,12 @@ public let EmailRegex = Regex("(?:[a-zA-Z0-9!#$%\\&'*+/=?\\^_`{|}~-]+(?:\\.[a-zA
 
 @IBDesignable
 public class FormField: NibView, UITextFieldDelegate {
+
 	@IBOutlet weak public var captionLabel: UILabel?
 	@IBOutlet weak public var field: UITextField!
 	@IBOutlet weak public var line: UIView!
 	public var regex: Regex = ".*"
+	@IBInspectable public var invalidErrorMessage: String?
 	@IBOutlet weak public var redLine: UIView?
 	@IBOutlet weak public var errorLabel: UILabel?
 	@IBOutlet weak public var errorHeight: NSLayoutConstraint?
@@ -32,7 +34,12 @@ public class FormField: NibView, UITextFieldDelegate {
 			}
 		}
 	}
-	
+
+	@IBInspectable public var enabled: Bool {
+		get { return field.enabled }
+		set(value) { field.enabled = value }
+	}
+
 	public var error: String? {
 		didSet {
 			if let error = error {
@@ -50,6 +57,7 @@ public class FormField: NibView, UITextFieldDelegate {
 	var everEdited = false
 	var onReturn: (() -> Bool)?
 	private var triggers: [() -> ()] = []
+
 	@IBAction func valueUpdated(sender: AnyObject) {
 		triggers.forEach { $0() }
 	}
@@ -68,6 +76,8 @@ public class FormField: NibView, UITextFieldDelegate {
 			if allowsError && reportError {
 				if !field.hasText() {
 					error = "\(validateText)\(placeholder.lowercaseString) is required."
+				} else if let invalidMessage = invalidErrorMessage where invalidMessage.characters.count > 0 {
+					error = invalidMessage.stringByReplacingOccurrencesOfString(":value", withString: field.text!)
 				} else {
 					error = "Invalid \(validateText)\(placeholder.lowercaseString)."
 				}
@@ -236,17 +246,16 @@ public class FormFieldGroup {
 	
 	public func bindButton(button: UIControl?) -> Self {
 		weak var button = button
-		return onChange { valid in
-			button?.enabled = valid
-			}.onSubmit {
-				button?.sendActionsForControlEvents(.TouchUpInside)
-		}
+		return self
+			.onChange { valid in button?.enabled = valid }
+			.onSubmit { button?.sendActionsForControlEvents(.TouchUpInside) }
 	}
 }
 
 private var formKey: Void?
+
 extension CollectionType where Generator.Element: FormField, Index == Int {
-	public func createForm(target: NSObjectProtocol, submitType: UIReturnKeyType = .Send, validatePrefix: String = "", reportsError: Bool = true) -> FormFieldGroup {
+	public func createForm(submitType: UIReturnKeyType = .Send, validatePrefix: String = "", reportsError: Bool = true) -> FormFieldGroup {
 		let group = FormFieldGroup {
 			return self.filter { !$0.pass(validatePrefix, reportError: reportsError) }.count == 0
 		}
@@ -276,6 +285,11 @@ extension CollectionType where Generator.Element: FormField, Index == Int {
 			}
 		}
 		group.validate()
+		return group
+	}
+
+	public func createForm(target: NSObjectProtocol, submitType: UIReturnKeyType = .Send, validatePrefix: String = "", reportsError: Bool = true) -> FormFieldGroup {
+		let group = createForm(submitType, validatePrefix: validatePrefix, reportsError: reportsError)
 		objc_setAssociatedObject(target, &formKey, group, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 		return group
 	}
