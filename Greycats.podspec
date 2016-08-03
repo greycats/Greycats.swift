@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.7.1"
+  s.version          = "2.7.2"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -45,9 +45,9 @@ Pod::Spec.new do |s|
     s.source_files = "Greycats/Camera.swift"
   end
 
-  s.subspec "Filter" do |s|
+  s.subspec "FilterHook" do |s|
     s.dependency "Greycats/Layout"
-    s.source_files = "Greycats/Filter.swift"
+    s.source_files = "Greycats/FilterHook.swift"
   end
 
   s.subspec "Breadcrumb" do |s|

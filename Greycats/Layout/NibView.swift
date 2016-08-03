@@ -6,6 +6,8 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+import UIKit
+
 public let LineWidth = 1 / UIScreen.mainScreen().scale
 public let ScreenSize = UIScreen.mainScreen().bounds.size
 public let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8

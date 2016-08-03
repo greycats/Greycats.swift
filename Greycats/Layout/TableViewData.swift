@@ -10,7 +10,7 @@
 
 import UIKit
 
-private let skipHeightCalculation = UIDevice.currentDevice().systemVersion.compare("8.0", options: NSStringCompareOptions.NumericSearch) != .OrderedAscending
+private let skipHeightCalculation = UIDevice.currentDevice().systemVersion.compare("8.0", options: .NumericSearch) != .OrderedAscending
 
 public protocol SectionData {
 	var section: Int { get set }

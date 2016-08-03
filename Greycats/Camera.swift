@@ -1,4 +1,5 @@
 import AVFoundation
+import UIKit
 
 public class Camera {
 	var session: AVCaptureSession!

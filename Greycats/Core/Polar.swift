@@ -5,6 +5,8 @@
 //  Created by Rex Sheng on 2/5/16.
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 
+import UIKit
+
 public struct Polar {
 	public let r: CGFloat
 	public var θ: CGFloat

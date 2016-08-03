@@ -6,6 +6,8 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+import UIKit
+
 extension UIColor {
 	public convenience init(hexRGB hex: UInt, alpha: CGFloat = 1) {
 		let ff: CGFloat = 255.0;

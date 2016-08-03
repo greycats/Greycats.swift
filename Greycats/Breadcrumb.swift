@@ -8,121 +8,136 @@
 
 // available in pod 'Greycats', '~> 0.1.5'
 
-public protocol BreadcrumbPickle {
-	init(pickle: [String: AnyObject])
-	func pickle() -> [String: AnyObject]
-}
+import Foundation
+import UIKit
 
 class TapTap: NSObject {
-	var block: (UIGestureRecognizer -> Void)?
-	func tapped(tap: UITapGestureRecognizer!) {
-		self.block?(tap)
-	}
+    var block: (UIGestureRecognizer -> Void)?
+
+    func tapped(tap: UITapGestureRecognizer!) {
+        block?(tap)
+    }
 }
 
-public class Breadcrumb<T: NSCoding> {
-	private let attributes: [String: AnyObject]
-	private let highlightAttributes: [String: AnyObject]?
-	private let transform: T -> String
-	public var slash = " / "
-	public var dots = "..."
-	public var within: CGSize = CGSizeMake(CGFloat.max, CGFloat.max)
-	
-	public init(attributes: [String: AnyObject], highlightAttributes: [String: AnyObject] = [:], transform: T -> String) {
-		self.attributes = attributes
-		self.highlightAttributes = highlightAttributes
-		self.transform = transform
-	}
-	
-	func join(elements: [T]) -> (NSMutableAttributedString, [NSRange]) {
-		let attempt = NSMutableAttributedString()
-		let slash = NSAttributedString(string: "\(self.slash)", attributes: attributes)
-		let lastIndex = elements.count - 1
-		var ranges: [NSRange] = []
-		
-		for (index, el) in elements.enumerate() {
-			let str = transform(el)
-			var attr = attributes
-			let data = NSMutableData()
-			let coder = NSKeyedArchiver(forWritingWithMutableData: data)
-			el.encodeWithCoder(coder)
-			coder.finishEncoding()
-			attr["archived-data"] = data
-			let text = NSMutableAttributedString(string: str, attributes: attr)
-			let loc = attempt.length
-			attempt.appendAttributedString(text)
-			if index != lastIndex {
-				attempt.appendAttributedString(slash)
-				ranges.append(NSMakeRange(loc, text.length + 1))
-			} else {
-				ranges.append(NSMakeRange(loc, text.length))
-			}
-		}
-		return (attempt, ranges)
-	}
-	
-	func _highlight(text: NSMutableAttributedString, range: NSRange?, highlight: NSRegularExpression?) {
-		if let highlight = highlight {
-			if let highlightAttributes = highlightAttributes {
-				if let r = range {
-					let matches = highlight.matchesInString(text.string, options: [], range: r)
-					for match in matches {
-						for i in 1..<match.numberOfRanges {
-							text.addAttributes(highlightAttributes, range: match.rangeAtIndex(i))
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	func fit(attr: NSAttributedString) -> Bool {
-		let rect = attr.boundingRectWithSize(CGSizeMake(within.width, CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
-		//		println("\"\(attr.string)\" rect = \(rect)")
-		return rect.size.height <= within.height
-	}
-	
-	func _cut(attempt: NSMutableAttributedString, ranges: [NSRange]) {
-		let dots = NSAttributedString(string: "\(self.dots)\(self.slash)", attributes: attributes)
-		if fit(attempt) {
-			return
-		}
-		for range in ranges {
-			attempt.deleteCharactersInRange(NSMakeRange(0, range.length))
-			attempt.insertAttributedString(dots, atIndex: 0)
-			if fit(attempt) {
-				return
-			} else {
-				attempt.deleteCharactersInRange(NSMakeRange(0, dots.length))
-			}
-		}
-	}
-	
-	public func create(elements: [T], highlight: NSRegularExpression? = nil) -> NSMutableAttributedString {
-		let (attempt, ranges) = join(elements)
-		_highlight(attempt, range: ranges.last, highlight: highlight)
-		_cut(attempt, ranges: ranges)
-		return attempt
-	}
-	
-	public func onClick(textView: UITextView, block: T -> Void) -> AnyObject {
-		let taptap = TapTap()
-		textView.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: #selector(TapTap.tapped(_:))))
-		taptap.block = {[unowned textView] tap in
-			var loc = tap.locationInView(textView)
-			loc.x -= textView.textContainerInset.left
-			loc.y -= textView.textContainerInset.top
-			let index = textView.layoutManager.characterIndexForPoint(loc, inTextContainer: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-			if index < textView.textStorage.length {
-				if let value = textView.attributedText.attribute("archived-data", atIndex: index, effectiveRange: nil) as? NSData {
-					let coder = NSKeyedUnarchiver(forReadingWithData: value)
-					if let category = T(coder: coder) {
-						block(category)
-					}
-					print("click \(value)")
-				}
-			}
-		}
-		return taptap
-	}
+public protocol BreadcrumbPipeline {
+    func process(string: NSMutableAttributedString, ranges: [NSRange])
+}
+
+public protocol Breadcrumb: NSCoding {
+}
+
+public struct BreadcrumbHighlightPipeline: BreadcrumbPipeline {
+    public let attributes: [String: AnyObject]
+    public let pattern: NSRegularExpression
+
+    public func process(string: NSMutableAttributedString, ranges: [NSRange]) {
+        if let range = ranges.last {
+            pattern.matchesInString(string.string, options: [], range: range).forEach { match in
+                for i in 1..<match.numberOfRanges {
+                    string.addAttributes(attributes, range: match.rangeAtIndex(i))
+                }
+            }
+        }
+    }
+}
+
+public struct BreadcrumbTrailingPipeline: BreadcrumbPipeline {
+    public let trailingString: String
+    public let attributes: [String: AnyObject]
+    public let maxSize: CGSize
+
+    func fit(attr: NSAttributedString) -> Bool {
+        let rect = attr.boundingRectWithSize(CGSizeMake(maxSize.width, CGFloat.max), options: .UsesLineFragmentOrigin, context: nil)
+        //		println("\"\(attr.string)\" rect = \(rect)")
+        return rect.size.height <= maxSize.height
+    }
+
+    public func process(string: NSMutableAttributedString, ranges: [NSRange]) {
+        let suffix = NSAttributedString(string: trailingString, attributes: attributes)
+
+        if fit(string) {
+            return
+        }
+        for range in ranges {
+            string.deleteCharactersInRange(NSMakeRange(0, range.length))
+            string.insertAttributedString(suffix, atIndex: 0)
+            if fit(string) {
+                return
+            } else {
+                string.deleteCharactersInRange(NSMakeRange(0, suffix.length))
+            }
+        }
+    }
+}
+
+extension NSAttributedString {
+    public convenience init<T: Breadcrumb>(elements: [T], attributes: [String: AnyObject], transform: T -> String, separator: String, pipelines: [BreadcrumbPipeline]?) {
+        let string = NSMutableAttributedString()
+        let slash = NSAttributedString(string: separator, attributes: attributes)
+        let lastIndex = elements.count - 1
+
+        func attributedStringWithEncodedData(t: T) -> NSAttributedString {
+            let str = transform(t)
+            var attr = attributes
+            let data = NSMutableData()
+            let coder = NSKeyedArchiver(forWritingWithMutableData: data)
+            t.encodeWithCoder(coder)
+            coder.finishEncoding()
+            attr["archived-data"] = data
+            return NSMutableAttributedString(string: str, attributes: attr)
+        }
+
+        let ranges: [NSRange] = elements.enumerate().map { index, element in
+            let text = attributedStringWithEncodedData(element)
+            let loc = string.length
+            string.appendAttributedString(text)
+            if index != lastIndex {
+                string.appendAttributedString(slash)
+                return NSMakeRange(loc, text.length + 1)
+            } else {
+                return NSMakeRange(loc, text.length)
+            }
+        }
+
+        pipelines?.forEach { $0.process(string, ranges: ranges) }
+        self.init(attributedString: string)
+    }
+
+    public func breadcrumbData<T: Breadcrumb>(atIndex index: Int) -> T? {
+        if let value = attribute("archived-data", atIndex: index, effectiveRange: nil) as? NSData {
+            let coder = NSKeyedUnarchiver(forReadingWithData: value)
+            return T(coder: coder)
+        }
+        return nil
+    }
+}
+
+public class Breadcrumbs<T: Breadcrumb> {
+    let attributeGenerator: ([T]) -> NSAttributedString
+    weak var container: UITextView!
+    let taptap = TapTap()
+
+    public init(attributes: [String: AnyObject], transform: T -> String, container: UITextView, onClick: (T) -> Void, separator: String = " / ", pipelines: [BreadcrumbPipeline]? = nil) {
+        self.container = container
+        attributeGenerator = { elements in
+            NSAttributedString(elements: elements, attributes: attributes, transform: transform, separator: separator, pipelines: pipelines)
+        }
+        container.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: #selector(TapTap.tapped)))
+        taptap.block = {[weak container] tap in
+            guard let container = container else { return }
+            var loc = tap.locationInView(container)
+            loc.x -= container.textContainerInset.left
+            loc.y -= container.textContainerInset.top
+            let index = container.layoutManager.characterIndexForPoint(loc, inTextContainer: container.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            if index < container.textStorage.length {
+                if let t: T = container.attributedText.breadcrumbData(atIndex: index) {
+                    onClick(t)
+                }
+            }
+        }
+    }
+
+    public func build(breadcrumbs: [T]) {
+        container.attributedText = attributeGenerator(breadcrumbs)
+    }
 }

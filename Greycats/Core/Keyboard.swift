@@ -7,6 +7,8 @@
 //
 // available in pod 'Greycats', '~> 2.3.0'
 
+import UIKit
+
 public protocol KeyboardResponder: NSObjectProtocol {
 	var keyboardHeight: NSLayoutConstraint! { get }
 	func keyboardWillChange(notif: NSNotification)

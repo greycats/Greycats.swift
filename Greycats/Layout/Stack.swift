@@ -8,6 +8,8 @@
 
 // available in pod 'Greycats', '~> 0.4.0'
 
+import UIKit
+
 public func _id<T: AnyObject>(object: T) -> String {
 	return "[\(object.dynamicType):0x\(String(ObjectIdentifier(object).uintValue, radix: 16))]"
 }

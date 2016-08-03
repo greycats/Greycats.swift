@@ -6,6 +6,8 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+// This is useful when you want to create a Button in IB, but also want to set the image part as a BezierPath.
+
 import UIKit
 
 public protocol SVG {

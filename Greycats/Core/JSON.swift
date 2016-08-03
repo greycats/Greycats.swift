@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Interactive Labs. All rights reserved.
 //
 
+import Foundation
+
 public struct JSON {
 	public enum Type {
 		case Number

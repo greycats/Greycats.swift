@@ -6,6 +6,8 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+import UIKit
+
 public class ReactControls: NSObject {
 	weak var a: UIControl!
 	weak var b: UIControl!

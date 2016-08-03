@@ -6,6 +6,8 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+import UIKit
+
 private var bitmapInfo: UInt32 = {
 	var bitmapInfo = CGBitmapInfo.ByteOrder32Little.rawValue
 	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask.rawValue
