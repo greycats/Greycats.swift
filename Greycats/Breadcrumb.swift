@@ -11,14 +11,6 @@
 import Foundation
 import UIKit
 
-class TapTap: NSObject {
-    var block: (UIGestureRecognizer -> Void)?
-
-    func tapped(tap: UITapGestureRecognizer!) {
-        block?(tap)
-    }
-}
-
 public protocol BreadcrumbPipeline {
     func process(string: NSMutableAttributedString, ranges: [NSRange])
 }
@@ -112,29 +104,45 @@ extension NSAttributedString {
     }
 }
 
-public class Breadcrumbs<T: Breadcrumb> {
-    let attributeGenerator: ([T]) -> NSAttributedString
-    weak var container: UITextView!
-    let taptap = TapTap()
+class Tap {
+    var block: (UIGestureRecognizer -> Void)?
 
-    public init(attributes: [String: AnyObject], transform: T -> String, container: UITextView, onClick: (T) -> Void, separator: String = " / ", pipelines: [BreadcrumbPipeline]? = nil) {
-        self.container = container
-        attributeGenerator = { elements in
-            NSAttributedString(elements: elements, attributes: attributes, transform: transform, separator: separator, pipelines: pipelines)
-        }
-        container.addGestureRecognizer(UITapGestureRecognizer(target: taptap, action: #selector(TapTap.tapped)))
-        taptap.block = {[weak container] tap in
-            guard let container = container else { return }
+    @objc func tapped(tap: UITapGestureRecognizer!) {
+        block?(tap)
+    }
+}
+
+extension UITextView {
+    public func tapOnBreadcrumb<T: Breadcrumb>(clousure: (T) -> Void) -> AnyObject {
+        let tap = Tap()
+        addGestureRecognizer(UITapGestureRecognizer(target: tap, action: #selector(Tap.tapped)))
+        tap.block = {[weak self] tap in
+            guard let container = self else { return }
             var loc = tap.locationInView(container)
             loc.x -= container.textContainerInset.left
             loc.y -= container.textContainerInset.top
             let index = container.layoutManager.characterIndexForPoint(loc, inTextContainer: container.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
             if index < container.textStorage.length {
                 if let t: T = container.attributedText.breadcrumbData(atIndex: index) {
-                    onClick(t)
+                    clousure(t)
                 }
             }
         }
+        return tap
+    }
+}
+
+public class Breadcrumbs<T: Breadcrumb> {
+    let attributeGenerator: ([T]) -> NSAttributedString
+    weak var container: UITextView!
+    let tap: AnyObject
+
+    public init(attributes: [String: AnyObject], transform: T -> String, container: UITextView, onClick: (T) -> Void, separator: String = " / ", pipelines: [BreadcrumbPipeline]? = nil) {
+        self.container = container
+        attributeGenerator = { elements in
+            NSAttributedString(elements: elements, attributes: attributes, transform: transform, separator: separator, pipelines: pipelines)
+        }
+        tap = container.tapOnBreadcrumb(onClick)
     }
 
     public func build(breadcrumbs: [T]) {
