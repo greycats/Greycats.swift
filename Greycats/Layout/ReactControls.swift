@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(*, deprecated=2.7, message="in favor of UIButton.svg")
 public class ReactControls: NSObject {
 	weak var a: UIControl!
 	weak var b: UIControl!
@@ -50,6 +51,7 @@ public class ReactControls: NSObject {
 	}
 }
 
+@available(*, deprecated=2.7, message="in favor of UIButton.svg")
 public func +(lhs: UIControl?, rhs: UIControl?) -> AnyObject? {
 	if let a = lhs, let b = rhs {
 		return ReactControls(a: a, b: b)

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.7.2"
+  s.version          = "2.8.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -35,8 +35,9 @@ Pod::Spec.new do |s|
     s.source_files = "Greycats/Geocode.swift"
   end
 
-  s.subspec "NavigationViewController" do |s|
-    s.source_files = "Greycats/NavigationViewController.swift"
+  s.subspec "Navigator" do |s|
+    s.dependency "Greycats/Layout"
+    s.source_files = "Greycats/Navigator.swift"
   end
 
   s.subspec "Camera" do |s|
