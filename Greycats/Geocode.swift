@@ -8,83 +8,96 @@
 
 import CoreLocation
 
-public enum Geocode {
-    class GeocodeContainer: NSObject, CLLocationManagerDelegate {
-        var locationManager: CLLocationManager!
+private var containerKey: Void?
 
-        var callback: (CLLocation? -> Void)?
+public enum LocationAuthorization {
+    case WhenInUse
+    case Always
+}
 
-        func current(accuracy: CLLocationAccuracy, callback: CLLocation? -> Void) {
-            locationManager?.stopUpdatingLocation()
-            self.callback = callback
-            if locationManager == nil {
-                locationManager = CLLocationManager()
-                locationManager.delegate = self
-                switch CLLocationManager.authorizationStatus() {
-                case .AuthorizedAlways, .AuthorizedWhenInUse:
-                    requestLocation()
-                case .NotDetermined:
-                    locationManager.requestWhenInUseAuthorization()
-                default:
-                    callback(nil)
-                    self.callback = nil
-                }
-            }
-        }
+class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
+    var locationManager: CLLocationManager!
+    var callback: ((CLLocation?) -> Void)?
 
-        func requestLocation() {
-            if #available(iOS 9.0, *) {
-                locationManager.requestLocation()
-            } else {
-                locationManager.startUpdatingLocation()
-            }
-        }
-
-        func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-            callback?(locations.last)
-            callback = nil
-            if #available(iOS 9.0, *) {
-            } else {
-                manager.stopUpdatingLocation()
-            }
-        }
-
-        func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-            switch status {
+    init(accuracy: CLLocationAccuracy, authorization: LocationAuthorization, callback: (CLLocation?) -> Void) {
+        super.init()
+        self.callback = callback
+        if locationManager == nil {
+            locationManager = CLLocationManager()
+            locationManager.delegate = self
+            objc_setAssociatedObject(locationManager, &containerKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            switch CLLocationManager.authorizationStatus() {
             case .AuthorizedAlways, .AuthorizedWhenInUse:
                 requestLocation()
+            case .NotDetermined:
+                switch authorization {
+                case .WhenInUse:
+                    locationManager.requestWhenInUseAuthorization()
+                case .Always:
+                    locationManager.requestAlwaysAuthorization()
+                }
             default:
-                locationManager = nil
-                callback?(nil)
-                callback = nil
+                returnLocation(nil)
             }
-        }
-
-        func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-            callback?(manager.location)
-            callback = nil
-            print("location failed with error \(error.localizedDescription)")
-            if #available(iOS 9.0, *) {
-            } else {
-                manager.stopUpdatingLocation()
-            }
-        }
-
-        deinit {
-            print("deinit GeocodeContainer")
         }
     }
 
-    private static var geoContainer = GeocodeContainer()
+    func returnLocation(location: CLLocation?) {
+        print("return location \(location)")
+        callback?(location)
+        callback = nil
+        locationManager = nil
+    }
+
+    func requestLocation() {
+        if #available(iOS 9.0, *) {
+            locationManager.requestLocation()
+        } else {
+            locationManager.startUpdatingLocation()
+        }
+    }
+
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        returnLocation(locations.last)
+        if #available(iOS 9.0, *) {
+        } else {
+            manager.stopUpdatingLocation()
+        }
+    }
+
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        switch status {
+        case .AuthorizedAlways, .AuthorizedWhenInUse:
+            requestLocation()
+        default:
+            returnLocation(nil)
+        }
+    }
+
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        returnLocation(manager.location)
+        print("location failed with error \(error.localizedDescription)")
+        if #available(iOS 9.0, *) {
+        } else {
+            manager.stopUpdatingLocation()
+        }
+    }
+
+    deinit {
+        print("deinit AsyncCurrentLocation")
+    }
+}
+
+public enum Geocode {
     case Location(CLLocation)
-    case Current(CLLocationAccuracy)
+    case Current(CLLocationAccuracy, LocationAuthorization)
 
     public func getLocation(closure: (CLLocation?) -> ()) {
         switch self {
         case .Location(let location):
             closure(location)
-        case .Current(let accuracy):
-            Geocode.geoContainer.current(accuracy, callback: closure)
+        case .Current(let accuracy, let authorization):
+            AsyncCurrentLocation(accuracy: accuracy, authorization: authorization, callback: closure)
         }
     }
 }
