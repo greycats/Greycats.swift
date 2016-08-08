@@ -69,8 +69,10 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         switch status {
         case .AuthorizedAlways, .AuthorizedWhenInUse:
             requestLocation()
-        default:
+        case .Denied:
             returnLocation(nil)
+        default:
+            break
         }
     }
 
@@ -97,7 +99,7 @@ public enum Geocode {
         case .Location(let location):
             closure(location)
         case .Current(let accuracy, let authorization):
-            AsyncCurrentLocation(accuracy: accuracy, authorization: authorization, callback: closure)
+            let _ = AsyncCurrentLocation(accuracy: accuracy, authorization: authorization, callback: closure)
         }
     }
 }
