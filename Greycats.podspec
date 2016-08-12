@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "2.8.4"
+  s.version          = "2.8.5"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.requires_arc     = true
   s.platform         = :ios, "8.0"
 
-  s.default_subspecs = %w[Core Layout Graphics]
+  s.default_subspecs = %w[Layout Graphics]
 
   s.subspec "Core" do |s|
     s.source_files = "Greycats/{Graphics/Graphics,Core/*,Layout/Designable}.swift"
