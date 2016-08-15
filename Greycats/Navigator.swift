@@ -32,7 +32,7 @@ extension UIViewController {
 }
 
 public protocol BarActionProvider {
-    func provideActionView(forBar bar: NavigationBar) -> UIView
+    func actionView(forBar bar: NavigationBar) -> UIView?
 }
 
 @IBDesignable
@@ -64,10 +64,11 @@ public class NavigationController: UIViewController, UINavigationControllerDeleg
         // customize action view
         customizedActionView?.removeFromSuperview()
         if let provider = viewController as? BarActionProvider {
-            let view = provider.provideActionView(forBar: navigationBar)
-            navigationBar.actionContainer.addSubview(view)
-            view.fullDimension()
-            customizedActionView = view
+            if let view = provider.actionView(forBar: navigationBar) {
+                navigationBar.actionContainer.addSubview(view)
+                view.fullDimension()
+                customizedActionView = view
+            }
         }
 
         navigationBar.leftButtonsContainer.hidden = navigationController.viewControllers.count == 1

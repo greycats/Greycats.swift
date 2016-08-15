@@ -75,7 +75,7 @@ public class Camera {
 		session.stopRunning()
 	}
 
-	public func toggleFlash() {
+	public func toggleFlash() -> AVCaptureFlashMode? {
 		if let device = backCameraDevice() {
 			do {
 				try device.lockForConfiguration()
@@ -87,7 +87,9 @@ public class Camera {
 				device.unlockForConfiguration()
 			} catch {
 			}
+            return device.flashMode
 		}
+        return nil
 	}
 
 	private func backCameraInput() -> AVCaptureDeviceInput? {
