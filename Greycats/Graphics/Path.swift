@@ -10,37 +10,49 @@
 
 import UIKit
 
-public protocol SVG {
-	var path: UIBezierPath { get }
-	init()
+public protocol Graphic {
+    func image(selected: Bool, tintColor: UIColor) -> CGImage?
+    init()
 }
 
-extension UIButton {
-	@IBInspectable public var svg: String? {
-		get { return nil }
-		set(value) {
-			if let value = value,
-				svg = NSClassFromString(value) as? SVG.Type {
-				let path = svg.init().path
-				setImage(UIImage(path: path, color: tintColor), forState: .Normal)
-			}
-		}
-	}
+public protocol SVG: Graphic {
+    var path: UIBezierPath { get }
 }
 
-extension UIImage {
-	public convenience init?(path: UIBezierPath, color: UIColor) {
-		let size = path.bounds.size
-		let image = CGImageRef.op(Int(ceil(size.width)), Int(ceil(size.height))) { context in
-			CGContextSetFillColorWithColor(context, color.CGColor)
-			CGContextAddPath(context, path.CGPath)
-			CGContextFillPath(context)
-		}
-		if let image = image {
-			self.init(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up)
-		} else {
-			return nil
-		}
-	}
+extension SVG {
+    public func image(selected: Bool, tintColor: UIColor) -> CGImage? {
+        let size = path.bounds.size
+        return CGImageRef.op(Int(ceil(size.width)), Int(ceil(size.height))) { context in
+            CGContextSetFillColorWithColor(context, tintColor.CGColor)
+            CGContextAddPath(context, path.CGPath)
+            CGContextFillPath(context)
+        }
+    }
 }
 
+@IBDesignable
+public class GraphicButton: UIButton {
+    @IBInspectable public var graphicClass: String? {
+        didSet {
+            setImageToGraphic()
+        }
+    }
+
+    override public func tintColorDidChange() {
+        super.tintColorDidChange()
+        setImageToGraphic()
+    }
+
+    private func setImageToGraphic() {
+        if let value = graphicClass,
+            graphic = NSClassFromString(value) as? Graphic.Type {
+            let instance = graphic.init()
+            if let image = instance.image(true, tintColor: tintColor) {
+                setImage(UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up), forState: .Selected)
+            }
+            if let image = instance.image(false, tintColor: tintColor) {
+                setImage(UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up), forState: .Normal)
+            }
+        }
+    }
+}

@@ -16,7 +16,7 @@ extension UIView {
 	public func fullDimension() {
 		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
-		let parent = self.superview!
+		let parent = superview!
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[v]|", options: [], metrics: nil, views: views))
 	}
@@ -24,7 +24,7 @@ extension UIView {
 	public func bottom(height: CGFloat = 1) {
 		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
-		let parent = self.superview!
+		let parent = superview!
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[v]|", options: [], metrics: nil, views: views))
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[v(h)]|", options: [], metrics: ["h": height / UIScreen.mainScreen().scale], views: views))
 	}
@@ -32,7 +32,7 @@ extension UIView {
 	public func right(width: CGFloat = 1, margin: CGFloat = 0) {
 		translatesAutoresizingMaskIntoConstraints = false
 		let views = ["v": self]
-		let parent = self.superview!
+		let parent = superview!
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-m-[v]-m-|", options: [], metrics: ["m": margin], views: views))
 		parent.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:[v(w)]|", options: [], metrics: ["w": width / UIScreen.mainScreen().scale], views: views))
 	}
@@ -54,31 +54,24 @@ extension UIStoryboardSegue {
 	}
 }
 
-public protocol _NibView {
-	func setup()
-	var nibName: String { get }
-}
-
 private var viewKey: Void?
-extension _NibView where Self: UIView {
-	private func replaceFirstChildWith<T: UIView>(nibName: String) -> T {
-		if let view = objc_getAssociatedObject(self, &viewKey) as? T {
-			view.removeFromSuperview()
-		}
-		let buddle = NSBundle(forClass: self.dynamicType)
-		let nib = UINib(nibName: nibName, bundle: buddle)
-		let view = nib.instantiateWithOwner(self, options: nil).first as! T
-		view.frame = bounds
-		view.backgroundColor = nil
-		view.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-		insertSubview(view, atIndex: 0)
-		objc_setAssociatedObject(self, &viewKey, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-		return view
-	}
-}
 
-public class NibView: UIView, _NibView {
-	public var nibName: String { return String(self.dynamicType) }
+public class NibView: UIView {
+    private func replaceFirstChildWith(nibName: String) {
+        if let view = objc_getAssociatedObject(self, &viewKey) as? UIView {
+            view.removeFromSuperview()
+        }
+        let buddle = NSBundle(forClass: self.dynamicType)
+        let nib = UINib(nibName: nibName, bundle: buddle)
+        let view = nib.instantiateWithOwner(self, options: nil).first as! UIView
+        view.backgroundColor = nil
+        view.frame = bounds
+        insertSubview(view, atIndex: 0)
+        view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        objc_setAssociatedObject(self, &viewKey, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+
+    public var nibName: String { return String(self.dynamicType) }
 
 	public convenience init() {
 		self.init(frame: .zero)
