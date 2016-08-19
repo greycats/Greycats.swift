@@ -56,8 +56,12 @@ extension UIStoryboardSegue {
 
 private var viewKey: Void?
 
-public class NibView: UIView {
-    private func replaceFirstChildWith(nibName: String) {
+public protocol NibViewProtocol {
+    func replaceFirstChildWith(nibName: String)
+}
+
+extension NibViewProtocol where Self: UIView {
+    public func replaceFirstChildWith(nibName: String) {
         if let view = objc_getAssociatedObject(self, &viewKey) as? UIView {
             view.removeFromSuperview()
         }
@@ -70,7 +74,9 @@ public class NibView: UIView {
         view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         objc_setAssociatedObject(self, &viewKey, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
+}
 
+public class NibView: UIView, NibViewProtocol {
     public var nibName: String { return String(self.dynamicType) }
 
 	public convenience init() {
