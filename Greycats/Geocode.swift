@@ -19,11 +19,15 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager!
     var callback: ((CLLocation?) -> Void)?
 
-    init(accuracy: CLLocationAccuracy, authorization: LocationAuthorization, callback: (CLLocation?) -> Void) {
-        super.init()
+    let requestOnce: Bool
+
+    required init(accuracy: CLLocationAccuracy, requestOnce: Bool = true, authorization: LocationAuthorization, callback: (CLLocation?) -> Void) {
         self.callback = callback
+        self.requestOnce = requestOnce
+        super.init()
         if locationManager == nil {
             locationManager = CLLocationManager()
+            locationManager.desiredAccuracy = accuracy
             locationManager.delegate = self
             objc_setAssociatedObject(locationManager, &containerKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             switch CLLocationManager.authorizationStatus() {
@@ -51,18 +55,22 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
 
     func requestLocation() {
         if #available(iOS 9.0, *) {
-            locationManager.requestLocation()
-        } else {
-            locationManager.startUpdatingLocation()
+            if requestOnce {
+                locationManager.requestLocation()
+                return
+            }
         }
+        locationManager.startUpdatingLocation()
     }
 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         returnLocation(locations.last)
         if #available(iOS 9.0, *) {
-        } else {
-            manager.stopUpdatingLocation()
+            if requestOnce {
+                return
+            }
         }
+        manager.stopUpdatingLocation()
     }
 
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
@@ -80,9 +88,11 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         returnLocation(manager.location)
         print("location failed with error \(error.localizedDescription)")
         if #available(iOS 9.0, *) {
-        } else {
-            manager.stopUpdatingLocation()
+            if requestOnce {
+                return
+            }
         }
+        manager.stopUpdatingLocation()
     }
 
     deinit {
@@ -92,14 +102,15 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
 
 public enum Geocode {
     case Location(CLLocation)
-    case Current(CLLocationAccuracy, LocationAuthorization)
+    case Current(accuracy: CLLocationAccuracy, authorization: LocationAuthorization)
 
     public func getLocation(closure: (CLLocation?) -> ()) {
         switch self {
         case .Location(let location):
             closure(location)
         case .Current(let accuracy, let authorization):
-            let _ = AsyncCurrentLocation(accuracy: accuracy, authorization: authorization, callback: closure)
+            //TODO: it seems like an iOS9 bug that when using requestOnce = true, it takes much longer time to response.
+            let _ = AsyncCurrentLocation(accuracy: accuracy, requestOnce: false, authorization: authorization, callback: closure)
         }
     }
 }
