@@ -44,19 +44,19 @@ public func +(lhs: UIColor, rhs: UIColor) -> UIColor {
 extension CGImage {
 	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
 		return op { context, rect in
-			CGContextSetFillColorWithColor(context, color)
-			CGContextFillRect(context, rect)
-			CGContextSetBlendMode(context, mode)
-			CGContextSetAlpha(context, alpha)
-			CGContextDrawImage(context, rect, self)
+			CGContextSetFillColorWithColor(context!, color)
+			CGContextFillRect(context!, rect)
+			CGContextSetBlendMode(context!, mode)
+			CGContextSetAlpha(context!, alpha)
+			CGContextDrawImage(context!, rect, self)
 		}
 	}
 
 	public static func create(color: CGColor, size: CGSize) -> CGImage? {
 		return op(Int(size.width), Int(size.height)) { (context) in
 			let rect = CGRect(origin: .zero, size: size)
-			CGContextSetFillColorWithColor(context, color)
-			CGContextFillRect(context, rect)
+			CGContextSetFillColorWithColor(context!, color)
+			CGContextFillRect(context!, rect)
 		}
 	}
 }

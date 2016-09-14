@@ -62,7 +62,7 @@ public class NavigationViewController: UIViewController, UINavigationControllerD
 	override public func viewDidLoad() {
 		super.viewDidLoad()
 		reattach()
-		bar?.backButton.addTarget(self, action: #selector(navigateBack), forControlEvents: .TouchUpInside)
+        bar?.backButton.addTarget(self, action: #selector(navigateBack(_:)), forControlEvents: .TouchUpInside)
 		let childNavigationController = UINavigationController()
 		childNavigationController.navigationBarHidden = true
 		childNavigationController.delegate = self

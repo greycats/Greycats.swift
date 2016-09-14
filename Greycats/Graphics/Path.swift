@@ -23,9 +23,9 @@ extension SVG {
     public func image(selected: Bool, tintColor: UIColor) -> CGImage? {
         let size = path.bounds.size
         return CGImageRef.op(Int(ceil(size.width)), Int(ceil(size.height))) { context in
-            CGContextSetFillColorWithColor(context, tintColor.CGColor)
-            CGContextAddPath(context, path.CGPath)
-            CGContextFillPath(context)
+            CGContextSetFillColorWithColor(context!, tintColor.CGColor)
+            CGContextAddPath(context!, path.CGPath)
+            CGContextFillPath(context!)
         }
     }
 }
@@ -45,7 +45,7 @@ public class GraphicButton: UIButton {
 
     private func setImageToGraphic() {
         if let value = graphicClass,
-            graphic = NSClassFromString(value) as? Graphic.Type {
+            let graphic = NSClassFromString(value) as? Graphic.Type {
             let instance = graphic.init()
             if let image = instance.image(true, tintColor: tintColor) {
                 setImage(UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up), forState: .Selected)
