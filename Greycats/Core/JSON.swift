@@ -9,12 +9,12 @@
 import Foundation
 
 public struct JSON {
-	public enum Type {
-		case Number
-		case String
-		case Dictionary
-		case Array
-		case Null
+	public enum `Type` {
+		case number
+		case string
+		case dictionary
+		case array
+		case null
 	}
 	public let type: Type
 	public typealias RawValue = AnyObject
@@ -23,53 +23,53 @@ public struct JSON {
 	public init(_ json: RawValue?) {
 		switch json {
 		case _ as String:
-			type = .String
+			type = .string
 			object = json
 		case _ as Double:
-			type = .Number
+			type = .number
 			object = json
 		case _ as [RawValue]:
-			type = .Array
+			type = .array
 			object = json
 		case _ as [String: RawValue]:
-			type = .Dictionary
+			type = .dictionary
 			object = json
 		default:
-			type = .Null
+			type = .null
 			object = nil
 		}
 	}
 	
 	public var int: Int? {
-		if type == .Number {
+		if type == .number {
 			return object as? Int
 		}
 		return nil
 	}
 	
 	public var double: Double? {
-		if type == .Number {
+		if type == .number {
 			return object as? Double
 		}
 		return nil
 	}
 	
 	public var string: String? {
-		if type == .String {
+		if type == .string {
 			return object as? String
 		}
 		return nil
 	}
 	
 	public var bool: Bool {
-		if type == .Number {
+		if type == .number {
 			return (object as? Bool)!
 		}
 		return false
 	}
 	
 	public var array: [JSON]? {
-		if type == .Array {
+		if type == .array {
 			let array: [JSON] = (object as! [RawValue]).map { JSON($0) }
 			return array
 		}
@@ -77,7 +77,7 @@ public struct JSON {
 	}
 	
 	public var dictionary: [String: JSON]? {
-		if type == .Dictionary {
+		if type == .dictionary {
 			var dictionary: [String: JSON] = [:]
 			for (k, v) in object as! [String: RawValue] {
 				dictionary[k] = JSON(v)
@@ -87,7 +87,7 @@ public struct JSON {
 		return nil
 	}
 	
-	public func tryDictionary(keys: String...) -> JSON? {
+	public func tryDictionary(_ keys: String...) -> JSON? {
 		if let object = object as? [String: AnyObject] {
 			for key in keys {
 				if let v = object[key] {
@@ -107,7 +107,7 @@ public struct JSON {
 	}
 	
 	public subscript (key: Int) -> JSON {
-		if type == .Array {
+		if type == .array {
 			if let object = object as? [RawValue] {
 				return JSON(object[key])
 			}
@@ -123,7 +123,7 @@ public struct JSON {
 	}
 }
 
-extension JSON: NilLiteralConvertible {
+extension JSON: ExpressibleByNilLiteral {
 	public init(nilLiteral: ()) {
 		self.init(nil)
 	}

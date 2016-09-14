@@ -11,8 +11,8 @@ import UIKit
 public extension UIView {
 
 	@IBInspectable public var borderColor: UIColor? {
-		get { if let color = layer.borderColor { return UIColor(CGColor: color) } else { return nil } }
-		set(value) { if let value = value { layer.borderColor = value.CGColor } }
+		get { if let color = layer.borderColor { return UIColor(cgColor: color) } else { return nil } }
+		set(value) { if let value = value { layer.borderColor = value.cgColor } }
 	}
 
 	@IBInspectable public var borderWidth: CGFloat {
@@ -21,8 +21,8 @@ public extension UIView {
 	}
 
 	@IBInspectable public var relativeBorderWidth: CGFloat {
-		get { return layer.borderWidth * UIScreen.mainScreen().scale }
-		set(value) { layer.borderWidth = value / UIScreen.mainScreen().scale }
+		get { return layer.borderWidth * UIScreen.main.scale }
+		set(value) { layer.borderWidth = value / UIScreen.main.scale }
 	}
 
 	@IBInspectable public var cornerRadius: CGFloat {
@@ -40,8 +40,8 @@ public extension UIView {
 	}
 
 	@IBInspectable public var shadowColor: UIColor? {
-		get { if let color = layer.shadowColor { return UIColor(CGColor: color) } else { return nil } }
-		set(value) { if let value = value { layer.shadowColor = value.CGColor } }
+		get { if let color = layer.shadowColor { return UIColor(cgColor: color) } else { return nil } }
+		set(value) { if let value = value { layer.shadowColor = value.cgColor } }
 	}
 
 	@IBInspectable public var shadowOffset: CGPoint {
@@ -50,8 +50,8 @@ public extension UIView {
 	}
 
 	@IBInspectable public var relativeShadowOffset: CGPoint {
-		get { return CGPoint(x: layer.shadowOffset.width * UIScreen.mainScreen().scale, y: layer.shadowOffset.height * UIScreen.mainScreen().scale) }
-		set(value) { layer.shadowOffset = CGSize(width: value.x / UIScreen.mainScreen().scale, height: value.y / UIScreen.mainScreen().scale) }
+		get { return CGPoint(x: layer.shadowOffset.width * UIScreen.main.scale, y: layer.shadowOffset.height * UIScreen.main.scale) }
+		set(value) { layer.shadowOffset = CGSize(width: value.x / UIScreen.main.scale, height: value.y / UIScreen.main.scale) }
 	}
 
 	@IBInspectable public var shadowOpacity: Float {
@@ -61,7 +61,7 @@ public extension UIView {
 			layer.masksToBounds = false
 			if value > 0 {
 				layer.shouldRasterize = true
-				layer.rasterizationScale = UIScreen.mainScreen().scale
+				layer.rasterizationScale = UIScreen.main.scale
 			} else {
 				layer.shouldRasterize = false
 			}
@@ -74,58 +74,58 @@ public extension UIView {
 	}
 
 	@IBInspectable public var relativeShadowRadius: CGFloat {
-		get { return layer.shadowRadius * UIScreen.mainScreen().scale }
-		set(value) { layer.shadowRadius = value / UIScreen.mainScreen().scale }
+		get { return layer.shadowRadius * UIScreen.main.scale }
+		set(value) { layer.shadowRadius = value / UIScreen.main.scale }
 	}
 }
 
 @IBDesignable
-public class BoxView: UIView {
-	@IBInspectable public var cornerRadii: CGSize = CGSize(width: 4, height: 4)
-	@IBInspectable public var corners: UInt = 0 {
+open class BoxView: UIView {
+	@IBInspectable open var cornerRadii: CGSize = CGSize(width: 4, height: 4)
+	@IBInspectable open var corners: UInt = 0 {
 		didSet {
 			updateCorners()
 		}
 	}
-	private func updateCorners() {
+	fileprivate func updateCorners() {
 		if corners > 0 {
 			let shape = CAShapeLayer()
-			shape.path = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: corners), cornerRadii: cornerRadii).CGPath
+			shape.path = UIBezierPath(roundedRect: bounds, byRoundingCorners: UIRectCorner(rawValue: corners), cornerRadii: cornerRadii).cgPath
 			layer.mask = shape
 		}
 	}
 }
 
 @IBDesignable
-public class TextField: UITextField {
-	@IBInspectable public var placeholderAlpha: CGFloat = 0.5 {
+open class TextField: UITextField {
+	@IBInspectable open var placeholderAlpha: CGFloat = 0.5 {
 		didSet {
 			updatePlaceholder()
 		}
 	}
 
-	private func updatePlaceholder() {
-		if let placeholder = placeholder, font = font, textColor = textColor {
+	fileprivate func updatePlaceholder() {
+		if let placeholder = placeholder, let font = font, let textColor = textColor {
 			attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [
 				NSFontAttributeName: font,
-				NSForegroundColorAttributeName: textColor.colorWithAlphaComponent(placeholderAlpha)
+				NSForegroundColorAttributeName: textColor.withAlphaComponent(placeholderAlpha)
 				])
 		}
 	}
 
-	override public var placeholder: String? {
+	override open var placeholder: String? {
 		didSet {
 			updatePlaceholder()
 		}
 	}
 
-	override public var font: UIFont? {
+	override open var font: UIFont? {
 		didSet {
 			updatePlaceholder()
 		}
 	}
 
-	override public var textColor: UIColor? {
+	override open var textColor: UIColor? {
 		didSet {
 			updatePlaceholder()
 		}
@@ -133,68 +133,68 @@ public class TextField: UITextField {
 }
 
 @IBDesignable
-public class GradientView: UIView {
-	@IBInspectable public var color1: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable public var color2: UIColor = UIColor.whiteColor() { didSet { setNeedsDisplay() } }
-	@IBInspectable public var loc1: CGPoint = CGPointMake(0, 0) { didSet { setNeedsDisplay() } }
-	@IBInspectable public var loc2: CGPoint = CGPointMake(1, 1) { didSet { setNeedsDisplay() } }
+open class GradientView: UIView {
+	@IBInspectable open var color1: UIColor = UIColor.white { didSet { setNeedsDisplay() } }
+	@IBInspectable open var color2: UIColor = UIColor.white { didSet { setNeedsDisplay() } }
+	@IBInspectable open var loc1: CGPoint = CGPoint(x: 0, y: 0) { didSet { setNeedsDisplay() } }
+	@IBInspectable open var loc2: CGPoint = CGPoint(x: 1, y: 1) { didSet { setNeedsDisplay() } }
 
-	override public func drawRect(rect: CGRect) {
+	override open func draw(_ rect: CGRect) {
 		drawGradient(rect)
-		super.drawRect(rect)
+		super.draw(rect)
 	}
 
-	public func drawGradient(rect: CGRect, @noescape closure: () -> () = {}) {
+	open func drawGradient(_ rect: CGRect, closure: () -> () = {}) {
 		let context = UIGraphicsGetCurrentContext()
 
-		CGContextSaveGState(context!)
+		context!.saveGState()
 		closure()
-		let gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [color1.CGColor, color2.CGColor], [0, 1])
-		CGContextDrawLinearGradient(context!, gradient!,
-		                            CGPointMake(rect.size.width * loc1.x, rect.size.height * loc1.y),
-		                            CGPointMake(rect.size.width * loc2.x, rect.size.height * loc2.y),
-		                            [.DrawsBeforeStartLocation, .DrawsAfterEndLocation])
-		CGContextRestoreGState(context!)
+		let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: [color1.cgColor, color2.cgColor] as CFArray, locations: [0, 1])
+		context!.drawLinearGradient(gradient!,
+		                            start: CGPoint(x: rect.size.width * loc1.x, y: rect.size.height * loc1.y),
+		                            end: CGPoint(x: rect.size.width * loc2.x, y: rect.size.height * loc2.y),
+		                            options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
+		context!.restoreGState()
 	}
 }
 
 @IBDesignable
-public class _Control: UIControl {
-	override public func tintColorDidChange() {
+open class _Control: UIControl {
+	override open func tintColorDidChange() {
 		setNeedsDisplay()
 	}
 
-	@IBInspectable public var disabledColor: UIColor = UIColor.grayColor()
+	@IBInspectable open var disabledColor: UIColor = UIColor.gray
 
-	@IBInspectable public var respectHeight: Bool = false {
+	@IBInspectable open var respectHeight: Bool = false {
 		didSet { setNeedsDisplay() }
 	}
 
-	@IBInspectable public var desiredWidth: CGFloat = 0 {
+	@IBInspectable open var desiredWidth: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
 
-	@IBInspectable public var scaleBoost: CGFloat = 1 {
+	@IBInspectable open var scaleBoost: CGFloat = 1 {
 		didSet { setNeedsDisplay() }
 	}
 
-	@IBInspectable public var angle: CGFloat = 0 {
+	@IBInspectable open var angle: CGFloat = 0 {
 		didSet { setNeedsDisplay() }
 	}
 
 	required override public init(frame: CGRect) {
 		super.init(frame: frame)
-		contentMode = .Redraw
-		opaque = false
+		contentMode = .redraw
+		isOpaque = false
 	}
 
 	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
-		contentMode = .Redraw
-		opaque = false
+		contentMode = .redraw
+		isOpaque = false
 	}
 
-    public func centerScale(originalSize: CGSize, @noescape closure: (scale: CGFloat) -> ()) {
+    open func centerScale(_ originalSize: CGSize, closure: (_ scale: CGFloat) -> ()) {
 		let rect = bounds
 		let scale: CGFloat
 		let width: CGFloat
@@ -213,17 +213,17 @@ public class _Control: UIControl {
 			height = width * originalSize.height / originalSize.width
 		}
 		let context = UIGraphicsGetCurrentContext()
-		CGContextSaveGState(context!)
-		CGContextTranslateCTM(context!, (rect.size.width - width) / 2, (rect.size.height - height) / 2)
-		CGContextScaleCTM(context!, scale, scale)
-		if enabled {
+		context!.saveGState()
+		context!.translateBy(x: (rect.size.width - width) / 2, y: (rect.size.height - height) / 2)
+		context!.scaleBy(x: scale, y: scale)
+		if isEnabled {
 			tintColor.setFill()
 			tintColor.setStroke()
 		} else {
 			disabledColor.setFill()
 			disabledColor.setStroke()
 		}
-		closure(scale: scale)
-		CGContextRestoreGState(context!)
+		closure(scale)
+		context!.restoreGState()
 	}
 }

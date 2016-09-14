@@ -1,7 +1,38 @@
+
 import UIKit
 
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
+fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l <= r
+  default:
+    return !(rhs < lhs)
+  }
+}
+
+
 public protocol Animatable: class {
-    func render(elapsedTime: NSTimeInterval) -> Bool
+    func render(_ elapsedTime: TimeInterval) -> Bool
     func start()
     func stop()
 }
@@ -14,8 +45,8 @@ class DisplayLink: NSObject {
 
     var lastDrawTime: CFTimeInterval = 0
     var displayLink: CADisplayLink?
-    private var pausedTime: CFTimeInterval?
-    private var bindAppStatus = false
+    fileprivate var pausedTime: CFTimeInterval?
+    fileprivate var bindAppStatus = false
 
     required init(animatable: Animatable, end: (() -> Void)? = nil) {
         self.animatable = animatable
@@ -61,21 +92,21 @@ class DisplayLink: NSObject {
     }
 
     func pause() {
-        displayLink?.paused = true
+        displayLink?.isPaused = true
         pausedTime = displayLink?.timestamp
     }
 
     func resume() {
         if displayLink == nil {
             displayLink = CADisplayLink(target: self, selector: #selector(update))
-            displayLink?.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+            displayLink?.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
         }
         if !bindAppStatus {
             bindAppStatus = true
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(resume), name: UIApplicationDidBecomeActiveNotification, object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(pause), name: UIApplicationWillResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(pause), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
         }
-        displayLink?.paused = false
+        displayLink?.isPaused = false
     }
 }
 
@@ -92,24 +123,24 @@ extension Animatable {
     }
 }
 
-public class Animation {
+open class Animation {
 
     public enum Easing {
-        case Linear
-        case Quad
-        case Cubic
-        case Sin
-        case Cos
-        case Circle
-        case Exp
-        case Elastic(bounciness: Double)
+        case linear
+        case quad
+        case cubic
+        case sin
+        case cos
+        case circle
+        case exp
+        case elastic(bounciness: Double)
     }
 
     public struct Value {
-        let _value: (time: NSTimeInterval, easing: Easing) -> CGFloat
+        let _value: (_ time: TimeInterval, _ easing: Easing) -> CGFloat
 
-        public func value(time: NSTimeInterval, easing: Easing = .Linear) -> CGFloat {
-            return _value(time: time, easing: easing)
+        public func value(_ time: TimeInterval, easing: Easing = .linear) -> CGFloat {
+            return _value(time, easing)
         }
     }
 
@@ -118,41 +149,41 @@ public class Animation {
     public init() {
     }
 
-    public func start(animatable: Animatable, end: (() -> Void)? = nil) {
+    open func start(_ animatable: Animatable, end: (() -> Void)? = nil) {
         displayLink = DisplayLink(animatable: animatable, end: end)
     }
 
-    public func stop() {
+    open func stop() {
         displayLink = nil
     }
 }
 
 extension Animation.Easing {
-    func calc(t: NSTimeInterval) -> NSTimeInterval {
+    func calc(_ t: TimeInterval) -> TimeInterval {
         switch self {
-        case .Linear:
+        case .linear:
             return t
-        case .Quad:
+        case .quad:
             return t * t
-        case .Cubic:
+        case .cubic:
             return t * t * t
-        case .Sin:
-            return sin(t * M_PI / 2)
-        case .Cos:
-            return cos(t * M_PI / 2)
-        case .Circle:
+        case .sin:
+            return Foundation.sin(t * M_PI / 2)
+        case .cos:
+            return Foundation.cos(t * M_PI / 2)
+        case .circle:
             return 1 - sqrt(1 - t * t)
-        case .Exp:
+        case .exp:
             return pow(2, 10 * (t - 1))
-        case .Elastic(let bounciness):
+        case .elastic(let bounciness):
             let p = bounciness * M_PI
-            return 1 - pow(cos(t * M_PI / 2), 3) * cos(t * p)
+            return 1 - pow(Foundation.cos(t * M_PI / 2), 3) * Foundation.cos(t * p)
         }
     }
 }
 
 extension Animation.Value {
-    public static func interpolate(inputRange inputRange: [NSTimeInterval], outputRange: [CGFloat]) -> Animation.Value {
+    public static func interpolate(inputRange: [TimeInterval], outputRange: [CGFloat]) -> Animation.Value {
         return Animation.Value(_value: { time, fn in
             if time >= inputRange.last {
                 return outputRange.last!
@@ -162,7 +193,7 @@ extension Animation.Value {
             }
             
             var found: Int = 0
-            for (index, input) in inputRange.enumerate() {
+            for (index, input) in inputRange.enumerated() {
                 if time >= input {
                     found = index
                 } else {

@@ -11,8 +11,8 @@ import CoreLocation
 private var containerKey: Void?
 
 public enum LocationAuthorization {
-    case WhenInUse
-    case Always
+    case whenInUse
+    case always
 }
 
 class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
@@ -21,7 +21,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
 
     let requestOnce: Bool
 
-    required init(accuracy: CLLocationAccuracy, requestOnce: Bool = true, authorization: LocationAuthorization, callback: (CLLocation?) -> Void) {
+    required init(accuracy: CLLocationAccuracy, requestOnce: Bool = true, authorization: LocationAuthorization, callback: @escaping (CLLocation?) -> Void) {
         self.callback = callback
         self.requestOnce = requestOnce
         super.init()
@@ -31,13 +31,13 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
             locationManager.delegate = self
             objc_setAssociatedObject(locationManager, &containerKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             switch CLLocationManager.authorizationStatus() {
-            case .AuthorizedAlways, .AuthorizedWhenInUse:
+            case .authorizedAlways, .authorizedWhenInUse:
                 requestLocation()
-            case .NotDetermined:
+            case .notDetermined:
                 switch authorization {
-                case .WhenInUse:
+                case .whenInUse:
                     locationManager.requestWhenInUseAuthorization()
-                case .Always:
+                case .always:
                     locationManager.requestAlwaysAuthorization()
                 }
             default:
@@ -46,7 +46,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func returnLocation(location: CLLocation?) {
+    func returnLocation(_ location: CLLocation?) {
         print("return location \(location)")
         callback?(location)
         callback = nil
@@ -63,7 +63,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         locationManager.startUpdatingLocation()
     }
 
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         returnLocation(locations.last)
         if #available(iOS 9.0, *) {
             if requestOnce {
@@ -73,18 +73,18 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         manager.stopUpdatingLocation()
     }
 
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
-        case .AuthorizedAlways, .AuthorizedWhenInUse:
+        case .authorizedAlways, .authorizedWhenInUse:
             requestLocation()
-        case .Denied:
+        case .denied:
             returnLocation(nil)
         default:
             break
         }
     }
 
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         returnLocation(manager.location)
         print("location failed with error \(error.localizedDescription)")
         if #available(iOS 9.0, *) {
@@ -101,14 +101,14 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
 }
 
 public enum Geocode {
-    case Location(CLLocation)
-    case Current(accuracy: CLLocationAccuracy, authorization: LocationAuthorization)
+    case location(CLLocation)
+    case current(accuracy: CLLocationAccuracy, authorization: LocationAuthorization)
 
-    public func getLocation(closure: (CLLocation?) -> ()) {
+    public func getLocation(_ closure: @escaping (CLLocation?) -> ()) {
         switch self {
-        case .Location(let location):
+        case .location(let location):
             closure(location)
-        case .Current(let accuracy, let authorization):
+        case .current(let accuracy, let authorization):
             //TODO: it seems like an iOS9 bug that when using requestOnce = true, it takes much longer time to response.
             let _ = AsyncCurrentLocation(accuracy: accuracy, requestOnce: false, authorization: authorization, callback: closure)
         }

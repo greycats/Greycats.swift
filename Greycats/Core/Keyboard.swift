@@ -11,8 +11,8 @@ import UIKit
 
 public protocol KeyboardResponder: NSObjectProtocol {
 	var keyboardHeight: NSLayoutConstraint! { get }
-	func keyboardWillChange(notif: NSNotification)
-	func keyboardHeightDidUpdate(height: CGFloat)
+	func keyboardWillChange(_ notif: Notification)
+	func keyboardHeightDidUpdate(_ height: CGFloat)
 }
 
 public protocol AutoFocus: NSObjectProtocol {
@@ -23,12 +23,12 @@ public protocol AutoFocus: NSObjectProtocol {
 private var observerKey: Void?
 
 extension KeyboardResponder {
-	public func keyboardHeightDidUpdate(height: CGFloat) {
+	public func keyboardHeightDidUpdate(_ height: CGFloat) {
 
 	}
 
 	public func registerKeyboard() {
-		let observer = NSNotificationCenter.defaultCenter().addObserverForName(UIKeyboardWillChangeFrameNotification, object: nil, queue: .mainQueue()) {[weak self] notif in
+		let observer = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil, queue: .main) { [weak self] notif in
 				self?.keyboardWillChange(notif)
 		}
 		unregisterKeyboard()
@@ -37,14 +37,14 @@ extension KeyboardResponder {
 
 	public func unregisterKeyboard() {
 		if let observer = objc_getAssociatedObject(self, &observerKey) {
-			NSNotificationCenter.defaultCenter().removeObserver(observer, name: UIKeyboardWillChangeFrameNotification, object: nil)
+			NotificationCenter.default.removeObserver(observer, name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
 		}
 	}
 
-	private func _keyboardWillChange(notif: NSNotification, view: UIView) {
-		if let info = notif.userInfo {
-			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-			kbRect = view.convertRect(kbRect, fromView: view.window)
+	fileprivate func _keyboardWillChange(_ notif: Notification, view: UIView) {
+		if let info = (notif as NSNotification).userInfo {
+			var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+			kbRect = view.convert(kbRect, from: view.window)
 			let height = view.bounds.size.height - kbRect.origin.y
 			if let constraint = keyboardHeight {
 				if constraint.constant != height {
@@ -53,19 +53,19 @@ extension KeyboardResponder {
 					keyboardHeightDidUpdate(height)
 					view.layoutIfNeeded()
 					constraint.constant = height
-					UIView.animateWithDuration(info[UIKeyboardAnimationDurationUserInfoKey] as! NSTimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+					UIView.animate(withDuration: info[UIKeyboardAnimationDurationUserInfoKey] as! TimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
 						view.layoutIfNeeded()
 						}, completion: nil)
 				}
 				return
 			}
 			if let this = self as? AutoFocus,
-				scrollView = this.scrollingView() {
+				let scrollView = this.scrollingView() {
 					let insets = UIEdgeInsetsMake(0, 0, height, 0)
 					scrollView.contentInset = insets
 					scrollView.scrollIndicatorInsets = insets
 					if let field = this.activeField() {
-						let frame = field.convertRect(field.bounds, toView: view)
+						let frame = field.convert(field.bounds, to: view)
 						scrollView.scrollRectToVisible(frame, animated: true)
 					}
 			}
@@ -75,13 +75,13 @@ extension KeyboardResponder {
 }
 
 extension KeyboardResponder where Self: UIView {
-	public func keyboardWillChange(notif: NSNotification) {
+	public func keyboardWillChange(_ notif: Notification) {
 		_keyboardWillChange(notif, view: self)
 	}
 }
 
 extension KeyboardResponder where Self: UIViewController {
-	public func keyboardWillChange(notif: NSNotification) {
+	public func keyboardWillChange(_ notif: Notification) {
 		_keyboardWillChange(notif, view: view)
 	}
 }

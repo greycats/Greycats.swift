@@ -3,7 +3,7 @@ import UIKit
 public protocol Navigatable {
     func canGoBack() -> Bool
     func goBack()
-    func navigatableChanged(listener: () -> Void)
+    func navigatableChanged(_ listener: () -> Void)
 }
 
 extension UIViewController {
@@ -15,7 +15,7 @@ extension UIViewController {
         guard let navigationController = navigationController else {
             return false
         }
-        if let index = navigationController.viewControllers.indexOf(self) where index > 0 {
+        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
             return true
         }
         return false
@@ -25,7 +25,7 @@ extension UIViewController {
         guard let navigationController = navigationController else {
             return
         }
-        if let index = navigationController.viewControllers.indexOf(self) where index > 0 {
+        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
             navigationController.popToViewController(navigationController.viewControllers[index - 1], animated: true)
         }
     }
@@ -36,20 +36,20 @@ public protocol BarActionProvider {
 }
 
 @IBDesignable
-public class NavigationBar: NibView {
-    @IBOutlet public weak var actionContainer: UIView!
-    @IBOutlet public weak var leftButtonsContainer: UIView!
-    @IBOutlet public weak var rightButtonsContainer: UIView!
-    public weak var navigationItem: UINavigationItem!
+open class NavigationBar: NibView {
+    @IBOutlet open weak var actionContainer: UIView!
+    @IBOutlet open weak var leftButtonsContainer: UIView!
+    @IBOutlet open weak var rightButtonsContainer: UIView!
+    open weak var navigationItem: UINavigationItem!
 }
 
-public class NavigationController: UIViewController, UINavigationControllerDelegate {
+open class NavigationController: UIViewController, UINavigationControllerDelegate {
 
-    @IBOutlet public weak var navigationBar: NavigationBar!
+    @IBOutlet open weak var navigationBar: NavigationBar!
 
     weak var customizedActionView: UIView?
 
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         for child in childViewControllers {
             if let child = child as? UINavigationController {
@@ -58,7 +58,7 @@ public class NavigationController: UIViewController, UINavigationControllerDeleg
         }
     }
 
-    public func navigationController(navigationController: UINavigationController, willShowViewController viewController: UIViewController, animated: Bool) {
+    open func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         navigationBar.navigationItem = viewController.navigationItem
 
         // customize action view
@@ -71,7 +71,7 @@ public class NavigationController: UIViewController, UINavigationControllerDeleg
             }
         }
 
-        navigationBar.leftButtonsContainer.hidden = navigationController.viewControllers.count == 1
+        navigationBar.leftButtonsContainer.isHidden = navigationController.viewControllers.count == 1
         weak var handler = viewController
         if let viewController = viewController as? Navigatable {
             viewController.navigatableChanged {[weak self] in
@@ -79,7 +79,7 @@ public class NavigationController: UIViewController, UINavigationControllerDeleg
                     return
                 }
                 if handler == navigationController.topViewController {
-                    self?.navigationBar.leftButtonsContainer.hidden = !handler.canGoBack() && navigationController.viewControllers.count == 1
+                    self?.navigationBar.leftButtonsContainer.isHidden = !handler.canGoBack() && navigationController.viewControllers.count == 1
                 }
             }
         }

@@ -8,33 +8,33 @@
 
 import UIKit
 
-private var bitmapInfo: UInt32 = {
-	var bitmapInfo = CGBitmapInfo.ByteOrder32Little.rawValue
-	bitmapInfo &= ~CGBitmapInfo.AlphaInfoMask.rawValue
-	bitmapInfo |= CGImageAlphaInfo.PremultipliedFirst.rawValue
+private var _bitmapInfo: UInt32 = {
+	var bitmapInfo = CGBitmapInfo.byteOrder32Little.rawValue
+	bitmapInfo &= ~CGBitmapInfo.alphaInfoMask.rawValue
+	bitmapInfo |= CGImageAlphaInfo.premultipliedFirst.rawValue
 	return bitmapInfo
 }()
 
 extension CGImage {
-	public func op(@noescape closure: (CGContext?, CGRect) -> ()) -> CGImage? {
-		let width = CGImageGetWidth(self)
-		let height = CGImageGetHeight(self)
+	public func op(_ closure: (CGContext?, CGRect) -> ()) -> CGImage? {
+		let width = self.width
+		let height = self.height
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
-		let context = CGBitmapContextCreate(nil, width, height, 8, width * 8, colourSpace, bitmapInfo)
+		let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 8, space: colourSpace, bitmapInfo: bitmapInfo.rawValue)
 		let rect = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
 		closure(context, rect)
-		return CGBitmapContextCreateImage(context!)
+		return context!.makeImage()
 	}
 
-	public static func op(width: Int, _ height: Int, @noescape closure: CGContext? -> ()) -> CGImage? {
-		let scale = UIScreen.mainScreen().scale
+	public static func op(_ width: Int, _ height: Int, closure: (CGContext?) -> ()) -> CGImage? {
+		let scale = UIScreen.main.scale
 		let w = width * Int(scale)
 		let h = height * Int(scale)
 		let colourSpace = CGColorSpaceCreateDeviceRGB()
-		let context = CGBitmapContextCreate(nil, w, h, 8, w * 8, colourSpace, bitmapInfo)
-		CGContextTranslateCTM(context!, 0, CGFloat(h))
-		CGContextScaleCTM(context!, scale, -scale)
+		let context = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 8, space: colourSpace, bitmapInfo: _bitmapInfo)
+		context!.translateBy(x: 0, y: CGFloat(h))
+		context!.scaleBy(x: scale, y: -scale)
 		closure(context)
-		return CGBitmapContextCreateImage(context!)
+		return context!.makeImage()
 	}
 }

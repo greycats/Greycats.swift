@@ -2,70 +2,70 @@ import UIKit
 import ImageIO
 
 extension UIImage {
-	public func resize(maxPixel: Int) -> UIImage? {
-		if let imageSource = CGImageSourceCreateWithData(UIImageJPEGRepresentation(self, 1)!, nil) {
-			let options: [NSString: NSObject] = [
-				kCGImageSourceThumbnailMaxPixelSize: maxPixel,
-				kCGImageSourceCreateThumbnailFromImageAlways: true,
-				]
-
-			return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options).flatMap { UIImage(CGImage: $0) }
-		}
-		return nil
-	}
-
-	public func fixedOrientation() -> UIImage {
-
-		if imageOrientation == .Up {
-			return self
-		}
-
-		var transform = CGAffineTransformIdentity
-
-		switch imageOrientation {
-		case .Down, .DownMirrored:
-			transform = CGAffineTransformTranslate(transform, size.width, size.height)
-			transform = CGAffineTransformRotate(transform, CGFloat(M_PI))
-			break
-		case .Left, .LeftMirrored:
-			transform = CGAffineTransformTranslate(transform, size.width, 0)
-			transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2))
-			break
-		case .Right, .RightMirrored:
-			transform = CGAffineTransformTranslate(transform, 0, size.height)
-			transform = CGAffineTransformRotate(transform, CGFloat(-M_PI_2))
-			break
-		case .Up, .UpMirrored:
-			break
-		}
-
-		switch imageOrientation {
-		case .UpMirrored, .DownMirrored:
-			CGAffineTransformTranslate(transform, size.width, 0)
-			CGAffineTransformScale(transform, -1, 1)
-			break
-		case .LeftMirrored, .RightMirrored:
-			CGAffineTransformTranslate(transform, size.height, 0)
-			CGAffineTransformScale(transform, -1, 1)
-		case .Up, .Down, .Left, .Right:
-			break
-		}
-
-		let ctx = CGBitmapContextCreate(nil, Int(size.width), Int(size.height), CGImageGetBitsPerComponent(CGImage!), 0, CGImageGetColorSpace(CGImage!)!, CGImageAlphaInfo.PremultipliedLast.rawValue)!
-
-		CGContextConcatCTM(ctx, transform)
-
-		switch imageOrientation {
-		case .Left, .LeftMirrored, .Right, .RightMirrored:
-			CGContextDrawImage(ctx, CGRectMake(0, 0, size.height, size.width), CGImage!)
-			break
-		default:
-			CGContextDrawImage(ctx, CGRectMake(0, 0, size.width, size.height), CGImage!)
-			break
-		}
-
-		let cgImage = CGBitmapContextCreateImage(ctx)!
-
-		return UIImage(CGImage: cgImage)
-	}
+    public func resize(_ maxPixel: Int) -> UIImage? {
+        if let imageSource = CGImageSourceCreateWithData(UIImageJPEGRepresentation(self, 1)! as CFData, nil) {
+            let options: [NSString: NSObject] = [
+                kCGImageSourceThumbnailMaxPixelSize: maxPixel as NSObject,
+                kCGImageSourceCreateThumbnailFromImageAlways: true as NSObject,
+                ]
+            
+            return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary?).flatMap { UIImage(cgImage: $0) }
+        }
+        return nil
+    }
+    
+    public func fixedOrientation() -> UIImage {
+        guard let cgImage = cgImage else {
+            return self
+        }
+        
+        if imageOrientation == .up {
+            return self
+        }
+        
+        var transform = CGAffineTransform.identity
+        
+        switch imageOrientation {
+        case .down, .downMirrored:
+            transform = transform.translatedBy(x: size.width, y: size.height)
+            transform = transform.rotated(by: CGFloat(M_PI))
+            break
+        case .left, .leftMirrored:
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.rotated(by: CGFloat(M_PI_2))
+            break
+        case .right, .rightMirrored:
+            transform = transform.translatedBy(x: 0, y: size.height)
+            transform = transform.rotated(by: CGFloat(-M_PI_2))
+            break
+        case .up, .upMirrored:
+            break
+        }
+        
+        switch imageOrientation {
+        case .upMirrored, .downMirrored:
+            transform.translatedBy(x: size.width, y: 0)
+            transform.scaledBy(x: -1, y: 1)
+            break
+        case .leftMirrored, .rightMirrored:
+            transform.translatedBy(x: size.height, y: 0)
+            transform.scaledBy(x: -1, y: 1)
+        case .up, .down, .left, .right:
+            break
+        }
+        
+        let ctx = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: cgImage.bitsPerComponent, bytesPerRow: 0, space: cgImage.colorSpace!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+        
+        ctx.concatenate(transform)
+        
+        switch imageOrientation {
+        case .left, .leftMirrored, .right, .rightMirrored:
+            ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.height, height: size.width))
+            break
+        default:
+            ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+            break
+        }
+        return UIImage(cgImage: ctx.makeImage()!)
+    }
 }

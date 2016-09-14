@@ -23,21 +23,21 @@ public final class Regex {
 	
 	public init(_ pattern: String) {
 		self.pattern = pattern
-		internalExpression = try! NSRegularExpression(pattern: pattern, options: [.CaseInsensitive, .AnchorsMatchLines])
+		internalExpression = try! NSRegularExpression(pattern: pattern, options: [.caseInsensitive, .anchorsMatchLines])
 	}
 	
-	public func test(input: String) -> Bool {
-		let matches = internalExpression.matchesInString(input, options: [], range:NSMakeRange(0, input.characters.count))
+	public func test(_ input: String) -> Bool {
+		let matches = internalExpression.matches(in: input, options: [], range:NSMakeRange(0, input.characters.count))
 		return matches.count > 0
 	}
 	
-	public func exec(input: String) -> [String]? {
-		if let match = internalExpression.firstMatchInString(input, options: [], range: NSMakeRange(0, input.characters.count)) {
+	public func exec(_ input: String) -> [String]? {
+		if let match = internalExpression.firstMatch(in: input, options: [], range: NSMakeRange(0, input.characters.count)) {
 			var results: [String] = []
 			for i in 1..<match.numberOfRanges {
-				let r = match.rangeAtIndex(i)
+				let r = match.rangeAt(i)
 				if r.location != Int.max {
-					results.append((input as NSString).substringWithRange(r))
+					results.append((input as NSString).substring(with: r))
 				}
 			}
 			return results
@@ -45,14 +45,14 @@ public final class Regex {
 		return nil
 	}
 	
-	public func findall(input: String) -> [[String]] {
-		let matches = internalExpression.matchesInString(input, options: [], range: NSMakeRange(0, input.characters.count))
+	public func findall(_ input: String) -> [[String]] {
+		let matches = internalExpression.matches(in: input, options: [], range: NSMakeRange(0, input.characters.count))
 		return matches.map { match in
 			var results: [String] = []
 			for i in 1..<match.numberOfRanges {
-				let r = match.rangeAtIndex(i)
+				let r = match.rangeAt(i)
 				if r.location != Int.max {
-					results.append((input as NSString).substringWithRange(r))
+					results.append((input as NSString).substring(with: r))
 				}
 			}
 			return results
@@ -60,7 +60,7 @@ public final class Regex {
 	}
 }
 
-extension Regex: StringLiteralConvertible {
+extension Regex: ExpressibleByStringLiteral {
 	public typealias ExtendedGraphemeClusterLiteralType = StringLiteralType
 	public typealias UnicodeScalarLiteralType = StringLiteralType
 	public convenience init(unicodeScalarLiteral value: UnicodeScalarLiteralType) {
@@ -76,7 +76,7 @@ extension Regex: StringLiteralConvertible {
 	}
 }
 
-infix operator =~ {}
+infix operator =~
 public func =~ (input: String, pattern: Regex) -> Bool {
 	return pattern.test(input)
 }

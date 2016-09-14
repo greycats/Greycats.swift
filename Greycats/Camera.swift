@@ -1,7 +1,7 @@
 import AVFoundation
 import UIKit
 
-public class Camera {
+open class Camera {
 	var session: AVCaptureSession!
 	var previewLayer: AVCaptureVideoPreviewLayer!
 	var stillCameraOutput: AVCaptureStillImageOutput!
@@ -22,17 +22,17 @@ public class Camera {
 		}
 	}
 
-	private func backCameraDevice() -> AVCaptureDevice? {
-		let availableCameraDevices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
+	fileprivate func backCameraDevice() -> AVCaptureDevice? {
+		let availableCameraDevices = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
 		for device in availableCameraDevices as! [AVCaptureDevice] {
-			if device.position == .Back {
+			if device.position == .back {
 				return device
 			}
 		}
 		return nil
 	}
 
-	public func containerDidUpdate(container: UIView) {
+	open func containerDidUpdate(_ container: UIView) {
 		if previewLayer.superlayer == nil {
 			container.layer.addSublayer(previewLayer)
 		}
@@ -41,7 +41,7 @@ public class Camera {
 		UIView.setAnimationsEnabled(true)
 	}
 
-	public func start() {
+	open func start() {
 		foreground {
 			self.checkPermission {[weak self] in
 				self?.session.startRunning()
@@ -49,16 +49,16 @@ public class Camera {
 		}
 	}
 
-	public func capture(next: (UIImage?) -> ()) {
-		if let connection = stillCameraOutput.connectionWithMediaType(AVMediaTypeVideo) {
-			if connection.supportsVideoOrientation {
-				connection.videoOrientation = .Portrait
+	open func capture(_ next: @escaping (UIImage?) -> ()) {
+		if let connection = stillCameraOutput.connection(withMediaType: AVMediaTypeVideo) {
+			if connection.isVideoOrientationSupported {
+				connection.videoOrientation = .portrait
 			}
-			stillCameraOutput.captureStillImageAsynchronouslyFromConnection(connection) { (buffer, error) in
+			stillCameraOutput.captureStillImageAsynchronously(from: connection) { (buffer, error) in
 				self.stop()
 				if let buffer = buffer {
 					let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer)
-					let image = UIImage(data: imageData)?.fixedOrientation()
+					let image = UIImage(data: imageData!)?.fixedOrientation()
 					foreground {
 						next(image)
 					}
@@ -71,18 +71,18 @@ public class Camera {
 		}
 	}
 
-	public func stop() {
+	open func stop() {
 		session.stopRunning()
 	}
 
-	public func toggleFlash() -> AVCaptureFlashMode? {
+	open func toggleFlash() -> AVCaptureFlashMode? {
 		if let device = backCameraDevice() {
 			do {
 				try device.lockForConfiguration()
-				if device.flashMode == .Off {
-					device.flashMode = .On
+				if device.flashMode == .off {
+					device.flashMode = .on
 				} else {
-					device.flashMode = .Off
+					device.flashMode = .off
 				}
 				device.unlockForConfiguration()
 			} catch {
@@ -92,19 +92,19 @@ public class Camera {
         return nil
 	}
 
-	private func backCameraInput() -> AVCaptureDeviceInput? {
+	fileprivate func backCameraInput() -> AVCaptureDeviceInput? {
 		if let device = backCameraDevice() {
 			return try? AVCaptureDeviceInput(device: device)
 		}
 		return nil
 	}
 
-	private func checkPermission(next: () -> ()) {
-		let authorizationStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
+	fileprivate func checkPermission(_ next: @escaping () -> ()) {
+		let authorizationStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
 		switch authorizationStatus {
-		case .NotDetermined:
+		case .notDetermined:
 			// permission dialog not yet presented, request authorization
-			AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo) { granted in
+			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo) { granted in
 				if granted {
 					foreground {
 						next()
@@ -114,9 +114,9 @@ public class Camera {
 					// user denied, nothing much to do
 				}
 			}
-		case .Authorized:
+		case .authorized:
 			next()
-		case .Denied, .Restricted:
+		case .denied, .restricted:
 			// the user explicitly denied camera usage or is not allowed to access the camera devices
 			return
 		}

@@ -16,7 +16,7 @@ public struct Polar {
 		θ = atan2(b, a)
 	}
 
-	public mutating func rotate(angle: CGFloat) {
+	public mutating func rotate(_ angle: CGFloat) {
 		θ -= angle
 	}
 

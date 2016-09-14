@@ -9,19 +9,19 @@
 import UIKit
 
 class Delegate: NSObject {
-    var applyFilter: (String? -> ()) = { _ in }
+    var applyFilter: ((String?) -> ()) = { _ in }
     var didCancel: (() -> Void)?
     var didSearch: ((UIResponder) -> ())? = { $0.resignFirstResponder() }
     var startEditing: (() -> Bool)?
 }
 
 extension Delegate: UITextFieldDelegate {
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return startEditing?() ?? true
     }
 
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        let filter = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let filter = (textField.text! as NSString).replacingCharacters(in: range, with: string)
         if filter.characters.count > 0 {
             applyFilter(filter)
         } else {
@@ -30,12 +30,12 @@ extension Delegate: UITextFieldDelegate {
         return true
     }
 
-    func textFieldShouldClear(textField: UITextField) -> Bool {
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
         applyFilter(nil)
         return true
     }
 
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         applyFilter(textField.text!.characters.count > 0 ? textField.text : nil)
         didSearch?(textField)
         return true
@@ -43,29 +43,29 @@ extension Delegate: UITextFieldDelegate {
 }
 
 extension Delegate: UISearchBarDelegate {
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         applyFilter(searchBar.text!.characters.count > 0 ? searchBar.text : nil)
     }
 
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         applyFilter(nil)
         didCancel?()
         searchBar.showsCancelButton = false
         searchBar.resignFirstResponder()
     }
 
-    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.showsCancelButton = true
         return startEditing?() ?? true
     }
 
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         didSearch?(searchBar)
     }
 }
 
-public class FilterHook<T: Equatable where T: Filtering> {
-    public var source: [T]! {
+open class FilterHook<T: Equatable> where T: Filtering {
+    open var source: [T]! {
         didSet {
             data.source = source
             delegate.applyFilter(term)
@@ -76,7 +76,7 @@ public class FilterHook<T: Equatable where T: Filtering> {
     var term: String?
     weak var data: Data!
 
-    public init(data: Data, filter: Filter, shouldStart: (() -> Bool)? = nil, didCancel: () -> () = {}, didSearch: ((UIResponder) -> ())? = nil) {
+    public init(data: Data, filter: Filter, shouldStart: (() -> Bool)? = nil, didCancel: @escaping () -> () = {}, didSearch: ((UIResponder) -> ())? = nil) {
         delegate.startEditing = shouldStart
         delegate.didCancel = didCancel
         if let didSearch = didSearch {
@@ -96,7 +96,7 @@ public class FilterHook<T: Equatable where T: Filtering> {
         input.delegate = delegate
     }
 
-    public convenience init(data: Data, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil, didCancel: () -> () = {}, didSearch: ((UIResponder) -> ())? = nil) {
+    public convenience init(data: Data, filter: Filter, input: UISearchBar, shouldStart: (() -> Bool)? = nil, didCancel: @escaping () -> () = {}, didSearch: ((UIResponder) -> ())? = nil) {
         self.init(data: data, filter: filter, shouldStart: shouldStart, didCancel: didCancel, didSearch: didSearch)
         input.delegate = delegate
     }

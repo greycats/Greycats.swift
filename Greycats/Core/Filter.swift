@@ -12,53 +12,53 @@ import Foundation
 
 public protocol Filtering {
     var valueToFilter: String? { get }
-    func highlightMatches(matches: [NSTextCheckingResult])
+    func highlightMatches(_ matches: [NSTextCheckingResult])
     func clearMatches()
 }
 
 public enum Filter {
-    case CharacterSequences
-    case WordSequences
-    case WordInitialSequences
-    case StartWith
-    case Contains
+    case characterSequences
+    case wordSequences
+    case wordInitialSequences
+    case startWith
+    case contains
 
-    func pattern(string: String) throws -> NSRegularExpression {
+    func pattern(_ string: String) throws -> NSRegularExpression {
         var pattern = "(?:.*?)"
-        let range = string.startIndex..<string.endIndex
+        let range = Range<String.Index>(uncheckedBounds: (string.startIndex, string.endIndex))
         switch self {
-        case .CharacterSequences:
-            string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByComposedCharacterSequences) { (substring, substringRange, enclosingRange, stop) -> () in
-                let escaped = NSRegularExpression.escapedPatternForString(substring!)
-                pattern.appendContentsOf("(\(escaped))(?:.*?)")
+        case .characterSequences:
+            string.enumerateSubstrings(in: range, options: NSString.EnumerationOptions.byComposedCharacterSequences) { (substring, substringRange, enclosingRange, stop) -> () in
+                let escaped = NSRegularExpression.escapedPattern(for: substring!)
+                pattern.append("(\(escaped))(?:.*?)")
             }
-        case .WordSequences:
-            string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByWords) { (substring, substringRange, enclosingRange, stop) -> () in
-                let escaped = NSRegularExpression.escapedPatternForString(substring!)
-                pattern.appendContentsOf("(\(escaped))(?:.*?)")
+        case .wordSequences:
+            string.enumerateSubstrings(in: range, options: .byWords) { (substring, substringRange, enclosingRange, stop) -> () in
+                let escaped = NSRegularExpression.escapedPattern(for: substring!)
+                pattern.append("(\(escaped))(?:.*?)")
             }
-        case .WordInitialSequences:
-            string.enumerateSubstringsInRange(range, options: NSStringEnumerationOptions.ByWords) { (substring, substringRange, enclosingRange, stop) -> () in
-                let escaped = NSRegularExpression.escapedPatternForString(substring!)
-                pattern.appendContentsOf("\\b(\(escaped))(?:.*?)")
+        case .wordInitialSequences:
+            string.enumerateSubstrings(in: range, options: .byWords) { (substring, substringRange, enclosingRange, stop) -> () in
+                let escaped = NSRegularExpression.escapedPattern(for: substring!)
+                pattern.append("\\b(\(escaped))(?:.*?)")
             }
-        case .StartWith:
-            let escaped = NSRegularExpression.escapedPatternForString(string)
+        case .startWith:
+            let escaped = NSRegularExpression.escapedPattern(for: string)
             pattern = "(\(escaped)).*?"
-        case .Contains:
-            let escaped = NSRegularExpression.escapedPatternForString(string)
+        case .contains:
+            let escaped = NSRegularExpression.escapedPattern(for: string)
             pattern = ".*?(\(escaped)).*?"
         }
-        return try NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions.CaseInsensitive)
+        return try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
     }
 
-    public func apply<T: Filtering>(string: String?, objects: [T]) -> [T] {
+    public func apply<T: Filtering>(_ string: String?, objects: [T]) -> [T] {
         if let keyword = string,
-            r = try? pattern(keyword) {
+            let r = try? pattern(keyword) {
             var filtered: [T] = []
             objects.forEach { object in
                 if let value = object.valueToFilter {
-                    let matches = r.matchesInString(value, options: .Anchored, range: NSMakeRange(0, value.characters.count))
+                    let matches = r.matches(in: value, options: .anchored, range: NSMakeRange(0, value.characters.count))
                     if matches.count > 0 {
                         object.highlightMatches(matches)
                         filtered.append(object)

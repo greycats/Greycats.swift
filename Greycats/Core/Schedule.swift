@@ -8,14 +8,10 @@
 
 import Foundation
 
-public func dispatch_time_in(delay: NSTimeInterval) -> dispatch_time_t {
-    return dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
-}
+public typealias Task = (_ cancel : Bool) -> ()
 
-public typealias Task = (cancel : Bool) -> ()
-
-public func delay(delay: NSTimeInterval, closure: dispatch_block_t) -> Task? {
-    var task: dispatch_block_t? = closure
+public func delay(_ delay: TimeInterval, closure: @escaping () -> Void) -> Task? {
+    var task: (() -> Void)? = closure
     var result: Task?
     let delayedClosure: Task = { cancel in
         if let internalClosure = task {
@@ -27,56 +23,51 @@ public func delay(delay: NSTimeInterval, closure: dispatch_block_t) -> Task? {
         result = nil
     }
     result = delayedClosure
-    dispatch_after(dispatch_time_in(delay), dispatch_get_main_queue()) {
-        result?(cancel: false)
+    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(Int(delay * 1000)) {
+        result?(false)
     }
     return result
 }
-public func cancel(task: Task?) {
-    task?(cancel: true)
+public func cancel(_ task: Task?) {
+    task?(true)
 }
 
-public func background(closure: dispatch_block_t) {
-    dispatch_async(dispatch_get_global_queue(0, 0), closure)
+public func background(_ closure: @escaping () -> Void) {
+    DispatchQueue.global(qos: .background).async(execute: closure)
 }
 
-public func foreground(closure: dispatch_block_t) {
-    dispatch_async(dispatch_get_main_queue(), closure)
+public func foreground(_ closure: @escaping () -> Void) {
+    DispatchQueue.main.async(execute: closure)
 }
 
 public struct Schedule {
-    private let timer: dispatch_source_t = {
-        let timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
-        dispatch_resume(timer)
+    fileprivate let timer: DispatchSourceTimer = {
+        let timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: DispatchQueue.main)
+        timer.resume()
         return timer
     }()
-
-    private var interval = DISPATCH_TIME_FOREVER
-    private var delay: NSTimeInterval = 0.25
-
-    public init(interval: NSTimeInterval = 0, delay: NSTimeInterval = 0.25) {
+    
+    let interval: DispatchTimeInterval?
+    let delay: DispatchTimeInterval
+    
+    public init(interval: DispatchTimeInterval?, delay: DispatchTimeInterval = .milliseconds(250)) {
         self.delay = delay
-        if interval > 0 {
-            self.interval = UInt64(interval * Double(NSEC_PER_SEC))
-        }
+        self.interval = interval
     }
-
+    
     public func cancel() {
-        dispatch_source_cancel(timer)
+        timer.cancel()
     }
-    private var flag: UInt8 = 0
-
-    mutating public func schedule(closure: (check: () -> Bool) -> ()) {
-        flag += 1
-        if flag > 250 {
-            flag = 0
+    
+    mutating public func schedule(_ closure: @escaping (_ check: () -> Bool) -> ()) {
+        cancel()
+        if let interval = interval {
+            timer.scheduleRepeating(deadline: DispatchTime.distantFuture, interval: interval)
+        } else {
+            timer.scheduleOneshot(deadline: DispatchTime.distantFuture)
         }
-        let f = flag
-        dispatch_source_set_timer(timer, dispatch_time_in(delay), interval, 0)
-        dispatch_source_set_event_handler(timer) {
-            if f == self.flag {
-                closure { f == self.flag }
-            }
+        timer.setEventHandler {
+            closure { true }
         }
     }
 }

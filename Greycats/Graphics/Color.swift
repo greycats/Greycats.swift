@@ -17,11 +17,11 @@ extension UIColor {
 		self.init(red: r, green: g, blue: b, alpha: alpha)
 	}
 
-	public func overlay(color: UIColor) -> UIColor {
+	public func overlay(_ color: UIColor) -> UIColor {
 		var ra: CGFloat = 0, ga: CGFloat = 0, ba: CGFloat = 0, aa: CGFloat = 0
 		var rb: CGFloat = 0, gb: CGFloat = 0, bb: CGFloat = 0, ab: CGFloat = 0
 		color.getRed(&ra, green: &ga, blue: &ba, alpha: &aa)
-		func blend(b: CGFloat, _ a: CGFloat) -> CGFloat {
+		func blend(_ b: CGFloat, _ a: CGFloat) -> CGFloat {
 			if a < 0.5 {
 				return 2 * a * b
 			} else {
@@ -42,41 +42,41 @@ public func +(lhs: UIColor, rhs: UIColor) -> UIColor {
 }
 
 extension CGImage {
-	public func blend(mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
+	public func blend(_ mode: CGBlendMode, color: CGColor, alpha: CGFloat = 1) -> CGImage? {
 		return op { context, rect in
-			CGContextSetFillColorWithColor(context!, color)
-			CGContextFillRect(context!, rect)
-			CGContextSetBlendMode(context!, mode)
-			CGContextSetAlpha(context!, alpha)
-			CGContextDrawImage(context!, rect, self)
+			context!.setFillColor(color)
+			context!.fill(rect)
+			context!.setBlendMode(mode)
+			context!.setAlpha(alpha)
+			context!.draw(self, in: rect)
 		}
 	}
 
-	public static func create(color: CGColor, size: CGSize) -> CGImage? {
+	public static func create(_ color: CGColor, size: CGSize) -> CGImage? {
 		return op(Int(size.width), Int(size.height)) { (context) in
 			let rect = CGRect(origin: .zero, size: size)
-			CGContextSetFillColorWithColor(context!, color)
-			CGContextFillRect(context!, rect)
+			context!.setFillColor(color)
+			context!.fill(rect)
 		}
 	}
 }
 
 extension UIImage {
-	public func blend(color: UIColor) -> UIImage? {
-		return blend(CGBlendMode.DestinationIn, color: color)
+	public func blend(_ color: UIColor) -> UIImage? {
+		return blend(CGBlendMode.destinationIn, color: color)
 	}
 
-	public func blend(mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
-		if let cgImage = CGImage?.blend(mode, color: color.CGColor, alpha: alpha) {
-			let image = UIImage(CGImage: cgImage, scale: scale, orientation: .Up)
+	public func blend(_ mode: CGBlendMode, color: UIColor, alpha: CGFloat = 1) -> UIImage? {
+		if let cgImage = cgImage?.blend(mode, color: color.cgColor, alpha: alpha) {
+			let image = UIImage(cgImage: cgImage, scale: scale, orientation: .up)
 			return image
 		}
 		return nil
 	}
 
 	public convenience init?(fromColor: UIColor) {
-		if let cgImage = CGImageRef.create(fromColor.CGColor, size: CGSizeMake(1, 1)) {
-			self.init(CGImage: cgImage)
+		if let cgImage = CGImage.create(fromColor.cgColor, size: CGSize(width: 1, height: 1)) {
+			self.init(cgImage: cgImage)
 		} else {
 			return nil
 		}
