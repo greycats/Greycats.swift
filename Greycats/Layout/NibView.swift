@@ -9,8 +9,6 @@
 import UIKit
 
 public let LineWidth = 1 / UIScreen.mainScreen().scale
-public let ScreenSize = UIScreen.mainScreen().bounds.size
-public let iOS8Less = (UIDevice.currentDevice().systemVersion as NSString).floatValue < 8
 
 extension UIView {
 	public func fullDimension() {
@@ -57,11 +55,11 @@ extension UIStoryboardSegue {
 private var viewKey: Void?
 
 public protocol NibViewProtocol {
-    func replaceFirstChildWith(nibName: String)
+    func replaceFirstChildWith(nibName: String) -> UIView
 }
 
 extension NibViewProtocol where Self: UIView {
-    public func replaceFirstChildWith(nibName: String) {
+    public func replaceFirstChildWith(nibName: String) -> UIView {
         if let view = objc_getAssociatedObject(self, &viewKey) as? UIView {
             view.removeFromSuperview()
         }
@@ -73,6 +71,7 @@ extension NibViewProtocol where Self: UIView {
         insertSubview(view, atIndex: 0)
         view.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         objc_setAssociatedObject(self, &viewKey, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return view
     }
 }
 
@@ -96,7 +95,7 @@ public class NibView: UIView, NibViewProtocol {
 	@IBOutlet var lineWidth: [NSLayoutConstraint]!
 
 	public func setup() {
-		replaceFirstChildWith(nibName)
+		_ = replaceFirstChildWith(nibName)
 		if lineWidth != nil {
 			for c in lineWidth {
 				c.constant = LineWidth

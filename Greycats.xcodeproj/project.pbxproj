@@ -25,7 +25,6 @@
 		CFD302D01D51E6AE009779AF /* Designable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302BB1D51E6AE009779AF /* Designable.swift */; };
 		CFD302D11D51E6AE009779AF /* FormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302BC1D51E6AE009779AF /* FormField.swift */; };
 		CFD302D21D51E6AE009779AF /* NibView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302BD1D51E6AE009779AF /* NibView.swift */; };
-		CFD302D31D51E6AE009779AF /* ReactControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302BE1D51E6AE009779AF /* ReactControls.swift */; };
 		CFD302D41D51E6AE009779AF /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302BF1D51E6AE009779AF /* Stack.swift */; };
 		CFD302D51D51E6AE009779AF /* TableViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302C01D51E6AE009779AF /* TableViewData.swift */; };
 		CFD302D61D51E6AE009779AF /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302C11D51E6AE009779AF /* NavigationViewController.swift */; };
@@ -57,7 +56,6 @@
 		CFD302BB1D51E6AE009779AF /* Designable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Designable.swift; sourceTree = "<group>"; };
 		CFD302BC1D51E6AE009779AF /* FormField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormField.swift; sourceTree = "<group>"; };
 		CFD302BD1D51E6AE009779AF /* NibView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibView.swift; sourceTree = "<group>"; };
-		CFD302BE1D51E6AE009779AF /* ReactControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactControls.swift; sourceTree = "<group>"; };
 		CFD302BF1D51E6AE009779AF /* Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		CFD302C01D51E6AE009779AF /* TableViewData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewData.swift; sourceTree = "<group>"; };
 		CFD302C11D51E6AE009779AF /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				CFD302BB1D51E6AE009779AF /* Designable.swift */,
 				CFD302BC1D51E6AE009779AF /* FormField.swift */,
 				CFD302BD1D51E6AE009779AF /* NibView.swift */,
-				CFD302BE1D51E6AE009779AF /* ReactControls.swift */,
 				CFD302BF1D51E6AE009779AF /* Stack.swift */,
 				CFD302C01D51E6AE009779AF /* TableViewData.swift */,
 			);
@@ -256,7 +253,6 @@
 				CFD302C41D51E6AE009779AF /* JSON.swift in Sources */,
 				CFD302CD1D51E6AE009779AF /* Graphics.swift in Sources */,
 				CF3A50521D892199001BDD5C /* Alertable.swift in Sources */,
-				CFD302D31D51E6AE009779AF /* ReactControls.swift in Sources */,
 				CFD302D01D51E6AE009779AF /* Designable.swift in Sources */,
 				CFD302D81D51FA0D009779AF /* FilterHook.swift in Sources */,
 				CFD302D61D51E6AE009779AF /* NavigationViewController.swift in Sources */,
