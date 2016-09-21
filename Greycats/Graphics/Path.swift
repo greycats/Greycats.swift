@@ -19,6 +19,7 @@ public protocol SVG: Graphic {
     var path: UIBezierPath { get }
 }
 
+@available(*, deprecated=2.9, message="Use Graphic directly")
 extension SVG {
     public func image(selected: Bool, tintColor: UIColor) -> CGImage? {
         let size = path.bounds.size
@@ -30,28 +31,58 @@ extension SVG {
     }
 }
 
+public protocol GraphicDesignable {
+    var graphicClass: String? { get set }
+    var graphic: Graphic? { get }
+}
+
+extension GraphicDesignable {
+    public var graphic: Graphic? {
+        if let value = graphicClass,
+            let instance = NSClassFromString(value) as? Graphic.Type {
+            return instance.init()
+        }
+        return nil
+    }
+}
+
 @IBDesignable
-public class GraphicButton: UIButton {
+public class GraphicButton: UIButton, GraphicDesignable {
     @IBInspectable public var graphicClass: String? {
         didSet {
             setImageToGraphic()
         }
     }
-
+    
     override public func tintColorDidChange() {
         super.tintColorDidChange()
         setImageToGraphic()
     }
-
+    
     private func setImageToGraphic() {
-        if let value = graphicClass,
-            let graphic = NSClassFromString(value) as? Graphic.Type {
-            let instance = graphic.init()
-            if let image = instance.image(true, tintColor: tintColor) {
+        if let graphic = self.graphic {
+            if let image = graphic.image(true, tintColor: tintColor) {
                 setImage(UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up), forState: .Selected)
             }
-            if let image = instance.image(false, tintColor: tintColor) {
+            if let image = graphic.image(false, tintColor: tintColor) {
                 setImage(UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up), forState: .Normal)
+            }
+        }
+    }
+}
+
+@IBDesignable
+public class GraphicBarButtonItem: UIBarButtonItem, GraphicDesignable {
+    @IBInspectable public var graphicClass: String? {
+        didSet {
+            setImageToGraphic()
+        }
+    }
+    
+    private func setImageToGraphic() {
+        if let graphic = self.graphic {
+            if let image = graphic.image(false, tintColor: tintColor ?? UIColor.whiteColor()) {
+                self.image = UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up)
             }
         }
     }
