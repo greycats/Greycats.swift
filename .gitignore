@@ -1,5 +1,6 @@
 # OS X
 .DS_Store
+*.icloud
 
 # Xcode
 build/
