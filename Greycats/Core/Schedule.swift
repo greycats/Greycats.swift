@@ -23,11 +23,12 @@ public func delay(_ delay: TimeInterval, closure: @escaping () -> Void) -> Task?
         result = nil
     }
     result = delayedClosure
-    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(Int(delay * 1000)) {
+    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(Int(delay * 1000))) { 
         result?(false)
     }
     return result
 }
+
 public func cancel(_ task: Task?) {
     task?(true)
 }

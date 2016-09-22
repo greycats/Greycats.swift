@@ -19,7 +19,7 @@ public protocol SVG: Graphic {
     var path: UIBezierPath { get }
 }
 
-@available(*, deprecated=2.9, message="Use Graphic directly")
+@available(*, deprecated: 2.9, message: "Use Graphic directly")
 extension SVG {
     public func image(_ selected: Bool, tintColor: UIColor) -> CGImage? {
         let size = path.bounds.size
@@ -81,8 +81,8 @@ public class GraphicBarButtonItem: UIBarButtonItem, GraphicDesignable {
     
     private func setImageToGraphic() {
         if let graphic = self.graphic {
-            if let image = graphic.image(false, tintColor: tintColor ?? UIColor.whiteColor()) {
-                self.image = UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up)
+            if let image = graphic.image(false, tintColor: tintColor ?? UIColor.white) {
+                self.image = UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .up)
             }
         }
     }

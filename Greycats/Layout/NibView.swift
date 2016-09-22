@@ -8,7 +8,7 @@
 
 import UIKit
 
-public let LineWidth = 1 / UIScreen.mainScreen().scale
+public let LineWidth = 1 / UIScreen.main.scale
 
 extension UIView {
 	public func fullDimension() {
@@ -95,7 +95,7 @@ open class NibView: UIView, NibViewProtocol {
 	@IBOutlet var lineWidth: [NSLayoutConstraint]!
 
 	open func setup() {
-		replaceFirstChildWith(nibName)
+		_ = replaceFirstChildWith(nibName: nibName)
 		if lineWidth != nil {
 			for c in lineWidth {
 				c.constant = LineWidth
