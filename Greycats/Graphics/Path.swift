@@ -71,19 +71,43 @@ public class GraphicButton: UIButton, GraphicDesignable {
     }
 }
 
+public protocol HasDefaultGraphic: class {
+    func defaultTintColor() -> UIColor?
+    var image: UIImage? { get set }
+}
+
+extension HasDefaultGraphic where Self: GraphicDesignable {
+    private func setImageToGraphic() {
+        if let graphic = self.graphic {
+            if let image = graphic.image(false, tintColor: defaultTintColor() ?? UIColor.whiteColor()) {
+                self.image = UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up)
+            }
+        }
+    }
+}
+
 @IBDesignable
-public class GraphicBarButtonItem: UIBarButtonItem, GraphicDesignable {
+public class GraphicBarButtonItem: UIBarButtonItem, HasDefaultGraphic, GraphicDesignable {
     @IBInspectable public var graphicClass: String? {
         didSet {
             setImageToGraphic()
         }
     }
     
-    private func setImageToGraphic() {
-        if let graphic = self.graphic {
-            if let image = graphic.image(false, tintColor: tintColor ?? UIColor.whiteColor()) {
-                self.image = UIImage(CGImage: image, scale: UIScreen.mainScreen().scale, orientation: .Up)
-            }
+    public func defaultTintColor() -> UIColor? {
+        return tintColor
+    }
+}
+
+@IBDesignable
+public class GraphicImageView: UIImageView, HasDefaultGraphic, GraphicDesignable {
+    @IBInspectable public var graphicClass: String? {
+        didSet {
+            setImageToGraphic()
         }
+    }
+    
+    public func defaultTintColor() -> UIColor? {
+        return tintColor
     }
 }
