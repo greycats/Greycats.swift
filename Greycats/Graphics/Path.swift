@@ -86,28 +86,32 @@ extension HasDefaultGraphic where Self: GraphicDesignable {
     }
 }
 
-@IBDesignable
-public class GraphicBarButtonItem: UIBarButtonItem, HasDefaultGraphic, GraphicDesignable {
-    @IBInspectable public var graphicClass: String? {
-        didSet {
-            setImageToGraphic()
-        }
+extension UIBarButtonItem: HasDefaultGraphic {
+    public func defaultTintColor() -> UIColor? {
+        return tintColor
     }
-    
+}
+
+extension UIImageView: HasDefaultGraphic {
     public func defaultTintColor() -> UIColor? {
         return tintColor
     }
 }
 
 @IBDesignable
-public class GraphicImageView: UIImageView, HasDefaultGraphic, GraphicDesignable {
+public class GraphicBarButtonItem: UIBarButtonItem, GraphicDesignable {
     @IBInspectable public var graphicClass: String? {
         didSet {
             setImageToGraphic()
         }
     }
-    
-    public func defaultTintColor() -> UIColor? {
-        return tintColor
+}
+
+@IBDesignable
+public class GraphicImageView: UIImageView, GraphicDesignable {
+    @IBInspectable public var graphicClass: String? {
+        didSet {
+            setImageToGraphic()
+        }
     }
 }
