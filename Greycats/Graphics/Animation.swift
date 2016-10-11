@@ -36,6 +36,9 @@ class DisplayLink: NSObject {
 
     deinit {
         invalidate()
+        if bindAppStatus {
+            NSNotificationCenter.defaultCenter().removeObserver(self)
+        }
     }
 
     func update() {
