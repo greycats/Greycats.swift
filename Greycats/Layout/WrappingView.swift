@@ -9,9 +9,9 @@
 import UIKit
 
 public class WrappingView: UIView {
-
-    public var insets: UIEdgeInsets = UIEdgeInsetsZero
-
+    
+    public var insets: UIEdgeInsets = .zero
+    
     public var wrappingItems: [UIView] = [] {
         didSet {
             oldValue.forEach { $0.removeFromSuperview() }
@@ -22,7 +22,7 @@ public class WrappingView: UIView {
             invalidateIntrinsicContentSize()
         }
     }
-
+    
     private var _intrinsicContentSize: CGSize? {
         didSet {
             if oldValue != _intrinsicContentSize {
@@ -30,37 +30,30 @@ public class WrappingView: UIView {
             }
         }
     }
-
-    public override func intrinsicContentSize() -> CGSize {
+    public override var intrinsicContentSize: CGSize {
         return _intrinsicContentSize ?? CGSize.zero
     }
-
+    
     public override func layoutSubviews() {
         super.layoutSubviews()
-        let wereEnabled = UIView.areAnimationsEnabled()
+        let wereEnabled = UIView.areAnimationsEnabled
         UIView.setAnimationsEnabled(false)
-        var generator = wrappingItems.generate()
         var totalRect = CGRect.null
-        enumerateItemRects(bounds.width) { (rect) in
-            totalRect = CGRectUnion(rect, totalRect)
-            generator.next()?.frame = rect
-        }
-        _intrinsicContentSize = totalRect.size
-        UIView.setAnimationsEnabled(wereEnabled)
-    }
-
-    private func enumerateItemRects(layoutWidth: CGFloat, @noescape closure: (CGRect) -> Void) {
+        let layoutWidth = bounds.width
         var rect = CGRect(x: insets.left, y: insets.top, width: 0, height: 0)
         wrappingItems.forEach { (item) in
-            let size = item.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+            let size = item.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
             let width = min(size.width, layoutWidth - insets.left - insets.right)
             if rect.origin.x > layoutWidth - insets.left - insets.right - size.width {
                 rect.origin.y += size.height + insets.bottom
                 rect.origin.x = insets.left
             }
             rect.size = CGSize(width: width, height: size.height)
-            closure(rect)
+            totalRect = rect.union(totalRect)
+            item.frame = rect
             rect.origin.x += rect.size.width + insets.right
         }
+        _intrinsicContentSize = totalRect.size
+        UIView.setAnimationsEnabled(wereEnabled)
     }
 }

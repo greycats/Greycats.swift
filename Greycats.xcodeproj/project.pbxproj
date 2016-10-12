@@ -30,6 +30,7 @@
 		CFD302D61D51E6AE009779AF /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302C11D51E6AE009779AF /* NavigationViewController.swift */; };
 		CFD302D81D51FA0D009779AF /* FilterHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302D71D51FA0D009779AF /* FilterHook.swift */; };
 		CFD302DA1D51FA85009779AF /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD302D91D51FA85009779AF /* Filter.swift */; };
+		CFEB14FE1DADE2CA004FF684 /* WrappingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEB14FD1DADE2CA004FF684 /* WrappingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		CFD302C11D51E6AE009779AF /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
 		CFD302D71D51FA0D009779AF /* FilterHook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterHook.swift; sourceTree = "<group>"; };
 		CFD302D91D51FA85009779AF /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		CFEB14FD1DADE2CA004FF684 /* WrappingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WrappingView.swift; path = Greycats/Layout/WrappingView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +157,7 @@
 		CFD302BA1D51E6AE009779AF /* Layout */ = {
 			isa = PBXGroup;
 			children = (
+				CFEB14FD1DADE2CA004FF684 /* WrappingView.swift */,
 				CFD302BB1D51E6AE009779AF /* Designable.swift */,
 				CFD302BC1D51E6AE009779AF /* FormField.swift */,
 				CFD302BD1D51E6AE009779AF /* NibView.swift */,
@@ -243,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFEB14FE1DADE2CA004FF684 /* WrappingView.swift in Sources */,
 				CFD302CF1D51E6AE009779AF /* UIImage+Extention.swift in Sources */,
 				CFD302C31D51E6AE009779AF /* Camera.swift in Sources */,
 				CFD302D11D51E6AE009779AF /* FormField.swift in Sources */,
