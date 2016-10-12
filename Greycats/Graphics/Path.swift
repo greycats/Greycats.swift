@@ -53,12 +53,12 @@ open class GraphicButton: UIButton, GraphicDesignable {
             setImageToGraphic()
         }
     }
-
+    
     override open func tintColorDidChange() {
         super.tintColorDidChange()
         setImageToGraphic()
     }
-
+    
     fileprivate func setImageToGraphic() {
         if let instance = self.graphic {
             if let image = instance.image(true, tintColor: tintColor) {

@@ -26,22 +26,22 @@ class _FormFieldGroup: FormFieldGroup {
     var _onSubmit: (() -> ())?
     var _onChange: ((Bool) -> ())?
     let valid: () -> (Bool)
-
+    
     fileprivate init(closure: @escaping () -> Bool) {
         valid = closure
     }
-
+    
     func validate() -> Bool {
         let v = valid()
         _onChange?(v)
         return v
     }
-
+    
     func onSubmit(_ closure: @escaping () -> ()) -> Self {
         _onSubmit = closure
         return self
     }
-
+    
     func onChange(_ closure: @escaping (Bool) -> ()) -> Self {
         _onChange = closure
         let _ = validate()
@@ -51,7 +51,7 @@ class _FormFieldGroup: FormFieldGroup {
 
 @IBDesignable
 open class FormField: NibView, UITextFieldDelegate {
-
+    
     @IBOutlet weak open var captionLabel: UILabel?
     @IBOutlet weak open var field: UITextField!
     @IBOutlet weak open var line: UIView!
@@ -69,14 +69,14 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var enabled: Bool {
         get { return field.isEnabled }
         set(value) { field.isEnabled = value }
     }
-
+    
     weak var group: _FormFieldGroup?
-
+    
     open var error: String? {
         didSet {
             if let error = error {
@@ -94,20 +94,20 @@ open class FormField: NibView, UITextFieldDelegate {
     var everEdited = false
     var onReturn: (() -> Bool)?
     fileprivate var triggers: [() -> ()] = []
-
-    @IBAction func valueUpdated(_ sender: AnyObject) {
+    
+    @IBAction func valueUpdated(_ sender: Any) {
         triggers.forEach { $0() }
         let _ = group?.validate()
     }
-
+    
     open var handle: (UITextField) -> Bool = { _ in true }
-
-    @IBAction func didBeginEditing(_ sender: AnyObject) {
+    
+    @IBAction func didBeginEditing(_ sender: Any) {
         everEdited = true
         triggers.forEach { $0() }
         let _ = group?.validate()
     }
-
+    
     open func pass(_ validateText: String = "", reportError: Bool = true) -> Bool {
         let allowsError = everEdited == true && field.isFirstResponder == false
         let passed = (field.text ?? "") =~ regex
@@ -126,14 +126,14 @@ open class FormField: NibView, UITextFieldDelegate {
         }
         return passed
     }
-
+    
     @IBInspectable open var secure: Bool = false {
         didSet {
             field.isSecureTextEntry = secure
             field.clearButtonMode = secure ? .never : .whileEditing
         }
     }
-
+    
     open var text: String? {
         get {
             return field.text
@@ -142,7 +142,7 @@ open class FormField: NibView, UITextFieldDelegate {
             field.text = value
         }
     }
-
+    
     @IBInspectable open var keyboardType: Int {
         get { return field.keyboardType.rawValue }
         set(value) {
@@ -151,7 +151,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var autocorrection: Int {
         get { return field.autocorrectionType.rawValue }
         set(value) {
@@ -160,7 +160,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var autocapitalizationType: Int {
         get { return field.autocapitalizationType.rawValue }
         set(value) {
@@ -169,7 +169,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var keyboardApperance: Int {
         get { return field.keyboardAppearance.rawValue }
         set(value) {
@@ -178,7 +178,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var placeholder: String = "Email Address" {
         didSet {
             if let captionLabel = captionLabel {
@@ -188,23 +188,23 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-
+    
     @IBInspectable open var textColor: UIColor? {
         didSet {
             field.textColor = textColor
         }
     }
-
+    
     @IBInspectable open var lineColor: UIColor? {
         didSet {
             line.backgroundColor = lineColor
         }
     }
-
+    
     open func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return handle(textField)
     }
-
+    
     open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return onReturn?() ?? true
     }

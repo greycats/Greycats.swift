@@ -10,7 +10,7 @@ extension UIViewController {
     @IBAction public func navigateBack() {
         goBack()
     }
-
+    
     public func canGoBack() -> Bool {
         guard let navigationController = navigationController else {
             return false
@@ -20,7 +20,7 @@ extension UIViewController {
         }
         return false
     }
-
+    
     public func goBack() {
         guard let navigationController = navigationController else {
             return
@@ -44,11 +44,11 @@ open class NavigationBar: NibView {
 }
 
 open class NavigationController: UIViewController, UINavigationControllerDelegate {
-
+    
     @IBOutlet open weak var navigationBar: NavigationBar!
-
+    
     weak var customizedActionView: UIView?
-
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         for child in childViewControllers {
@@ -57,10 +57,10 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
             }
         }
     }
-
+    
     open func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         navigationBar.navigationItem = viewController.navigationItem
-
+        
         // customize action view
         customizedActionView?.removeFromSuperview()
         if let provider = viewController as? BarActionProvider {
@@ -70,7 +70,7 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
                 customizedActionView = view
             }
         }
-
+        
         navigationBar.leftButtonsContainer.isHidden = navigationController.viewControllers.count == 1
         weak var handler = viewController
         if let viewController = viewController as? Navigatable {

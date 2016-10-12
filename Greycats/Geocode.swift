@@ -18,9 +18,9 @@ public enum LocationAuthorization {
 class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
     var locationManager: CLLocationManager!
     var callback: ((CLLocation?) -> Void)?
-
+    
     let requestOnce: Bool
-
+    
     required init(accuracy: CLLocationAccuracy, requestOnce: Bool = true, authorization: LocationAuthorization, callback: @escaping (CLLocation?) -> Void) {
         self.callback = callback
         self.requestOnce = requestOnce
@@ -45,14 +45,14 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
             }
         }
     }
-
+    
     func returnLocation(_ location: CLLocation?) {
         print("return location \(location)")
         callback?(location)
         callback = nil
         locationManager = nil
     }
-
+    
     func requestLocation() {
         if #available(iOS 9.0, *) {
             if requestOnce {
@@ -62,7 +62,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         }
         locationManager.startUpdatingLocation()
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         returnLocation(locations.last)
         if #available(iOS 9.0, *) {
@@ -72,7 +72,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         }
         manager.stopUpdatingLocation()
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
@@ -83,7 +83,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
             break
         }
     }
-
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         returnLocation(manager.location)
         print("location failed with error \(error.localizedDescription)")
@@ -94,7 +94,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
         }
         manager.stopUpdatingLocation()
     }
-
+    
     deinit {
         print("deinit AsyncCurrentLocation")
     }
@@ -103,7 +103,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
 public enum Geocode {
     case location(CLLocation)
     case current(accuracy: CLLocationAccuracy, authorization: LocationAuthorization)
-
+    
     public func getLocation(_ closure: @escaping (CLLocation?) -> ()) {
         switch self {
         case .location(let location):

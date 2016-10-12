@@ -22,7 +22,7 @@ public enum Filter {
     case wordInitialSequences
     case startWith
     case contains
-
+    
     func pattern(_ string: String) throws -> NSRegularExpression {
         var pattern = "(?:.*?)"
         let range = Range<String.Index>(uncheckedBounds: (string.startIndex, string.endIndex))
@@ -51,7 +51,7 @@ public enum Filter {
         }
         return try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
     }
-
+    
     public func apply<T: Filtering>(_ string: String?, objects: [T]) -> [T] {
         if let keyword = string,
             let r = try? pattern(keyword) {
