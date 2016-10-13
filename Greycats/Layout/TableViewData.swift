@@ -74,18 +74,24 @@ open class TableViewSource<T: Equatable>: SectionData {
     open weak var navigationController: UINavigationController?
     fileprivate var title: String?
     fileprivate var renderHeader: ((String) -> UIView)?
+    
+    @discardableResult
     open func onHeader(_ block: @escaping (String) -> UIView) -> Self {
         renderHeader = block
         return self
     }
     
     fileprivate var deselectAfterward: Bool = true
+    
+    @discardableResult
     open func keepSelection() -> Self {
         deselectAfterward = false
         return self
     }
     
     fileprivate var _editingStyle: ((Int) -> UITableViewCellEditingStyle)?
+    
+    @discardableResult
     open func editingStyle(_ block: @escaping (Int) -> UITableViewCellEditingStyle) -> Self {
         _editingStyle = block
         return self
@@ -151,11 +157,13 @@ open class TableViewSource<T: Equatable>: SectionData {
     func onSourceChanged() {
     }
     
+    @discardableResult
     open func onSelect(_ block: @escaping (T, Int) -> UIViewController?) -> Self {
         select = block
         return self
     }
     
+    @discardableResult
     open func onSelect(_ block: @escaping (T) -> UIViewController?) -> Self {
         select = { (t, _) in block(t) }
         return self
@@ -267,6 +275,8 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
     }
     
     var identifier: ((T) -> (String))?
+    
+    @discardableResult
     open func interceptIdentifier(_ closure: @escaping ((T) -> (String))) -> Self {
         identifier = closure
         return self
@@ -299,16 +309,19 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
         className = "\(NSStringFromClass(U.self))"
     }
     
+    @discardableResult
     open func willDisplay(_ block: @escaping (_ cell: U, _ row: Int) -> Void) -> Self {
         willDisplay = block
         return self
     }
     
+    @discardableResult
     open func preRender(_ block: @escaping (_ cell: U) -> Void) -> Self {
         preRender = block
         return self
     }
     
+    @discardableResult
     open func onRender(_ block: @escaping (_ cell: U, _ object: T) -> Void) -> Self {
         renderCell = {
             block($0, $1)
@@ -317,17 +330,21 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
         return self
     }
     
+    @discardableResult
     open func postRender(_ block: @escaping (_ cell: U, _ row: Int) -> Void) -> Self {
         postRender = block
         return self
     }
     
     var didChange: ((Void) -> Void)?
+    
+    @discardableResult
     open func didChange(_ block: @escaping (Void) -> Void) -> Self {
         didChange = block
         return self
     }
     
+    @discardableResult
     open func onFutureRender(_ render: @escaping (U, T, ()->()) -> Void) -> Self {
         renderCell = render
         return self
