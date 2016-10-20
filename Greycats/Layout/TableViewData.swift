@@ -44,13 +44,17 @@ public enum ChangeType {
 	case Delete
 }
 
-public struct Change<T: Equatable> {
+public struct Change<T: Equatable>: Equatable {
 	public let value: T
 	public let type: ChangeType
 	public init(type: ChangeType, value: T) {
 		self.type = type
 		self.value = value
 	}
+}
+
+public func ==<T: Equatable>(lhs: Change<T>, rhs: Change<T>) -> Bool {
+    return lhs.type == rhs.type && lhs.value == rhs.value
 }
 
 public class TableViewSource<T: Equatable>: SectionData {
