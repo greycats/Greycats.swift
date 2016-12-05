@@ -47,7 +47,6 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
     }
     
     func returnLocation(_ location: CLLocation?) {
-        print("return location \(location)")
         callback?(location)
         callback = nil
         locationManager = nil
