@@ -115,7 +115,7 @@ open class FormField: NibView, UITextFieldDelegate {
             if allowsError && reportError {
                 if !field.hasText {
                     error = "\(validateText)\(placeholder.lowercased()) is required."
-                } else if let invalidMessage = invalidErrorMessage , invalidMessage.characters.count > 0 {
+                } else if let invalidMessage = invalidErrorMessage , invalidMessage.count > 0 {
                     error = invalidMessage.replacingOccurrences(of: ":value", with: field.text!)
                 } else {
                     error = "Invalid \(validateText)\(placeholder.lowercased())."
@@ -223,7 +223,7 @@ extension String: FormFieldData {
 
 extension FormField {
     public func bind<T: FormFieldData>(_ value: UnsafeMutablePointer<T?>) {
-        triggers.append {[weak self] _ in
+        triggers.append {[weak self] in
             if let input = self?.text {
                 if value.pointee == nil {
                     value.initialize(to: T())

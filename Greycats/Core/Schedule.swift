@@ -64,9 +64,9 @@ public struct Schedule {
     mutating public func schedule(_ closure: @escaping (_ check: () -> Bool) -> ()) {
         cancel()
         if let interval = interval {
-            timer.scheduleRepeating(deadline: DispatchTime.distantFuture, interval: interval)
+            timer.schedule(deadline: DispatchTime.distantFuture, repeating: interval)
         } else {
-            timer.scheduleOneshot(deadline: DispatchTime.distantFuture)
+            timer.schedule(deadline: DispatchTime.distantFuture)
         }
         timer.setEventHandler {
             closure { true }

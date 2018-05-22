@@ -110,7 +110,7 @@ extension UIView {
             if let prevNext = _previousView(next.firstItem as! UIView, axis: axis) {
                 removeConstraint(prevNext)
             }
-            let newConstraint = NSLayoutConstraint(item: next.firstItem, attribute: next.firstAttribute, relatedBy: .equal, toItem: prev.secondItem, attribute: prev.secondAttribute, multiplier: 1, constant: view.bounds.height)
+            let newConstraint = NSLayoutConstraint(item: next.firstItem!, attribute: next.firstAttribute, relatedBy: .equal, toItem: prev.secondItem, attribute: prev.secondAttribute, multiplier: 1, constant: view.bounds.height)
             if animated {
                 addConstraint(newConstraint)
                 layoutIfNeeded()
@@ -153,14 +153,14 @@ extension UIView {
             // let us found original next view, and link it to this view
             if let c = _nextView(previous, axis: axis) {
                 removeConstraint(c)
-                let bottom = NSLayoutConstraint(item: c.firstItem, attribute: c.firstAttribute, relatedBy: .equal, toItem: view, attribute: _edge1, multiplier: 1, constant: c.constant)
+                let bottom = NSLayoutConstraint(item: c.firstItem!, attribute: c.firstAttribute, relatedBy: .equal, toItem: view, attribute: _edge1, multiplier: 1, constant: c.constant)
                 addConstraint(bottom)
             }
             edge0Constraint = NSLayoutConstraint(item: view, attribute: _edge0, relatedBy: .equal, toItem: previous, attribute: _edge1, multiplier: 1, constant: marginX)
         } else {
             // view is gonna be first, find current first and unlink it
             if let c = _firstView(axis) {
-                addConstraint(NSLayoutConstraint(item: c.firstItem, attribute: _edge0, relatedBy: .equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 0))
+                addConstraint(NSLayoutConstraint(item: c.firstItem!, attribute: _edge0, relatedBy: .equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 0))
                 removeConstraint(c)
             } else {
                 let bottom = NSLayoutConstraint(item: self, attribute: _edge1, relatedBy: .equal, toItem: view, attribute: _edge1, multiplier: 1, constant: 0)

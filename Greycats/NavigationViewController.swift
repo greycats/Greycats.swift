@@ -88,9 +88,9 @@ open class NavigationViewController: UIViewController, UINavigationControllerDel
         childNavigationController.delegate = self
         self.childNavigationController = childNavigationController
         addChildViewController(childNavigationController)
-        let container = childNavigationController.view
-        container?.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(container!)
+        guard let container = childNavigationController.view else { return }
+        container.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(container)
         
         //H
         view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))

@@ -14,7 +14,7 @@ public protocol SectionData {
     var section: Int { get set }
     var tableView: UITableView? { get set }
     var reversed: Bool { get set }
-    weak var navigationController: UINavigationController? { get set }
+    var navigationController: UINavigationController? { get set }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat
     func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell!
@@ -288,7 +288,7 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
             let key = c(object)
             let data = rendering_cache[key]
             if data == nil {
-                renderCell?(cell, object) {[weak self] _ in
+                renderCell?(cell, object) {[weak self] in
                     let mdata = NSMutableData()
                     let coder = NSKeyedArchiver(forWritingWith: mdata)
                     cell.encodeRestorableState(with: coder)
@@ -336,10 +336,10 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
         return self
     }
     
-    var didChange: ((Void) -> Void)?
+    var didChange: (() -> Void)?
     
     @discardableResult
-    open func didChange(_ block: @escaping (Void) -> Void) -> Self {
+    open func didChange(_ block: @escaping () -> Void) -> Self {
         didChange = block
         return self
     }
