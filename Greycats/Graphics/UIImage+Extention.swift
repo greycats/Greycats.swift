@@ -3,7 +3,7 @@ import ImageIO
 
 extension UIImage {
     public func resize(_ maxPixel: Int) -> UIImage? {
-        if let imageSource = CGImageSourceCreateWithData(UIImageJPEGRepresentation(self, 1)! as CFData, nil) {
+        if let imageSource = CGImageSourceCreateWithData(self.jpegData(compressionQuality: 1)! as CFData, nil) {
             let options: [NSString: NSObject] = [
                 kCGImageSourceThumbnailMaxPixelSize: maxPixel as NSObject,
                 kCGImageSourceCreateThumbnailFromImageAlways: true as NSObject,

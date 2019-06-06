@@ -107,8 +107,8 @@ open class TextField: UITextField {
     fileprivate func updatePlaceholder() {
         if let placeholder = placeholder, let font = font, let textColor = textColor {
             attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [
-                NSAttributedStringKey.font: font,
-                NSAttributedStringKey.foregroundColor: textColor.withAlphaComponent(placeholderAlpha)
+                NSAttributedString.Key.font: font,
+                NSAttributedString.Key.foregroundColor: textColor.withAlphaComponent(placeholderAlpha)
                 ])
         }
     }

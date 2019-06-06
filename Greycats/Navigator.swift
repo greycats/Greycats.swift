@@ -3,15 +3,15 @@ import UIKit
 public protocol Navigatable {
     func canGoBack() -> Bool
     func goBack()
-    func navigatableChanged(_ listener: () -> Void)
+    func navigatableChanged(_ listener: @escaping () -> Void)
 }
 
 extension UIViewController {
-    @IBAction public func navigateBack() {
+    @IBAction open func navigateBack() {
         goBack()
     }
     
-    public func canGoBack() -> Bool {
+    @objc open func canGoBack() -> Bool {
         guard let navigationController = navigationController else {
             return false
         }
@@ -21,7 +21,7 @@ extension UIViewController {
         return false
     }
     
-    public func goBack() {
+    @objc open func goBack() {
         guard let navigationController = navigationController else {
             return
         }
@@ -51,7 +51,7 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        for child in childViewControllers {
+        for child in children {
             if let child = child as? UINavigationController {
                 child.delegate = self
             }

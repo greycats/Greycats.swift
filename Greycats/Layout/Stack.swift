@@ -14,19 +14,19 @@ public func _id<T: AnyObject>(_ object: T) -> String {
     return "[\(type(of: object)):0x\(String(UInt(bitPattern: ObjectIdentifier(object)), radix: 16))]"
 }
 
-func edge0(_ axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
+func edge0(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint.Attribute {
     return axis == .vertical ? .top : .leading
 }
-func edge1(_ axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
+func edge1(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint.Attribute {
     return axis == .vertical ? .bottom : .trailing
 }
-func perpendicularEdge0(_ axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
+func perpendicularEdge0(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint.Attribute {
     return axis == .horizontal ? .top : .leading
 }
-func perpendicularEdge1(_ axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
+func perpendicularEdge1(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint.Attribute {
     return axis == .horizontal ? .bottom : .trailing
 }
-func perpendicularDimension(_ axis: UILayoutConstraintAxis) -> NSLayoutAttribute {
+func perpendicularDimension(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint.Attribute {
     return axis == .horizontal ? .height : .width
 }
 
@@ -60,7 +60,7 @@ extension UIView {
         }
     }
     
-    public func _previousView(_ view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+    public func _previousView(_ view: UIView, axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge0(axis)
         for gap in gaps {
@@ -71,7 +71,7 @@ extension UIView {
         return nil
     }
     
-    public func _firstView(_ axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+    public func _firstView(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge0(axis)
         for gap in gaps {
@@ -82,7 +82,7 @@ extension UIView {
         return nil
     }
     
-    public func _lastView(_ axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+    public func _lastView(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge1(axis)
         for gap in gaps {
@@ -93,7 +93,7 @@ extension UIView {
         return nil
     }
     
-    public func _nextView(_ view: UIView, axis: UILayoutConstraintAxis) -> NSLayoutConstraint? {
+    public func _nextView(_ view: UIView, axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge1(axis)
         for gap in gaps {
@@ -104,7 +104,7 @@ extension UIView {
         return nil
     }
     
-    public func ejectView(_ view: UIView, axis: UILayoutConstraintAxis, animated: Bool = true) {
+    public func ejectView(_ view: UIView, axis: NSLayoutConstraint.Axis, animated: Bool = true) {
         if let prev = _previousView(view, axis: axis),
             let next = _nextView(view, axis: axis) {
             if let prevNext = _previousView(next.firstItem as! UIView, axis: axis) {
@@ -136,7 +136,7 @@ extension UIView {
         }
     }
     
-    public func injectView(_ view: UIView, axis: UILayoutConstraintAxis, after previous: UIView?, marginX: CGFloat = 0, animated: Bool = false) {
+    public func injectView(_ view: UIView, axis: NSLayoutConstraint.Axis, after previous: UIView?, marginX: CGFloat = 0, animated: Bool = false) {
         view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
         let _edge0 = edge0(axis)
@@ -170,7 +170,7 @@ extension UIView {
         }
         addConstraint(edge0Constraint)
         if animated {
-            let size = view.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+            let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
             edge0Constraint.constant = axis == .vertical ? -size.height : -size.width
             layoutIfNeeded()
             view.alpha = 0

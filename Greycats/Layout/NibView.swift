@@ -130,15 +130,15 @@ open class KernLabel: UILabel {
         didSet { updateAttributedText() }
     }
     
-    open var attributes: [NSAttributedStringKey: Any] {
+    open var attributes: [NSAttributedString.Key: Any] {
         let style = NSMutableParagraphStyle()
         style.lineHeightMultiple = lineHeight / font.lineHeight
         style.alignment = textAlignment
         return [
-            NSAttributedStringKey.font: font,
-            NSAttributedStringKey.foregroundColor: textColor,
-            NSAttributedStringKey.kern: kern as Any,
-            NSAttributedStringKey.paragraphStyle: style,
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.foregroundColor: textColor,
+            NSAttributedString.Key.kern: kern as Any,
+            NSAttributedString.Key.paragraphStyle: style,
         ]
     }
     

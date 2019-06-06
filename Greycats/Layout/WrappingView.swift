@@ -42,7 +42,7 @@ public class WrappingView: UIView {
         let layoutWidth = bounds.width
         var rect = CGRect(x: insets.left, y: insets.top, width: 0, height: 0)
         wrappingItems.forEach { (item) in
-            let size = item.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+            let size = item.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
             let width = min(size.width, layoutWidth - insets.left - insets.right)
             if rect.origin.x > layoutWidth - insets.left - insets.right - size.width {
                 rect.origin.y += size.height + insets.bottom

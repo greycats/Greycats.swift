@@ -102,12 +102,12 @@ class DisplayLink: NSObject {
     @objc func resume() {
         if displayLink == nil {
             displayLink = CADisplayLink(target: self, selector: #selector(update))
-            displayLink?.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+            displayLink?.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
         }
         if !bindAppStatus {
             bindAppStatus = true
-            NotificationCenter.default.addObserver(self, selector: #selector(resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(pause), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(pause), name: UIApplication.willResignActiveNotification, object: nil)
         }
         displayLink?.isPaused = false
     }

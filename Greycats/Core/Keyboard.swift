@@ -28,7 +28,7 @@ extension KeyboardResponder {
     }
     
     public func registerKeyboard() {
-        let observer = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil, queue: .main) { [weak self] notif in
+        let observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { [weak self] notif in
             self?.keyboardWillChange(notif)
         }
         unregisterKeyboard()
@@ -37,13 +37,13 @@ extension KeyboardResponder {
     
     public func unregisterKeyboard() {
         if let observer = objc_getAssociatedObject(self, &observerKey) {
-            NotificationCenter.default.removeObserver(observer, name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
+            NotificationCenter.default.removeObserver(observer, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         }
     }
     
     fileprivate func _keyboardWillChange(_ notif: Notification, view: UIView) {
         if let info = (notif as NSNotification).userInfo {
-            var kbRect = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+            var kbRect = (info[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
             kbRect = view.convert(kbRect, from: view.window)
             let height = view.bounds.size.height - kbRect.origin.y
             if let constraint = keyboardHeight {
@@ -53,7 +53,7 @@ extension KeyboardResponder {
                     keyboardHeightDidUpdate(height)
                     view.layoutIfNeeded()
                     constraint.constant = height
-                    UIView.animate(withDuration: info[UIKeyboardAnimationDurationUserInfoKey] as! TimeInterval, delay: 0, options: UIViewAnimationOptions(rawValue: info[UIKeyboardAnimationCurveUserInfoKey] as! UInt), animations: {
+                    UIView.animate(withDuration: info[UIResponder.keyboardAnimationDurationUserInfoKey] as! TimeInterval, delay: 0, options: UIView.AnimationOptions(rawValue: info[UIResponder.keyboardAnimationCurveUserInfoKey] as! UInt), animations: {
                         view.layoutIfNeeded()
                         }, completion: nil)
                 }
@@ -61,7 +61,7 @@ extension KeyboardResponder {
             }
             if let this = self as? AutoFocus,
                 let scrollView = this.scrollingView() {
-                let insets = UIEdgeInsetsMake(0, 0, height, 0)
+                let insets = UIEdgeInsets(top: 0, left: 0, bottom: height, right: 0)
                 scrollView.contentInset = insets
                 scrollView.scrollIndicatorInsets = insets
                 if let field = this.activeField() {

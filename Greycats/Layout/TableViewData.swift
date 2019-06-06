@@ -23,7 +23,7 @@ public protocol SectionData {
     func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath)
     func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath)
     func tableView(_ tableView: UITableView, moveRowAtIndexPath sourceIndexPath: IndexPath, toIndexPath destinationIndexPath: IndexPath)
-    func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCellEditingStyle
+    func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell.EditingStyle
 }
 
 public protocol TableViewDataNibCell {
@@ -89,10 +89,10 @@ open class TableViewSource<T: Equatable>: SectionData {
         return self
     }
     
-    fileprivate var _editingStyle: ((Int) -> UITableViewCellEditingStyle)?
+    fileprivate var _editingStyle: ((Int) -> UITableViewCell.EditingStyle)?
     
     @discardableResult
-    open func editingStyle(_ block: @escaping (Int) -> UITableViewCellEditingStyle) -> Self {
+    open func editingStyle(_ block: @escaping (Int) -> UITableViewCell.EditingStyle) -> Self {
         _editingStyle = block
         return self
     }
@@ -178,7 +178,7 @@ open class TableViewSource<T: Equatable>: SectionData {
     }
     
     open func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     open func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell! {
@@ -189,7 +189,7 @@ open class TableViewSource<T: Equatable>: SectionData {
         if self.title != nil {
             var height: CGFloat = 44
             if let view = renderHeader?(title!) {
-                let size = view.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+                let size = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
                 height = size.height
             }
             return height
@@ -197,7 +197,7 @@ open class TableViewSource<T: Equatable>: SectionData {
         return 0
     }
     
-    open func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    open func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return _editingStyle?((indexPath as NSIndexPath).row) ?? .delete
     }
     
@@ -231,7 +231,7 @@ open class TableViewDataNib<T: Equatable, U: UITableViewCell>: TableViewData<T, 
     open override func didSetTableView(_ tableView: UITableView) {
         cellIdentifier = "\(U.nibName)-\(section)"
         let nib = UINib(nibName: U.nibName, bundle: Bundle(for: U.self))
-        print("\(self) register cell \(cellIdentifier) \(nib)")
+        print("\(self) register cell \(String(describing: cellIdentifier)) \(nib)")
         tableView.register(nib, forCellReuseIdentifier: cellIdentifier)
     }
 }
@@ -270,7 +270,7 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
     
     open override func didSetTableView(_ tableView: UITableView) {
         cellIdentifier = cellIdentifier ?? "\(className!)-\(section)"
-        print("\(self) register cell \(cellIdentifier)")
+        print("\(self) register cell \(String(describing: cellIdentifier))")
         _tableView?.register(U.self, forCellReuseIdentifier: cellIdentifier)
     }
     
@@ -350,7 +350,7 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
         return self
     }
     
-    var rowAnimation = UITableViewRowAnimation.none
+    var rowAnimation = UITableView.RowAnimation.none
     
     override func onSourceChanged() {
         didChange?()
@@ -368,7 +368,7 @@ open class TableViewData<T: Equatable, U: UITableViewCell>: TableViewSource<T> {
     }
     
     open override func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     open override func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell {
@@ -494,7 +494,7 @@ class TableViewJoinedData: NSObject, UITableViewDataSource, UITableViewDelegate 
         joined[(indexPath as NSIndexPath).section].tableView(tableView, willDisplayCell: cell, forRowAtIndexPath: indexPath)
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return joined[(indexPath as NSIndexPath).section].tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
     }
     
