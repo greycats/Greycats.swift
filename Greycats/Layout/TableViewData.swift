@@ -132,12 +132,12 @@ open class TableViewSource<T: Equatable>: SectionData {
             tableView?.insertRows(at: [IndexPath(row: index, section: section)], with: reversed ? .top : .bottom)
             data.insert(change.value, at: index)
         case .update:
-            if let index = data.index(of: change.value) {
+            if let index = data.firstIndex(of: change.value) {
                 tableView?.reloadRows(at: [IndexPath(row: index, section: section)], with: .automatic)
                 data[index] = change.value
             }
         case .delete:
-            if let index = data.index(of: change.value) {
+            if let index = data.firstIndex(of: change.value) {
                 tableView?.deleteRows(at: [IndexPath(row: index, section: section)], with: .automatic)
                 data.remove(at: index)
             }

@@ -135,8 +135,8 @@ open class KernLabel: UILabel {
         style.lineHeightMultiple = lineHeight / font.lineHeight
         style.alignment = textAlignment
         return [
-            NSAttributedString.Key.font: font,
-            NSAttributedString.Key.foregroundColor: textColor,
+            NSAttributedString.Key.font: font as Any,
+            NSAttributedString.Key.foregroundColor: textColor as Any,
             NSAttributedString.Key.kern: kern as Any,
             NSAttributedString.Key.paragraphStyle: style,
         ]

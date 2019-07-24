@@ -29,7 +29,7 @@ class AsyncCurrentLocation: NSObject, CLLocationManagerDelegate {
             locationManager = CLLocationManager()
             locationManager.desiredAccuracy = accuracy
             locationManager.delegate = self
-            objc_setAssociatedObject(locationManager, &containerKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(locationManager as Any, &containerKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             switch CLLocationManager.authorizationStatus() {
             case .authorizedAlways, .authorizedWhenInUse:
                 requestLocation()

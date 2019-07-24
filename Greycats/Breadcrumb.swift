@@ -19,7 +19,7 @@ public protocol Breadcrumb: NSCoding {
 }
 
 public struct BreadcrumbHighlightPipeline: BreadcrumbPipeline {
-    public let attributes: [NSAttributedStringKey: Any]
+    public let attributes: [NSAttributedString.Key: Any]
     public let pattern: NSRegularExpression
     
     public func process(_ string: NSMutableAttributedString, ranges: [NSRange]) {
@@ -35,7 +35,7 @@ public struct BreadcrumbHighlightPipeline: BreadcrumbPipeline {
 
 public struct BreadcrumbTrailingPipeline: BreadcrumbPipeline {
     public let trailingString: String
-    public let attributes: [NSAttributedStringKey: Any]
+    public let attributes: [NSAttributedString.Key: Any]
     public let maxSize: CGSize
     
     func fit(_ attr: NSAttributedString) -> Bool {
@@ -63,7 +63,7 @@ public struct BreadcrumbTrailingPipeline: BreadcrumbPipeline {
 }
 
 extension NSAttributedString {
-    public convenience init<T: Breadcrumb>(elements: [T], attributes: [NSAttributedStringKey: Any], transform: @escaping (T) -> String, separator: String, pipelines: [BreadcrumbPipeline]?) {
+    public convenience init<T: Breadcrumb>(elements: [T], attributes: [NSAttributedString.Key: Any], transform: @escaping (T) -> String, separator: String, pipelines: [BreadcrumbPipeline]?) {
         let string = NSMutableAttributedString()
         let slash = NSAttributedString(string: separator, attributes: attributes)
         let lastIndex = elements.count - 1
@@ -75,7 +75,7 @@ extension NSAttributedString {
             let coder = NSKeyedArchiver(forWritingWith: data)
             t.encode(with: coder)
             coder.finishEncoding()
-            attr[NSAttributedStringKey("archived-data")] = data
+            attr[NSAttributedString.Key("archived-data")] = data
 //            attr["archived-data"] = data
             return NSMutableAttributedString(string: str, attributes: attr)
         }
@@ -97,7 +97,7 @@ extension NSAttributedString {
     }
     
     public func breadcrumbData<T: Breadcrumb>(atIndex index: Int) -> T? {
-        if let value = attribute(NSAttributedStringKey(rawValue: "archived-data"), at: index, effectiveRange: nil) as? Data {
+        if let value = attribute(NSAttributedString.Key(rawValue: "archived-data"), at: index, effectiveRange: nil) as? Data {
             let coder = NSKeyedUnarchiver(forReadingWith: value)
             return T(coder: coder)
         }
@@ -138,7 +138,7 @@ open class Breadcrumbs<T: Breadcrumb> {
     weak var container: UITextView!
     let tap: Any
     
-    public init(attributes: [NSAttributedStringKey: Any], transform: @escaping (T) -> String, container: UITextView, onClick: @escaping (T) -> Void, separator: String = " / ", pipelines: [BreadcrumbPipeline]? = nil) {
+    public init(attributes: [NSAttributedString.Key: Any], transform: @escaping (T) -> String, container: UITextView, onClick: @escaping (T) -> Void, separator: String = " / ", pipelines: [BreadcrumbPipeline]? = nil) {
         self.container = container
         attributeGenerator = { elements in
             NSAttributedString(elements: elements, attributes: attributes, transform: transform, separator: separator, pipelines: pipelines)

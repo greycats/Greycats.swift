@@ -15,7 +15,7 @@ extension UIViewController {
         guard let navigationController = navigationController else {
             return false
         }
-        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
             return true
         }
         return false
@@ -25,7 +25,7 @@ extension UIViewController {
         guard let navigationController = navigationController else {
             return
         }
-        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
             navigationController.popToViewController(navigationController.viewControllers[index - 1], animated: true)
         }
     }
