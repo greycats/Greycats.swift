@@ -10,7 +10,7 @@
 import UIKit
 
 public protocol KeyboardResponder {
-    var keyboardHeight: NSLayoutConstraint? { get }
+    func keyboardHeight() -> NSLayoutConstraint?
     func keyboardWillChange(_ notif: Notification)
     func keyboardHeightDidUpdate(_ height: CGFloat)
 }
@@ -24,7 +24,7 @@ private var observerKey: Void?
 
 extension KeyboardResponder where Self: UIViewController {
 
-    var keyboardHeight: NSLayoutConstraint? {
+    func keyboardHeight() -> NSLayoutConstraint? {
         return nil
     }
 
@@ -54,7 +54,7 @@ extension KeyboardResponder where Self: UIViewController {
             var kbRect = (info[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
             kbRect = view.convert(kbRect, from: view.window)
             let height = view.bounds.size.height - kbRect.origin.y
-            if let constraint = keyboardHeight {
+            if let constraint = keyboardHeight() {
                 if constraint.constant != height {
                     print("Bottom layout constant = \(height)")
                     keyboardHeightDidUpdate(height)
