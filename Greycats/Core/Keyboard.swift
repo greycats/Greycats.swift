@@ -24,7 +24,7 @@ private var observerKey: Void?
 
 extension KeyboardResponder where Self: UIViewController {
 
-    func keyboardHeight() -> NSLayoutConstraint? {
+    public func keyboardHeight() -> NSLayoutConstraint? {
         return nil
     }
 
