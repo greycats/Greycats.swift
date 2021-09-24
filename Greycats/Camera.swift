@@ -54,8 +54,12 @@ open class Camera {
             if connection.isVideoOrientationSupported {
                 connection.videoOrientation = .portrait
             }
-            stillCameraOutput.captureStillImageAsynchronously(from: connection) { (buffer, error) in
-                self.stop()
+            if !connection.isEnabled || !connection.isActive {
+                next(nil)
+                return
+            }
+            stillCameraOutput.captureStillImageAsynchronously(from: connection) { [weak self] (buffer, error) in
+                self?.stop()
                 if let buffer = buffer {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer)
                     let image = UIImage(data: imageData!)?.fixedOrientation()
