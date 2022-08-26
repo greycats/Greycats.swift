@@ -87,19 +87,19 @@ open class NavigationViewController: UIViewController, UINavigationControllerDel
         childNavigationController.isNavigationBarHidden = true
         childNavigationController.delegate = self
         self.childNavigationController = childNavigationController
-        addChildViewController(childNavigationController)
-        let container = childNavigationController.view
-        container?.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(container!)
+        addChild(childNavigationController)
+        guard let container = childNavigationController.view else { return }
+        container.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(container)
         
         //H
-        view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0))
         //V
-        view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: navigationBar, attribute: .bottom, relatedBy: .equal, toItem: container, attribute: .top, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .bottom, relatedBy: .equal, toItem: container, attribute: .top, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0))
         performSegue(withIdentifier: "root", sender: nil)
     }

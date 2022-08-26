@@ -27,15 +27,15 @@ public final class Regex {
     }
     
     public func test(_ input: String) -> Bool {
-        let matches = internalExpression.matches(in: input, options: [], range:NSMakeRange(0, input.characters.count))
+        let matches = internalExpression.matches(in: input, options: [], range:NSMakeRange(0, input.count))
         return matches.count > 0
     }
     
     public func exec(_ input: String) -> [String]? {
-        if let match = internalExpression.firstMatch(in: input, options: [], range: NSMakeRange(0, input.characters.count)) {
+        if let match = internalExpression.firstMatch(in: input, options: [], range: NSMakeRange(0, input.count)) {
             var results: [String] = []
             for i in 1..<match.numberOfRanges {
-                let r = match.rangeAt(i)
+                let r = match.range(at: i)
                 if r.location != Int.max {
                     results.append((input as NSString).substring(with: r))
                 }
@@ -46,11 +46,11 @@ public final class Regex {
     }
     
     public func findall(_ input: String) -> [[String]] {
-        let matches = internalExpression.matches(in: input, options: [], range: NSMakeRange(0, input.characters.count))
+        let matches = internalExpression.matches(in: input, options: [], range: NSMakeRange(0, input.count))
         return matches.map { match in
             var results: [String] = []
             for i in 1..<match.numberOfRanges {
-                let r = match.rangeAt(i)
+                let r = match.range(at: i)
                 if r.location != Int.max {
                     results.append((input as NSString).substring(with: r))
                 }

@@ -72,7 +72,7 @@ class DisplayLink: NSObject {
         }
     }
     
-    func update() {
+    @objc func update() {
         guard let displayLink = displayLink else {
             return
         }
@@ -94,20 +94,20 @@ class DisplayLink: NSObject {
         }
     }
     
-    func pause() {
+    @objc func pause() {
         displayLink?.isPaused = true
         pausedTime = displayLink?.timestamp
     }
     
-    func resume() {
+    @objc func resume() {
         if displayLink == nil {
             displayLink = CADisplayLink(target: self, selector: #selector(update))
-            displayLink?.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+            displayLink?.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
         }
         if !bindAppStatus {
             bindAppStatus = true
-            NotificationCenter.default.addObserver(self, selector: #selector(resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(pause), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(pause), name: UIApplication.willResignActiveNotification, object: nil)
         }
         displayLink?.isPaused = false
     }
@@ -171,16 +171,16 @@ extension Animation.Easing {
         case .cubic:
             return t * t * t
         case .sin:
-            return Foundation.sin(t * M_PI / 2)
+            return Foundation.sin(t * .pi / 2)
         case .cos:
-            return Foundation.cos(t * M_PI / 2)
+            return Foundation.cos(t * .pi / 2)
         case .circle:
             return 1 - sqrt(1 - t * t)
         case .exp:
             return pow(2, 10 * (t - 1))
         case .elastic(let bounciness):
-            let p = bounciness * M_PI
-            return 1 - pow(Foundation.cos(t * M_PI / 2), 3) * Foundation.cos(t * p)
+            let p = bounciness * .pi
+            return 1 - pow(Foundation.cos(t * .pi / 2), 3) * Foundation.cos(t * p)
         }
     }
 }

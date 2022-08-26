@@ -9,9 +9,9 @@ open class Camera {
     public init() {
         session = AVCaptureSession()
         stillCameraOutput = AVCaptureStillImageOutput()
-        session.sessionPreset = AVCaptureSessionPresetPhoto
+        session.sessionPreset = AVCaptureSession.Preset.photo
         previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         if let input = backCameraInput() {
             if session.canAddInput(input) {
                 session.addInput(input)
@@ -23,8 +23,8 @@ open class Camera {
     }
     
     fileprivate func backCameraDevice() -> AVCaptureDevice? {
-        let availableCameraDevices = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
-        for device in availableCameraDevices as! [AVCaptureDevice] {
+        let availableCameraDevices = AVCaptureDevice.devices(for: AVMediaType.video)
+        for device in availableCameraDevices {
             if device.position == .back {
                 return device
             }
@@ -50,12 +50,16 @@ open class Camera {
     }
     
     open func capture(_ next: @escaping (UIImage?) -> ()) {
-        if let connection = stillCameraOutput.connection(withMediaType: AVMediaTypeVideo) {
+        if let connection = stillCameraOutput.connection(with: AVMediaType.video) {
             if connection.isVideoOrientationSupported {
                 connection.videoOrientation = .portrait
             }
-            stillCameraOutput.captureStillImageAsynchronously(from: connection) { (buffer, error) in
-                self.stop()
+            if !connection.isEnabled || !connection.isActive {
+                next(nil)
+                return
+            }
+            stillCameraOutput.captureStillImageAsynchronously(from: connection) { [weak self] (buffer, error) in
+                self?.stop()
                 if let buffer = buffer {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer)
                     let image = UIImage(data: imageData!)?.fixedOrientation()
@@ -75,7 +79,7 @@ open class Camera {
         session.stopRunning()
     }
     
-    open func toggleFlash() -> AVCaptureFlashMode? {
+    open func toggleFlash() -> AVCaptureDevice.FlashMode? {
         if let device = backCameraDevice() {
             do {
                 try device.lockForConfiguration()
@@ -100,11 +104,11 @@ open class Camera {
     }
     
     fileprivate func checkPermission(_ next: @escaping () -> ()) {
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         switch authorizationStatus {
         case .notDetermined:
             // permission dialog not yet presented, request authorization
-            AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo) { granted in
+            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
                 if granted {
                     foreground {
                         next()

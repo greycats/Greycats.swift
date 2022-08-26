@@ -10,51 +10,51 @@ import UIKit
 
 public extension UIView {
     
-    @IBInspectable public var borderColor: UIColor? {
+    @IBInspectable var borderColor: UIColor? {
         get { if let color = layer.borderColor { return UIColor(cgColor: color) } else { return nil } }
         set(value) { if let value = value { layer.borderColor = value.cgColor } }
     }
     
-    @IBInspectable public var borderWidth: CGFloat {
+    @IBInspectable var borderWidth: CGFloat {
         get { return layer.borderWidth }
         set(value) { layer.borderWidth = value }
     }
     
-    @IBInspectable public var relativeBorderWidth: CGFloat {
+    @IBInspectable var relativeBorderWidth: CGFloat {
         get { return layer.borderWidth * UIScreen.main.scale }
         set(value) { layer.borderWidth = value / UIScreen.main.scale }
     }
     
-    @IBInspectable public var cornerRadius: CGFloat {
+    @IBInspectable var cornerRadius: CGFloat {
         get { return layer.cornerRadius }
         set(value) {
             layer.cornerRadius = value
         }
     }
     
-    @IBInspectable public var masksToBounds: Bool {
+    @IBInspectable var masksToBounds: Bool {
         get { return layer.masksToBounds }
         set(value) {
             layer.masksToBounds = value
         }
     }
     
-    @IBInspectable public var shadowColor: UIColor? {
+    @IBInspectable var shadowColor: UIColor? {
         get { if let color = layer.shadowColor { return UIColor(cgColor: color) } else { return nil } }
         set(value) { if let value = value { layer.shadowColor = value.cgColor } }
     }
     
-    @IBInspectable public var shadowOffset: CGPoint {
+    @IBInspectable var shadowOffset: CGPoint {
         get { return CGPoint(x: layer.shadowOffset.width, y: layer.shadowOffset.height) }
         set(value) { layer.shadowOffset = CGSize(width: value.x, height: value.y) }
     }
     
-    @IBInspectable public var relativeShadowOffset: CGPoint {
+    @IBInspectable var relativeShadowOffset: CGPoint {
         get { return CGPoint(x: layer.shadowOffset.width * UIScreen.main.scale, y: layer.shadowOffset.height * UIScreen.main.scale) }
         set(value) { layer.shadowOffset = CGSize(width: value.x / UIScreen.main.scale, height: value.y / UIScreen.main.scale) }
     }
     
-    @IBInspectable public var shadowOpacity: Float {
+    @IBInspectable var shadowOpacity: Float {
         get { return layer.shadowOpacity }
         set(value) {
             layer.shadowOpacity = value
@@ -68,12 +68,12 @@ public extension UIView {
         }
     }
     
-    @IBInspectable public var shadowRadius: CGFloat {
+    @IBInspectable var shadowRadius: CGFloat {
         get { return layer.shadowRadius }
         set(value) { layer.shadowRadius = value }
     }
     
-    @IBInspectable public var relativeShadowRadius: CGFloat {
+    @IBInspectable var relativeShadowRadius: CGFloat {
         get { return layer.shadowRadius * UIScreen.main.scale }
         set(value) { layer.shadowRadius = value / UIScreen.main.scale }
     }
@@ -107,8 +107,8 @@ open class TextField: UITextField {
     fileprivate func updatePlaceholder() {
         if let placeholder = placeholder, let font = font, let textColor = textColor {
             attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [
-                NSFontAttributeName: font,
-                NSForegroundColorAttributeName: textColor.withAlphaComponent(placeholderAlpha)
+                NSAttributedString.Key.font: font,
+                NSAttributedString.Key.foregroundColor: textColor.withAlphaComponent(placeholderAlpha)
                 ])
         }
     }

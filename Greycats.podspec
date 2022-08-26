@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Greycats"
-  s.version          = "3.0.2"
+  s.version          = "5.0.0"
   s.summary          = "A set of tools we use to speed up developing in greycats"
   s.description      = <<-DESC
 						Currently includes
@@ -55,6 +55,6 @@ Pod::Spec.new do |s|
     s.source_files = "Greycats/Breadcrumb.swift"
   end
 
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.0' }
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '5.0' }
 
 end

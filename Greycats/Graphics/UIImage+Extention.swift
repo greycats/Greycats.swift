@@ -3,7 +3,7 @@ import ImageIO
 
 extension UIImage {
     public func resize(_ maxPixel: Int) -> UIImage? {
-        if let imageSource = CGImageSourceCreateWithData(UIImageJPEGRepresentation(self, 1)! as CFData, nil) {
+        if let imageSource = CGImageSourceCreateWithData(self.jpegData(compressionQuality: 1)! as CFData, nil) {
             let options: [NSString: NSObject] = [
                 kCGImageSourceThumbnailMaxPixelSize: maxPixel as NSObject,
                 kCGImageSourceCreateThumbnailFromImageAlways: true as NSObject,
@@ -28,15 +28,15 @@ extension UIImage {
         switch imageOrientation {
         case .down, .downMirrored:
             transform = transform.translatedBy(x: size.width, y: size.height)
-            transform = transform.rotated(by: CGFloat(M_PI))
+            transform = transform.rotated(by: .pi)
             break
         case .left, .leftMirrored:
             transform = transform.translatedBy(x: size.width, y: 0)
-            transform = transform.rotated(by: CGFloat(M_PI_2))
+            transform = transform.rotated(by: .pi / 2)
             break
         case .right, .rightMirrored:
             transform = transform.translatedBy(x: 0, y: size.height)
-            transform = transform.rotated(by: CGFloat(-M_PI_2))
+            transform = transform.rotated(by: .pi / -2)
             break
         case .up, .upMirrored:
             break

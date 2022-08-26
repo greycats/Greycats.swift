@@ -22,7 +22,7 @@ extension Delegate: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let filter = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-        if filter.characters.count > 0 {
+        if filter.count > 0 {
             applyFilter(filter)
         } else {
             applyFilter(nil)
@@ -36,7 +36,7 @@ extension Delegate: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        applyFilter(textField.text!.characters.count > 0 ? textField.text : nil)
+        applyFilter(textField.text!.count > 0 ? textField.text : nil)
         didSearch?(textField)
         return true
     }
@@ -44,7 +44,7 @@ extension Delegate: UITextFieldDelegate {
 
 extension Delegate: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        applyFilter(searchBar.text!.characters.count > 0 ? searchBar.text : nil)
+        applyFilter(searchBar.text!.count > 0 ? searchBar.text : nil)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {

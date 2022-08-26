@@ -3,29 +3,29 @@ import UIKit
 public protocol Navigatable {
     func canGoBack() -> Bool
     func goBack()
-    func navigatableChanged(_ listener: () -> Void)
+    func navigatableChanged(_ listener: @escaping () -> Void)
 }
 
 extension UIViewController {
-    @IBAction public func navigateBack() {
+    @IBAction open func navigateBack() {
         goBack()
     }
     
-    public func canGoBack() -> Bool {
+    @objc open func canGoBack() -> Bool {
         guard let navigationController = navigationController else {
             return false
         }
-        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
             return true
         }
         return false
     }
     
-    public func goBack() {
+    @objc open func goBack() {
         guard let navigationController = navigationController else {
             return
         }
-        if let index = navigationController.viewControllers.index(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
             navigationController.popToViewController(navigationController.viewControllers[index - 1], animated: true)
         }
     }
@@ -51,7 +51,7 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
     
     override open func viewDidLoad() {
         super.viewDidLoad()
-        for child in childViewControllers {
+        for child in children {
             if let child = child as? UINavigationController {
                 child.delegate = self
             }

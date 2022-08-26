@@ -65,7 +65,7 @@ open class GraphicButton: UIButton, GraphicDesignable {
                 setImage(UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .up), for: .selected)
             }
             if let image = instance.image(false, tintColor: tintColor) {
-                setImage(UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .up), for: UIControlState())
+                setImage(UIImage(cgImage: image, scale: UIScreen.main.scale, orientation: .up), for: UIControl.State())
             }
         }
     }

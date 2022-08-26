@@ -58,7 +58,7 @@ public enum Filter {
             var filtered: [T] = []
             objects.forEach { object in
                 if let value = object.valueToFilter {
-                    let matches = r.matches(in: value, options: .anchored, range: NSMakeRange(0, value.characters.count))
+                    let matches = r.matches(in: value, options: .anchored, range: NSMakeRange(0, value.count))
                     if matches.count > 0 {
                         object.highlightMatches(matches)
                         filtered.append(object)
