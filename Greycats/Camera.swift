@@ -1,11 +1,13 @@
 import AVFoundation
+import GreycatsCore
+import GreycatsGraphics
 import UIKit
 
 open class Camera {
     var session: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var stillCameraOutput: AVCaptureStillImageOutput!
-    
+
     public init() {
         session = AVCaptureSession()
         stillCameraOutput = AVCaptureStillImageOutput()
@@ -21,7 +23,7 @@ open class Camera {
             session.addOutput(stillCameraOutput)
         }
     }
-    
+
     fileprivate func backCameraDevice() -> AVCaptureDevice? {
         let availableCameraDevices = AVCaptureDevice.devices(for: AVMediaType.video)
         for device in availableCameraDevices {
@@ -31,7 +33,7 @@ open class Camera {
         }
         return nil
     }
-    
+
     open func containerDidUpdate(_ container: UIView) {
         if previewLayer.superlayer == nil {
             container.layer.addSublayer(previewLayer)
@@ -40,7 +42,7 @@ open class Camera {
         previewLayer.frame = container.bounds
         UIView.setAnimationsEnabled(true)
     }
-    
+
     open func start() {
         foreground {
             self.checkPermission {[weak self] in
@@ -48,8 +50,8 @@ open class Camera {
             }
         }
     }
-    
-    open func capture(_ next: @escaping (UIImage?) -> ()) {
+
+    open func capture(_ next: @escaping (UIImage?) -> Void) {
         if let connection = stillCameraOutput.connection(with: AVMediaType.video) {
             if connection.isVideoOrientationSupported {
                 connection.videoOrientation = .portrait
@@ -58,7 +60,7 @@ open class Camera {
                 next(nil)
                 return
             }
-            stillCameraOutput.captureStillImageAsynchronously(from: connection) { [weak self] (buffer, error) in
+            stillCameraOutput.captureStillImageAsynchronously(from: connection) { [weak self] buffer, _ in
                 self?.stop()
                 if let buffer = buffer {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(buffer)
@@ -74,11 +76,11 @@ open class Camera {
             next(nil)
         }
     }
-    
+
     open func stop() {
         session.stopRunning()
     }
-    
+
     open func toggleFlash() -> AVCaptureDevice.FlashMode? {
         if let device = backCameraDevice() {
             do {
@@ -95,34 +97,35 @@ open class Camera {
         }
         return nil
     }
-    
+
     fileprivate func backCameraInput() -> AVCaptureDeviceInput? {
         if let device = backCameraDevice() {
             return try? AVCaptureDeviceInput(device: device)
         }
         return nil
     }
-    
-    fileprivate func checkPermission(_ next: @escaping () -> ()) {
+
+    fileprivate func checkPermission(_ next: @escaping () -> Void) {
         let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         switch authorizationStatus {
-        case .notDetermined:
-            // permission dialog not yet presented, request authorization
-            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-                if granted {
-                    foreground {
-                        next()
+            case .notDetermined:
+                // permission dialog not yet presented, request authorization
+                AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
+                    if granted {
+                        foreground {
+                            next()
+                        }
+                    } else {
+                        // user denied, nothing much to do
                     }
                 }
-                else {
-                    // user denied, nothing much to do
-                }
-            }
-        case .authorized:
-            next()
-        case .denied, .restricted:
-            // the user explicitly denied camera usage or is not allowed to access the camera devices
-            return
+            case .authorized:
+                next()
+            case .denied, .restricted:
+                // the user explicitly denied camera usage or is not allowed to access the camera devices
+                return
+            @unknown default:
+                return
         }
     }
 }

@@ -1,3 +1,4 @@
+import GreycatsLayout
 import UIKit
 
 public protocol Navigatable {
@@ -10,22 +11,22 @@ extension UIViewController {
     @IBAction open func navigateBack() {
         goBack()
     }
-    
+
     @objc open func canGoBack() -> Bool {
         guard let navigationController = navigationController else {
             return false
         }
-        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self), index > 0 {
             return true
         }
         return false
     }
-    
+
     @objc open func goBack() {
         guard let navigationController = navigationController else {
             return
         }
-        if let index = navigationController.viewControllers.firstIndex(of: self) , index > 0 {
+        if let index = navigationController.viewControllers.firstIndex(of: self), index > 0 {
             navigationController.popToViewController(navigationController.viewControllers[index - 1], animated: true)
         }
     }
@@ -44,11 +45,10 @@ open class NavigationBar: NibView {
 }
 
 open class NavigationController: UIViewController, UINavigationControllerDelegate {
-    
     @IBOutlet open weak var navigationBar: NavigationBar!
-    
+
     weak var customizedActionView: UIView?
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
         for child in children {
@@ -57,10 +57,10 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
             }
         }
     }
-    
+
     open func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         navigationBar.navigationItem = viewController.navigationItem
-        
+
         // customize action view
         customizedActionView?.removeFromSuperview()
         if let provider = viewController as? BarActionProvider {
@@ -70,7 +70,7 @@ open class NavigationController: UIViewController, UINavigationControllerDelegat
                 customizedActionView = view
             }
         }
-        
+
         navigationBar.leftButtonsContainer.isHidden = navigationController.viewControllers.count == 1
         weak var handler = viewController
         if let viewController = viewController as? Navigatable {

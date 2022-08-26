@@ -7,7 +7,7 @@
 //
 
 import UIKit
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l < r
@@ -18,7 +18,7 @@ fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l > r
@@ -26,7 +26,6 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
         return rhs < lhs
     }
 }
-
 
 /**
  intergration steps:
@@ -37,10 +36,10 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
  4. create a custom segue to your root view controller, select 'root view controller relationship', name it 'root'
  */
 public protocol NavigationBarProtocol {
-    var titleLabel: UILabel! {get set}
-    var backButton: UIButton! {get set}
-    var rightToolbar: UIToolbar! {get set}
-    var navigationItem: UINavigationItem? {get set}
+    var titleLabel: UILabel! { get set }
+    var backButton: UIButton! { get set }
+    var rightToolbar: UIToolbar! { get set }
+    var navigationItem: UINavigationItem? { get set }
 }
 
 open class RootViewControllerRelationshipSegue: UIStoryboardSegue {
@@ -53,11 +52,11 @@ open class RootViewControllerRelationshipSegue: UIStoryboardSegue {
 }
 
 public protocol NavigationBackProxy {
-    func navigateBack(_ next: () ->())
+    func navigateBack(_ next: () -> Void)
 }
 
 public protocol Navigation {
-    var hidesNavigationBarWhenPushed: Bool {get}
+    var hidesNavigationBarWhenPushed: Bool { get }
 }
 
 open class NavigationViewController: UIViewController, UINavigationControllerDelegate {
@@ -68,17 +67,17 @@ open class NavigationViewController: UIViewController, UINavigationControllerDel
             }
         }
     }
-    
+
     var bar: NavigationBarProtocol?
-    
+
     weak var childNavigationController: UINavigationController?
-    
+
     fileprivate func reattach() {
         navigationBar.removeFromSuperview()
         view.addSubview(navigationBar)
         navigationBar.translatesAutoresizingMaskIntoConstraints = false
     }
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
         reattach()
@@ -91,29 +90,29 @@ open class NavigationViewController: UIViewController, UINavigationControllerDel
         guard let container = childNavigationController.view else { return }
         container.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(container)
-        
-        //H
+
+        // H
         view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: 0))
-        //V
+        // V
         view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: navigationBar as Any, attribute: .bottom, relatedBy: .equal, toItem: container, attribute: .top, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: container, attribute: .bottom, relatedBy: .equal, toItem: bottomLayoutGuide, attribute: .top, multiplier: 1, constant: 0))
         performSegue(withIdentifier: "root", sender: nil)
     }
-    
+
     @IBAction func navigateBack(_ sender: Any) {
         if let proxy = childNavigationController?.topViewController as? NavigationBackProxy {
             proxy.navigateBack {[weak self] in
-                let _ = self?.childNavigationController?.popViewController(animated: true)
+                _ = self?.childNavigationController?.popViewController(animated: true)
             }
         } else {
-            let _ = childNavigationController?.popViewController(animated: true)
+            _ = childNavigationController?.popViewController(animated: true)
         }
     }
-    
+
     open func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         let showBackButton = childNavigationController?.viewControllers.count > 1
         var hides = false
@@ -124,6 +123,6 @@ open class NavigationViewController: UIViewController, UINavigationControllerDel
             self.navigationBar.alpha = hides ? 0 : 1
             self.bar?.navigationItem = viewController.navigationItem
             self.bar?.backButton.alpha = showBackButton ? 1 : 0
-        }) 
+        })
     }
 }

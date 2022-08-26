@@ -6,12 +6,13 @@
 //  Copyright (c) 2016 Interactive Labs. All rights reserved.
 //
 
+import GreycatsCore
 import UIKit
 
-public protocol FormFieldGroup: class {
+public protocol FormFieldGroup: AnyObject {
     func validate() -> Bool
-    func onChange(_ closure: @escaping (Bool) -> ()) -> Self
-    func onSubmit(_ closure: @escaping () -> ()) -> Self
+    func onChange(_ closure: @escaping (Bool) -> Void) -> Self
+    func onSubmit(_ closure: @escaping () -> Void) -> Self
 }
 
 extension FormFieldGroup {
@@ -23,43 +24,42 @@ extension FormFieldGroup {
 }
 
 class _FormFieldGroup: FormFieldGroup {
-    var _onSubmit: (() -> ())?
-    var _onChange: ((Bool) -> ())?
+    var _onSubmit: (() -> Void)?
+    var _onChange: ((Bool) -> Void)?
     let valid: () -> (Bool)
-    
+
     fileprivate init(closure: @escaping () -> Bool) {
         valid = closure
     }
-    
+
     func validate() -> Bool {
         let v = valid()
         _onChange?(v)
         return v
     }
-    
-    func onSubmit(_ closure: @escaping () -> ()) -> Self {
+
+    func onSubmit(_ closure: @escaping () -> Void) -> Self {
         _onSubmit = closure
         return self
     }
-    
-    func onChange(_ closure: @escaping (Bool) -> ()) -> Self {
+
+    func onChange(_ closure: @escaping (Bool) -> Void) -> Self {
         _onChange = closure
-        let _ = validate()
+        _ = validate()
         return self
     }
 }
 
 @IBDesignable
 open class FormField: NibView, UITextFieldDelegate {
-    
-    @IBOutlet weak open var captionLabel: UILabel?
-    @IBOutlet weak open var field: UITextField!
-    @IBOutlet weak open var line: UIView!
+    @IBOutlet open weak var captionLabel: UILabel?
+    @IBOutlet open weak var field: UITextField!
+    @IBOutlet open weak var line: UIView!
     open var regex: Regex = ".*"
     @IBInspectable open var invalidErrorMessage: String?
-    @IBOutlet weak open var redLine: UIView?
-    @IBOutlet weak open var errorLabel: UILabel?
-    @IBOutlet weak open var errorHeight: NSLayoutConstraint?
+    @IBOutlet open weak var redLine: UIView?
+    @IBOutlet open weak var errorLabel: UILabel?
+    @IBOutlet open weak var errorHeight: NSLayoutConstraint?
     @IBInspectable open var pattern: String = ".*" {
         didSet {
             if pattern == "EmailRegex" {
@@ -69,14 +69,14 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var enabled: Bool {
         get { return field.isEnabled }
         set(value) { field.isEnabled = value }
     }
-    
+
     weak var group: _FormFieldGroup?
-    
+
     open var error: String? {
         didSet {
             if let error = error {
@@ -93,21 +93,21 @@ open class FormField: NibView, UITextFieldDelegate {
     }
     var everEdited = false
     var onReturn: (() -> Bool)?
-    fileprivate var triggers: [() -> ()] = []
-    
+    fileprivate var triggers: [() -> Void] = []
+
     @IBAction func valueUpdated(_ sender: Any) {
         triggers.forEach { $0() }
-        let _ = group?.validate()
+        _ = group?.validate()
     }
-    
+
     open var handle: (UITextField) -> Bool = { _ in true }
-    
+
     @IBAction func didBeginEditing(_ sender: Any) {
         everEdited = true
         triggers.forEach { $0() }
-        let _ = group?.validate()
+        _ = group?.validate()
     }
-    
+
     open func pass(_ validateText: String = "", reportError: Bool = true) -> Bool {
         let allowsError = everEdited == true && field.isFirstResponder == false
         let passed = (field.text ?? "") =~ regex
@@ -115,7 +115,7 @@ open class FormField: NibView, UITextFieldDelegate {
             if allowsError && reportError {
                 if !field.hasText {
                     error = "\(validateText)\(placeholder.lowercased()) is required."
-                } else if let invalidMessage = invalidErrorMessage , invalidMessage.count > 0 {
+                } else if let invalidMessage = invalidErrorMessage, invalidMessage.count > 0 {
                     error = invalidMessage.replacingOccurrences(of: ":value", with: field.text!)
                 } else {
                     error = "Invalid \(validateText)\(placeholder.lowercased())."
@@ -126,14 +126,14 @@ open class FormField: NibView, UITextFieldDelegate {
         }
         return passed
     }
-    
+
     @IBInspectable open var secure: Bool = false {
         didSet {
             field.isSecureTextEntry = secure
             field.clearButtonMode = secure ? .never : .whileEditing
         }
     }
-    
+
     open var text: String? {
         get {
             return field.text
@@ -142,7 +142,7 @@ open class FormField: NibView, UITextFieldDelegate {
             field.text = value
         }
     }
-    
+
     @IBInspectable open var keyboardType: Int {
         get { return field.keyboardType.rawValue }
         set(value) {
@@ -151,7 +151,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var autocorrection: Int {
         get { return field.autocorrectionType.rawValue }
         set(value) {
@@ -160,7 +160,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var autocapitalizationType: Int {
         get { return field.autocapitalizationType.rawValue }
         set(value) {
@@ -169,7 +169,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var keyboardApperance: Int {
         get { return field.keyboardAppearance.rawValue }
         set(value) {
@@ -178,7 +178,7 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var placeholder: String = "Email Address" {
         didSet {
             if let captionLabel = captionLabel {
@@ -188,23 +188,23 @@ open class FormField: NibView, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBInspectable open var textColor: UIColor? {
         didSet {
             field.textColor = textColor
         }
     }
-    
+
     @IBInspectable open var lineColor: UIColor? {
         didSet {
             line.backgroundColor = lineColor
         }
     }
-    
+
     open func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return handle(textField)
     }
-    
+
     open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return onReturn?() ?? true
     }
@@ -272,10 +272,10 @@ extension Collection where Iterator.Element: FormField, Index == Int {
                 }
             }
         }
-        let _ = group.validate()
+        _ = group.validate()
         return group
     }
-    
+
     public func createForm(_ target: NSObjectProtocol, submitType: UIReturnKeyType = .send, validatePrefix: String = "", reportsError: Bool = true) -> FormFieldGroup {
         let group = createForm(submitType, validatePrefix: validatePrefix, reportsError: reportsError)
         objc_setAssociatedObject(target, &formKey, group, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

@@ -35,18 +35,18 @@ extension UIView {
         for v in subviews {
             v.removeFromSuperview()
         }
-        var previous: UIView? = nil
+        var previous: UIView?
         for view in views {
             injectView(view, axis: .vertical, after: previous, marginX: marginX)
             previous = view
         }
     }
-    
+
     public func horizontalStack(_ views: [UIView], marginX: CGFloat = 0, equalWidth: Bool = false) {
         for v in subviews {
             v.removeFromSuperview()
         }
-        var previous: UIView? = nil
+        var previous: UIView?
         for view in views {
             injectView(view, axis: .horizontal, after: previous, marginX: marginX)
             if equalWidth {
@@ -59,7 +59,7 @@ extension UIView {
             previous = view
         }
     }
-    
+
     public func _previousView(_ view: UIView, axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge0(axis)
@@ -70,7 +70,7 @@ extension UIView {
         }
         return nil
     }
-    
+
     public func _firstView(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge0(axis)
@@ -81,7 +81,7 @@ extension UIView {
         }
         return nil
     }
-    
+
     public func _lastView(_ axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge1(axis)
@@ -92,7 +92,7 @@ extension UIView {
         }
         return nil
     }
-    
+
     public func _nextView(_ view: UIView, axis: NSLayoutConstraint.Axis) -> NSLayoutConstraint? {
         let gaps = constraints
         let attr = edge1(axis)
@@ -103,7 +103,7 @@ extension UIView {
         }
         return nil
     }
-    
+
     public func ejectView(_ view: UIView, axis: NSLayoutConstraint.Axis, animated: Bool = true) {
         if let prev = _previousView(view, axis: axis),
             let next = _nextView(view, axis: axis) {
@@ -135,7 +135,7 @@ extension UIView {
             }
         }
     }
-    
+
     public func injectView(_ view: UIView, axis: NSLayoutConstraint.Axis, after previous: UIView?, marginX: CGFloat = 0, animated: Bool = false) {
         view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
@@ -147,7 +147,7 @@ extension UIView {
         addConstraint(NSLayoutConstraint(item: view, attribute: pedge0, relatedBy: .equal, toItem: self, attribute: pedge0, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint(item: view, attribute: pedge1, relatedBy: .equal, toItem: self, attribute: pedge1, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint(item: view, attribute: attr, relatedBy: .equal, toItem: self, attribute: attr, multiplier: 1, constant: 0))
-        
+
         let edge0Constraint: NSLayoutConstraint
         if let previous = previous {
             // let us found original next view, and link it to this view
@@ -178,7 +178,7 @@ extension UIView {
                 edge0Constraint.constant = 0
                 self.layoutIfNeeded()
             })
-            
+
             UIView.animate(withDuration: 0.15, delay: 0.2, options: .curveEaseIn, animations: {
                 view.alpha = 1
                 }, completion: nil)
@@ -200,4 +200,3 @@ infix operator --<
 public func --< (view: UIView, views: [UIView]) {
     view.horizontalStack(views, marginX: 0, equalWidth: true)
 }
-

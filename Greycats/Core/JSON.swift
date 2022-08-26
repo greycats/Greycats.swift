@@ -19,7 +19,7 @@ public struct JSON {
     public let type: Type
     public typealias RawValue = Any
     public let object: RawValue?
-    
+
     public init(_ json: RawValue?) {
         switch json {
         case _ as String:
@@ -39,35 +39,35 @@ public struct JSON {
             object = nil
         }
     }
-    
+
     public var int: Int? {
         if type == .number {
             return object as? Int
         }
         return nil
     }
-    
+
     public var double: Double? {
         if type == .number {
             return object as? Double
         }
         return nil
     }
-    
+
     public var string: String? {
         if type == .string {
             return object as? String
         }
         return nil
     }
-    
+
     public var bool: Bool {
         if type == .number {
             return (object as? Bool)!
         }
         return false
     }
-    
+
     public var array: [JSON]? {
         if type == .array {
             let array: [JSON] = (object as! [RawValue]).map { JSON($0) }
@@ -75,7 +75,7 @@ public struct JSON {
         }
         return nil
     }
-    
+
     public var dictionary: [String: JSON]? {
         if type == .dictionary {
             var dictionary: [String: JSON] = [:]
@@ -86,7 +86,7 @@ public struct JSON {
         }
         return nil
     }
-    
+
     public func tryDictionary(_ keys: String...) -> JSON? {
         if let object = object as? [String: Any] {
             for key in keys {
@@ -97,7 +97,7 @@ public struct JSON {
         }
         return nil
     }
-    
+
     public var json: Any {
         if let o: Any = object {
             return o
@@ -105,7 +105,7 @@ public struct JSON {
             return NSNull()
         }
     }
-    
+
     public subscript (key: Int) -> JSON {
         if type == .array {
             if let object = object as? [RawValue] {
@@ -114,7 +114,7 @@ public struct JSON {
         }
         return JSON(nil)
     }
-    
+
     public subscript (key: String) -> JSON {
         if let object = object as? [String: Any] {
             return JSON(object[key])

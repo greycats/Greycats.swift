@@ -18,7 +18,7 @@ extension UIView {
         parent.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v]|", options: [], metrics: nil, views: views))
         parent.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[v]|", options: [], metrics: nil, views: views))
     }
-    
+
     public func bottom(_ height: CGFloat = 1) {
         translatesAutoresizingMaskIntoConstraints = false
         let views = ["v": self]
@@ -26,7 +26,7 @@ extension UIView {
         parent.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[v]|", options: [], metrics: nil, views: views))
         parent.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[v(h)]|", options: [], metrics: ["h": height / UIScreen.main.scale], views: views))
     }
-    
+
     public func right(_ width: CGFloat = 1, margin: CGFloat = 0) {
         translatesAutoresizingMaskIntoConstraints = false
         let views = ["v": self]
@@ -38,7 +38,7 @@ extension UIView {
 
 extension UIStoryboardSegue {
     public func topViewController<T>() -> T? {
-        var dest: T? = nil
+        var dest: T?
         if let controller = destination as? T {
             dest = controller
         } else {
@@ -81,23 +81,23 @@ extension NibViewProtocol where Self: UIView {
 
 open class NibView: UIView, NibViewProtocol {
     open var nibName: String { return String(describing: type(of: self)) }
-    
+
     public convenience init() {
         self.init(frame: .zero)
     }
-    
-    public override init(frame: CGRect) {
+
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
-    
+
     @IBOutlet var lineWidth: [NSLayoutConstraint]!
-    
+
     open func setup() {
         _ = replaceFirstChildWith(nibName: nibName)
         if lineWidth != nil {
@@ -110,7 +110,7 @@ open class NibView: UIView, NibViewProtocol {
 
 @IBDesignable
 open class StyledView: NibView {
-    open override var nibName: String { return "\(nibNamePrefix)\(layout)" }
+    override open var nibName: String { return "\(nibNamePrefix)\(layout)" }
     open var nibNamePrefix: String { return String(describing: type(of: self)) }
     @IBInspectable open var layout: String = "" {
         didSet {
@@ -126,14 +126,14 @@ open class KernLabel: UILabel {
     @IBInspectable open var kern: Float = 0 {
         didSet { updateAttributedText() }
     }
-    open override var text: String? {
+    override open var text: String? {
         didSet { updateAttributedText() }
     }
-    
+
     @IBInspectable open var lineHeight: CGFloat = 0 {
         didSet { updateAttributedText() }
     }
-    
+
     open var attributes: [NSAttributedString.Key: Any] {
         let style = NSMutableParagraphStyle()
         style.lineHeightMultiple = lineHeight / font.lineHeight
@@ -142,10 +142,10 @@ open class KernLabel: UILabel {
             NSAttributedString.Key.font: font as Any,
             NSAttributedString.Key.foregroundColor: textColor as Any,
             NSAttributedString.Key.kern: kern as Any,
-            NSAttributedString.Key.paragraphStyle: style,
+            NSAttributedString.Key.paragraphStyle: style
         ]
     }
-    
+
     func updateAttributedText() {
         if let text = text {
             attributedText = NSAttributedString(string: text, attributes: attributes)

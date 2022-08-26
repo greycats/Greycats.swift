@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Task = (_ cancel : Bool) -> ()
+public typealias Task = (_ cancel: Bool) -> Void
 
 @discardableResult
 public func delay(_ delay: TimeInterval, closure: @escaping () -> Void) -> Task? {
@@ -48,20 +48,20 @@ public struct Schedule {
         timer.resume()
         return timer
     }()
-    
+
     let interval: DispatchTimeInterval?
     let delay: DispatchTimeInterval
-    
+
     public init(interval: DispatchTimeInterval?, delay: DispatchTimeInterval = .milliseconds(250)) {
         self.delay = delay
         self.interval = interval
     }
-    
+
     public func cancel() {
         timer.cancel()
     }
-    
-    mutating public func schedule(_ closure: @escaping (_ check: () -> Bool) -> ()) {
+
+    public mutating func schedule(_ closure: @escaping (_ check: () -> Bool) -> Void) {
         cancel()
         if let interval = interval {
             timer.schedule(deadline: DispatchTime.distantFuture, repeating: interval)

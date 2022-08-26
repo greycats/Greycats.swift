@@ -23,7 +23,6 @@ public protocol AutoFocus {
 private var observerKey: Void?
 
 extension KeyboardResponder where Self: UIViewController {
-
     public func keyboardHeight() -> NSLayoutConstraint? {
         return nil
     }

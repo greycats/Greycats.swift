@@ -16,7 +16,7 @@ private var _bitmapInfo: UInt32 = {
 }()
 
 extension CGImage {
-    public func op(_ closure: (CGContext?, CGRect) -> ()) -> CGImage? {
+    public func op(_ closure: (CGContext?, CGRect) -> Void) -> CGImage? {
         let width = self.width
         let height = self.height
         let colourSpace = CGColorSpaceCreateDeviceRGB()
@@ -25,8 +25,8 @@ extension CGImage {
         closure(context, rect)
         return context!.makeImage()
     }
-    
-    public static func op(_ width: Int, _ height: Int, closure: (CGContext?) -> ()) -> CGImage? {
+
+    public static func op(_ width: Int, _ height: Int, closure: (CGContext?) -> Void) -> CGImage? {
         let scale = UIScreen.main.scale
         let w = width * Int(scale)
         let h = height * Int(scale)

@@ -1,6 +1,8 @@
 # OS X
 .DS_Store
 *.icloud
+.build
+.swiftpm
 
 # Xcode
 build/

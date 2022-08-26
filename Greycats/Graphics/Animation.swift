@@ -1,7 +1,6 @@
-
 import UIKit
 
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l < r
@@ -12,7 +11,7 @@ fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func >= <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l >= r
@@ -21,7 +20,7 @@ fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+private func <= <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
     switch (lhs, rhs) {
     case let (l?, r?):
         return l <= r
@@ -30,8 +29,7 @@ fileprivate func <= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     }
 }
 
-
-public protocol Animatable: class {
+public protocol Animatable: AnyObject {
     func render(_ elapsedTime: TimeInterval) -> Bool
     func start()
     func stop()
@@ -40,21 +38,21 @@ public protocol Animatable: class {
 class DisplayLink: NSObject {
     weak var animatable: Animatable?
     let end: (() -> Void)?
-    
-    var ended: Bool = false
-    
+
+    var ended = false
+
     var lastDrawTime: CFTimeInterval = 0
     var displayLink: CADisplayLink?
     fileprivate var pausedTime: CFTimeInterval?
     fileprivate var bindAppStatus = false
-    
+
     required init(animatable: Animatable, end: (() -> Void)? = nil) {
         self.animatable = animatable
         self.end = end
         super.init()
         resume()
     }
-    
+
     func invalidate() {
         displayLink?.invalidate()
         lastDrawTime = 0
@@ -64,14 +62,14 @@ class DisplayLink: NSObject {
             ended = true
         }
     }
-    
+
     deinit {
         invalidate()
         if bindAppStatus {
             NotificationCenter.default.removeObserver(self)
         }
     }
-    
+
     @objc func update() {
         guard let displayLink = displayLink else {
             return
@@ -80,7 +78,7 @@ class DisplayLink: NSObject {
             invalidate()
             return
         }
-        
+
         if lastDrawTime == 0 {
             lastDrawTime = displayLink.timestamp
         }
@@ -93,12 +91,12 @@ class DisplayLink: NSObject {
             invalidate()
         }
     }
-    
+
     @objc func pause() {
         displayLink?.isPaused = true
         pausedTime = displayLink?.timestamp
     }
-    
+
     @objc func resume() {
         if displayLink == nil {
             displayLink = CADisplayLink(target: self, selector: #selector(update))
@@ -115,19 +113,17 @@ class DisplayLink: NSObject {
 
 private var displayLinkKey: Void?
 extension Animatable {
-    
     public func start() {
         let displayLink = DisplayLink(animatable: self)
         objc_setAssociatedObject(self, &displayLinkKey, displayLink, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-    
+
     public func stop() {
         objc_setAssociatedObject(self, &displayLinkKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
 
 open class Animation {
-    
     public enum Easing {
         case linear
         case quad
@@ -138,24 +134,24 @@ open class Animation {
         case exp
         case elastic(bounciness: Double)
     }
-    
+
     public struct Value {
         let _value: (_ time: TimeInterval, _ easing: Easing) -> CGFloat
-        
+
         public func value(_ time: TimeInterval, easing: Easing = .linear) -> CGFloat {
             return _value(time, easing)
         }
     }
-    
+
     var displayLink: DisplayLink?
-    
+
     public init() {
     }
-    
+
     open func start(_ animatable: Animatable, end: (() -> Void)? = nil) {
         displayLink = DisplayLink(animatable: animatable, end: end)
     }
-    
+
     open func stop() {
         displayLink = nil
     }
@@ -194,7 +190,7 @@ extension Animation.Value {
             if time <= inputRange.first {
                 return outputRange.first!
             }
-            
+
             var found: Int = 0
             for (index, input) in inputRange.enumerated() {
                 if time >= input {
