@@ -14,7 +14,7 @@ let package = Package(
             targets: ["GreycatsCore"]
         ),
         .library(
-            name: "GreycatsLayout",
+            name: "Greycats",
             targets: ["GreycatsLayout"]
         ),
         .library(
