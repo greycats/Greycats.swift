@@ -14,8 +14,8 @@ let package = Package(
             targets: ["GreycatsCore"]
         ),
         .library(
-            name: "GreycatsLayout",
-            targets: ["GreycatsLayout"]
+            name: "Greycats",
+            targets: ["Greycats"]
         ),
         .library(
             name: "GreycatsGraphics",
@@ -50,7 +50,7 @@ let package = Package(
             sources: ["Core"]
         ),
         .target(
-            name: "GreycatsLayout",
+            name: "Greycats",
             dependencies: ["GreycatsCore"],
             path: "Greycats",
             sources: ["Layout"]
@@ -67,7 +67,7 @@ let package = Package(
         ),
         .target(
             name: "GreycatsNavigator",
-            dependencies: ["GreycatsLayout"],
+            dependencies: ["Greycats"],
             path: "Greycats",
             sources: ["Navigator.swift"]
         ),
@@ -79,7 +79,7 @@ let package = Package(
         ),
         .target(
             name: "GreycatsFilterHook",
-            dependencies: ["GreycatsLayout"],
+            dependencies: ["Greycats"],
             path: "Greycats",
             sources: ["FilterHook.swift"]
         ),
